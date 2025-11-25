@@ -87,7 +87,7 @@ const Stats = {
       SELECT
         d.id,
         d.name,
-        d.status,
+        COALESCE(d.status, 'offline') as status,
         COUNT(b.id) as trips,
         COALESCE(SUM(CASE WHEN b.status = 'completed' THEN b.fare_aed ELSE 0 END), 0) as earnings
       FROM drivers d
