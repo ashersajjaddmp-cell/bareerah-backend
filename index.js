@@ -1,6 +1,13 @@
 const express = require('express');
-const { query } = require('./db/db');
-const bookingsRouter = require('./routes/bookings');
+const { query } = require('./config/db');
+const { PORT } = require('./config/env');
+const errorHandler = require('./middleware/errorHandler');
+const logger = require('./utils/logger');
+
+const bookingRoutes = require('./routes/bookingRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
+const vendorRoutes = require('./routes/vendorRoutes');
+
 const app = express();
 
 app.use(express.json());
@@ -18,8 +25,12 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
-app.use('/api/bookings', bookingsRouter);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/vendors', vendorRoutes);
 
-app.listen(3000, '0.0.0.0', () => {
-  console.log('Server running on http://0.0.0.0:3000');
+app.use(errorHandler);
+
+app.listen(PORT, '0.0.0.0', () => {
+  logger.info(`Server running on http://0.0.0.0:${PORT}`);
 });
