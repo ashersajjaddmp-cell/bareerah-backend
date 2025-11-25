@@ -1,0 +1,340 @@
+DASHBOARD (MAJOR UPGRADE REQUIRED)
+A. Summary Cards (with Filters)
+
+Replace current static numbers with full analytics supporting these time filters:
+
+Time Filters Required:
+
+Today
+
+Yesterday
+
+This Week
+
+This Month
+
+Custom Range (Calendar picker) → start date + end date
+
+Dashboard Metrics:
+
+Total Bookings
+
+Completed Bookings
+
+Pending Bookings
+
+Cancelled Bookings
+
+Total Revenue
+
+Cash vs Card Split (if card used later)
+
+All metrics must refresh when the date filter changes.
+
+B. Charts
+
+7-Day Bookings Chart (line chart)
+
+Revenue Chart (bar or line)
+
+Driver Online/Offline Trends
+
+Fleet Utilization Chart
+
+C. Live Map Widget
+
+Show all drivers (online/offline)
+
+Show ongoing trips
+
+Realtime position updates
+
+D. Alerts Panel
+
+Display system-level alerts:
+
+API errors
+
+Booking creation failures
+
+Driver documents expired
+
+Car documents expired
+
+Google Maps API over-limit warning
+
+2️⃣ SIDEBAR + NAVIGATION (ADD SUBMENUS)
+Bookings
+
+All Bookings
+
+Today
+
+Yesterday
+
+Scheduled
+
+Cancelled
+
+Drivers
+
+Active Drivers
+
+Offline Drivers
+
+Pending Applications
+
+Cars
+
+All Cars
+
+Luxury
+
+Business
+
+SUV
+
+MPV
+
+Settings
+
+(no change, but will add Fare Rules)
+
+Notifications
+
+System Alerts
+
+Messages to/from Drivers
+
+3️⃣ BOOKINGS MODULE (IMPROVE TABLE + FILTERS)
+A. Columns Required
+
+Booking ID
+
+Customer Name
+
+Phone
+
+Pickup Address
+
+Drop Address
+
+Distance (km)
+
+Estimated Fare
+
+Final Fare
+
+Driver Assigned
+
+Payment Method
+
+Status (Pending/Completed/Cancelled)
+
+Ride Type (if later)
+
+Created At
+
+Updated At
+
+B. Filters Required
+
+Date Filters (Today, Yesterday, Week, Month, Custom Calendar)
+
+Status Filter → Pending / Completed / Cancelled
+
+Driver Filter
+
+Payment Filter (if needed)
+
+Phone/Name Search
+
+Pickup/Drop Search
+
+C. Export Options
+
+Export CSV
+
+Export PDF
+
+4️⃣ DRIVER MODULE (ADD MISSING FEATURES)
+A. Driver List Should Include
+
+Name
+
+Phone
+
+Status (Online/Offline)
+
+Total Trips
+
+Earnings (future)
+
+Rating (future)
+
+License Expiry Date
+
+Car Assigned
+
+B. Driver Profile Page
+
+Documents uploader (license, ID, vehicle card)
+
+Driver logs
+
+Status history
+
+Trip history
+
+5️⃣ CARS MODULE
+Add Fields:
+
+Category (Luxury/Business/SUV/MPV)
+
+Registration Number
+
+Model & Make
+
+Car Year
+
+Insurance Expiry
+
+Registration Expiry
+
+Assigned Driver
+
+Add Filters:
+
+Category
+
+Availability
+
+Expired Documents
+
+6️⃣ FARE ENGINE (NEW MODULE)
+Admin should be able to define:
+
+Base Fare
+
+Per KM Fare
+
+Per Minute Fare
+
+Minimum Fare
+
+Airport Surcharge
+
+Peak Hour Surcharge (Time range selector)
+
+Weekend Surcharge
+
+Fare Calculation Test Box
+
+Admin enters:
+
+Pickup
+
+Drop
+System returns:
+
+Distance
+
+Time
+
+Estimated Fare
+
+7️⃣ GOOGLE MAPS API MONITOR (NEW MODULE)
+Show:
+
+API key status
+
+Usage stats
+
+Error logs
+
+Test distance matrix (admin enters addresses)
+
+Test autocomplete
+
+8️⃣ AI VOICE BOOKING LOGS (CRITICAL)
+Logs must include:
+
+Caller number
+
+Summary of conversation (transcription text or text notes)
+
+AI understanding: pickup + drop
+
+Google Maps distance result
+
+Fare calculation result
+
+Booking created → Yes/No
+
+If failed → error reason
+
+Timestamp
+
+9️⃣ NOTIFICATION SYSTEM
+Admin Panel
+
+Send notification to any driver
+
+View sent messages
+
+View system-level alerts
+
+Driver Notification Log
+
+System automatically records:
+
+New booking
+
+Cancelled booking
+
+Payment update
+
+Document expiry
+
+🔟 GENERAL UX IMPROVEMENTS
+UI Changes Required
+
+Reduce empty white space
+
+Improve card design
+
+Add icons to cards
+
+Better spacing and visual structure
+
+Responsive design for mobile use
+
+Add dark mode switch
+
+✅ FINAL DEVELOPER NOTES
+
+Every section must use clean modular code.
+
+Backend should return date-filtered analytics via API endpoint:
+
+/api/stats?range=today
+
+/api/stats?range=yesterday
+
+/api/stats?range=week
+
+/api/stats?range=month
+
+/api/stats?start=YYYY-MM-DD&end=YYYY-MM-DD
+
+Ensure time range filters work across:
+
+Dashboard
+
+Bookings
+
+Drivers (optional)
+
+Revenue
+
+Everything must be optimized for future mobile app connection.

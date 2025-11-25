@@ -11,6 +11,7 @@ const vendorRoutes = require('./routes/vendorRoutes');
 const authRoutes = require('./routes/authRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const pushRoutes = require('./routes/pushRoutes');
+const statsRoutes = require('./routes/statsRoutes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/push', pushRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Login page (public)
 app.get('/dashboard/login.html', (req, res) => {
