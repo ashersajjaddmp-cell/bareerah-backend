@@ -16,18 +16,25 @@ pool.on('error', (err) => {
 });
 
 async function query(text, params, retries = 1) {
-  const client = await pool.connect();
+  let client;
   try {
+    client = await pool.connect();
     const result = await client.query(text, params);
     return result;
   } catch (err) {
     if (retries > 0 && err.code === '53300') {
+      if (client) {
+        client.release();
+        client = null;
+      }
       await new Promise(resolve => setTimeout(resolve, 200));
       return query(text, params, retries - 1);
     }
     throw err;
   } finally {
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 }
 
