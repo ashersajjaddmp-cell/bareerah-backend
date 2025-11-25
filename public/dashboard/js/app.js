@@ -1,3 +1,12 @@
+// Global State
+let currentRange = 'today';
+let currentStartDate = null;
+let currentEndDate = null;
+let charts = {};
+
+// Get API base URL (for Replit proxy)
+const API_BASE = window.location.origin + '/api';
+
 // Auth Check
 function checkAuth() {
   const token = localStorage.getItem('token');
@@ -12,25 +21,82 @@ function logout() {
   window.location.href = '/dashboard/login.html';
 }
 
-checkAuth();
-
-// Global State
-let currentRange = 'today';
-let currentStartDate = null;
-let currentEndDate = null;
-let charts = {};
-
-// Get API base URL (for Replit proxy)
-const API_BASE = window.location.origin + '/api';
-
-// Navigation
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', function(e) {
-    e.preventDefault();
-    const page = this.dataset.page;
-    navigateToPage(page);
-  });
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', function() {
+  checkAuth();
+  initializeApp();
 });
+
+function initializeApp() {
+  // Navigation
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      const page = this.dataset.page;
+      navigateToPage(page);
+    });
+  });
+
+  // Filter controls
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (this.dataset.range === 'custom') {
+        document.getElementById('customDatePicker').style.display = 'flex';
+      } else {
+        document.getElementById('customDatePicker').style.display = 'none';
+        currentRange = this.dataset.range;
+        currentStartDate = null;
+        currentEndDate = null;
+        
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        loadDashboard();
+      }
+    });
+  });
+
+  // Bookings Filter Events
+  const statusFilter = document.getElementById('statusFilter');
+  if (statusFilter) statusFilter.addEventListener('change', loadBookings);
+  
+  const vehicleFilter = document.getElementById('vehicleFilter');
+  if (vehicleFilter) vehicleFilter.addEventListener('change', loadBookings);
+
+  // Theme Toggle
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+      document.body.classList.toggle('dark-theme');
+      this.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+      localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+    });
+  }
+
+  // Load saved theme
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-theme');
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) themeToggle.textContent = '☀️';
+  }
+
+  // Initialize user data
+  const user = localStorage.getItem('user');
+  if (user) {
+    const userData = JSON.parse(user);
+    const userEl = document.getElementById('currentUser');
+    if (userEl) userEl.textContent = userData.username;
+  }
+  
+  const apiUrl = document.getElementById('apiUrl');
+  if (apiUrl) apiUrl.value = API_BASE;
+  
+  const lastUpdated = document.getElementById('lastUpdated');
+  if (lastUpdated) lastUpdated.textContent = new Date().toLocaleString();
+
+  // Load initial dashboard
+  loadDashboard();
+}
 
 function toggleSubmenu(element) {
   const submenu = element.nextElementSibling;
@@ -62,25 +128,6 @@ function navigateToPage(page) {
     loadCars(page.replace('cars-', ''));
   }
 }
-
-// Filter Controls
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    if (this.dataset.range === 'custom') {
-      document.getElementById('customDatePicker').style.display = 'flex';
-    } else {
-      document.getElementById('customDatePicker').style.display = 'none';
-      currentRange = this.dataset.range;
-      currentStartDate = null;
-      currentEndDate = null;
-      
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      
-      loadDashboard();
-    }
-  });
-});
 
 function applyCustomRange() {
   const start = document.getElementById('startDate').value;
@@ -190,20 +237,19 @@ async function loadDashboard() {
   const driverStats = stats.driverStats || [];
 
   // Update Summary Cards
-  document.getElementById('stat-bookings').textContent = summary.total_bookings || 0;
-  document.getElementById('stat-completed').textContent = summary.completed_bookings || 0;
-  document.getElementById('stat-pending').textContent = summary.pending_bookings || 0;
-  document.getElementById('stat-cancelled').textContent = summary.cancelled_bookings || 0;
-  document.getElementById('stat-revenue').textContent = `AED ${parseFloat(summary.total_revenue || 0).toFixed(2)}`;
-  document.getElementById('stat-cash').textContent = `AED ${parseFloat(summary.cash_revenue || 0).toFixed(2)}`;
-  document.getElementById('stat-card').textContent = `AED ${parseFloat(summary.card_revenue || 0).toFixed(2)}`;
+  const el = (id) => document.getElementById(id);
+  if (el('stat-bookings')) el('stat-bookings').textContent = summary.total_bookings || 0;
+  if (el('stat-completed')) el('stat-completed').textContent = summary.completed_bookings || 0;
+  if (el('stat-pending')) el('stat-pending').textContent = summary.pending_bookings || 0;
+  if (el('stat-cancelled')) el('stat-cancelled').textContent = summary.cancelled_bookings || 0;
+  if (el('stat-revenue')) el('stat-revenue').textContent = `AED ${parseFloat(summary.total_revenue || 0).toFixed(2)}`;
+  if (el('stat-cash')) el('stat-cash').textContent = `AED ${parseFloat(summary.cash_revenue || 0).toFixed(2)}`;
+  if (el('stat-card')) el('stat-card').textContent = `AED ${parseFloat(summary.card_revenue || 0).toFixed(2)}`;
 
   // Update Charts
   updateBookingsChart(trend);
   updateRevenueChart(revenueByType);
   updateDriversList(driverStats);
-  
-  // Update Alerts
   updateAlerts();
 }
 
@@ -464,36 +510,4 @@ function calculateTestFare() {
   }
 
   document.getElementById('calcResult').textContent = `Result: AED ${fare.toFixed(2)}`;
-}
-
-// Bookings Filter Events
-document.getElementById('statusFilter')?.addEventListener('change', loadBookings);
-document.getElementById('vehicleFilter')?.addEventListener('change', loadBookings);
-
-// Initialize
-window.addEventListener('load', () => {
-  const user = localStorage.getItem('user');
-  if (user) {
-    const userData = JSON.parse(user);
-    const userEl = document.getElementById('currentUser');
-    if (userEl) userEl.textContent = userData.username;
-  }
-  
-  document.getElementById('apiUrl').value = API_BASE;
-  document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
-  
-  loadDashboard();
-});
-
-// Theme Toggle
-document.getElementById('themeToggle')?.addEventListener('click', function() {
-  document.body.classList.toggle('dark-theme');
-  this.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
-  localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-});
-
-// Load saved theme
-if (localStorage.getItem('theme') === 'dark') {
-  document.body.classList.add('dark-theme');
-  document.getElementById('themeToggle').textContent = '☀️';
 }
