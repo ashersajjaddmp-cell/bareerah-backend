@@ -15,8 +15,34 @@ const pushRoutes = require('./routes/pushRoutes');
 const app = express();
 
 app.use(express.json());
+
+// API routes BEFORE static files
+app.use('/api/auth', authRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/vendors', vendorRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/push', pushRoutes);
+
+// Login page (public)
+app.get('/dashboard/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'login.html'));
+});
+
+// Dashboard main page
+app.get('/dashboard/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
+});
+
+// Dashboard root redirects to login
+app.get('/dashboard', (req, res) => {
+  res.redirect('/dashboard/login.html');
+});
+
+// Serve static files (CSS, JS, etc)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Database test
 app.get('/db-test', async (req, res) => {
   try {
     const result = await query('SELECT NOW()');
@@ -26,20 +52,9 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/vehicles', vehicleRoutes);
-app.use('/api/vendors', vendorRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/push', pushRoutes);
-
-// Serve dashboard
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
-});
-
+// Root redirects to login
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
+  res.redirect('/dashboard/login.html');
 });
 
 app.use(errorHandler);
