@@ -715,3 +715,64 @@
       </div>
     </div>
   </div>
+
+<!-- Vendors Tab in Admin Dashboard -->
+<div id="page-vendors" class="page" style="display: none;">
+  <h2>👥 Vendors Management</h2>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;" id="vendorsGrid">
+    Loading vendors...
+  </div>
+  
+  <h3>⏳ Pending Vendor Requests</h3>
+  <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead style="background: rgba(0,0,0,0.1);">
+        <tr>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Vendor Name</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Email</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Phone</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Status</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="pendingVendorsTable">
+        <tr><td colspan="5" style="padding: 20px; text-align: center;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Driver Approvals Tab -->
+<div id="page-driver-approvals" class="page" style="display: none;">
+  <h2>✅ Driver Registrations</h2>
+  
+  <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead style="background: rgba(0,0,0,0.1);">
+        <tr>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Driver Name</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Email</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">License</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Status</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color);">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="driverApprovalsTable">
+        <tr><td colspan="5" style="padding: 20px; text-align: center;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+// Add vendor/driver tabs to sidebar if admin
+if (localStorage.getItem('user') && JSON.parse(localStorage.getItem('user')).role === 'admin') {
+  const navToggle = document.querySelector('.nav-submenu-toggle:last-of-type');
+  if (navToggle) {
+    navToggle.insertAdjacentHTML('afterend', `
+      <a class="nav-item" data-page="vendors">👥 Vendors</a>
+      <a class="nav-item" data-page="driver-approvals">✅ Driver Approvals</a>
+    `);
+  }
+}
+</script>

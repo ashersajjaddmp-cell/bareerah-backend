@@ -80,3 +80,13 @@ app.use(errorHandler);
 app.listen(PORT, '0.0.0.0', () => {
   logger.info(`Server running on http://0.0.0.0:${PORT}`);
 });
+
+// Import new routes
+const vendorAuthRoutes = require('./routes/vendorAuthRoutes');
+const driverAuthRoutes = require('./routes/driverAuthRoutes');
+const vendorManagementRoutes = require('./routes/vendorManagementRoutes');
+
+// Mount new routes
+app.use('/api/vendor-auth', vendorAuthRoutes);
+app.use('/api/driver-auth', driverAuthRoutes);
+app.use('/api/vendor-management', vendorManagementRoutes);

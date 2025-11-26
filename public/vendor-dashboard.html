@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Dashboard - Bareerah</title>
+  <link rel="stylesheet" href="dashboard/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="titlebar">
+      <h1>🚕 Vendor Dashboard</h1>
+      <div class="titlebar-right">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <button class="logout-btn" onclick="vendorLogout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <aside class="sidebar">
+        <a class="nav-item active" data-page="overview">📊 Overview</a>
+        <a class="nav-item" data-page="vehicles">🚗 My Vehicles</a>
+        <a class="nav-item" data-page="drivers">👥 My Drivers</a>
+        <a class="nav-item" data-page="bookings">📅 Bookings</a>
+        <a class="nav-item" data-page="profile">⚙️ Profile & Bank</a>
+      </aside>
+
+      <div class="content">
+        <!-- Overview Page -->
+        <div id="page-overview" class="page active">
+          <h2>📊 Dashboard Overview</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #34C759;">
+              <div style="font-size: 0.9em; opacity: 0.7;">Total Bookings</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="totalBookings">0</div>
+            </div>
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #007AFF;">
+              <div style="font-size: 0.9em; opacity: 0.7;">Total Earnings</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="totalEarnings">AED 0</div>
+            </div>
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #FF9500;">
+              <div style="font-size: 0.9em; opacity: 0.7;">Pending Payout</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="pendingPayout">AED 0</div>
+            </div>
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #5856D6;">
+              <div style="font-size: 0.9em; opacity: 0.7;">Active Vehicles</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="vehicleCount">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicles Page -->
+        <div id="page-vehicles" class="page" style="display: none;">
+          <h2>🚗 My Vehicles</h2>
+          <button class="btn btn-primary" onclick="openAddVehicleModal()" style="margin-bottom: 20px;">➕ Add Vehicle</button>
+          <div id="vehiclesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            Loading vehicles...
+          </div>
+        </div>
+
+        <!-- Drivers Page -->
+        <div id="page-drivers" class="page" style="display: none;">
+          <h2>👥 My Drivers</h2>
+          <button class="btn btn-primary" onclick="openAddDriverModal()" style="margin-bottom: 20px;">➕ Add Driver</button>
+          <div id="driversGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            Loading drivers...
+          </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="page-profile" class="page" style="display: none;">
+          <h2>⚙️ Vendor Profile & Bank Details</h2>
+          <div style="background: var(--glass-bg); padding: 30px; border-radius: 12px; max-width: 600px;">
+            <form id="profileForm" style="display: grid; gap: 20px;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">🏦 Bank Account Number</label>
+                <input type="text" id="profileBankAccount" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">🏪 Bank Name</label>
+                <input type="text" id="profileBankName" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">👤 Account Holder Name</label>
+                <input type="text" id="profileAccountHolder" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">💾 Save Changes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin + '/api';
+    
+    function checkVendorAuth() {
+      const token = localStorage.getItem('vendor_token');
+      if (!token) window.location.href = '/vendor-login.html';
+    }
+    
+    function vendorLogout() {
+      localStorage.removeItem('vendor_token');
+      localStorage.removeItem('vendor');
+      window.location.href = '/vendor-login.html';
+    }
+    
+    async function loadVendorProfile() {
+      const token = localStorage.getItem('vendor_token');
+      try {
+        const response = await fetch(`${API_BASE}/vendor-auth/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success) {
+          document.getElementById('totalBookings').textContent = result.vendor.total_bookings;
+          document.getElementById('totalEarnings').textContent = `AED ${Math.round(result.vendor.total_earnings)}`;
+          document.getElementById('pendingPayout').textContent = `AED ${Math.round(result.vendor.pending_payout)}`;
+          document.getElementById('vehicleCount').textContent = result.vendor.vehicle_count || 0;
+        }
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      }
+    }
+    
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        document.getElementById(`page-${this.dataset.page}`).style.display = 'block';
+      });
+    });
+    
+    checkVendorAuth();
+    loadVendorProfile();
+  </script>
+</body>
+</html>

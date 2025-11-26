@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver Dashboard - Bareerah</title>
+  <link rel="stylesheet" href="dashboard/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="titlebar">
+      <h1>🚗 Driver Dashboard</h1>
+      <div class="titlebar-right">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <button class="logout-btn" onclick="driverLogout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <aside class="sidebar">
+        <a class="nav-item active" data-page="overview">📊 Overview</a>
+        <a class="nav-item" data-page="vehicle">🚗 My Vehicle</a>
+        <a class="nav-item" data-page="earnings">💰 Earnings</a>
+        <a class="nav-item" data-page="profile">⚙️ Profile</a>
+      </aside>
+
+      <div class="content">
+        <!-- Overview Page -->
+        <div id="page-overview" class="page active">
+          <h2>📊 Dashboard</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #34C759;">
+              <div style="font-size: 0.9em; opacity: 0.7;">Completed Rides</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="completedRides">0</div>
+            </div>
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #007AFF;">
+              <div style="font-size: 0.9em; opacity: 0.7;">Average Rating</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="avgRating">0 ⭐</div>
+            </div>
+            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #FF9500;">
+              <div style="font-size: 0.9em; opacity: 0.7;">License Status</div>
+              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="licenseStatus">Valid ✅</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle Page -->
+        <div id="page-vehicle" class="page" style="display: none;">
+          <h2>🚗 My Vehicle</h2>
+          <button class="btn btn-primary" onclick="openAddVehicleModal()" style="margin-bottom: 20px;" id="addVehicleBtn">➕ Add Vehicle</button>
+          <div id="vehicleDetails" style="background: var(--glass-bg); padding: 30px; border-radius: 12px;"></div>
+        </div>
+
+        <!-- Earnings Page -->
+        <div id="page-earnings" class="page" style="display: none;">
+          <h2>💰 My Earnings</h2>
+          <div id="earningsDetails" style="background: var(--glass-bg); padding: 30px; border-radius: 12px;"></div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="page-profile" class="page" style="display: none;">
+          <h2>⚙️ My Profile</h2>
+          <div style="background: var(--glass-bg); padding: 30px; border-radius: 12px; max-width: 600px;">
+            <form id="profileForm" style="display: grid; gap: 20px;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">👤 Name</label>
+                <input type="text" id="profileName" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">📧 Email</label>
+                <input type="email" id="profileEmail" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">📋 License Number</label>
+                <input type="text" id="profileLicense" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin + '/api';
+    
+    function checkDriverAuth() {
+      const token = localStorage.getItem('driver_token');
+      if (!token) window.location.href = '/driver-login.html';
+    }
+    
+    function driverLogout() {
+      localStorage.removeItem('driver_token');
+      localStorage.removeItem('driver');
+      window.location.href = '/driver-login.html';
+    }
+    
+    async function loadDriverProfile() {
+      const token = localStorage.getItem('driver_token');
+      try {
+        const response = await fetch(`${API_BASE}/driver-auth/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success) {
+          document.getElementById('completedRides').textContent = result.driver.completed_rides || 0;
+          document.getElementById('avgRating').textContent = (result.driver.avg_rating || 0).toFixed(1) + ' ⭐';
+          document.getElementById('profileName').value = result.driver.name;
+          document.getElementById('profileEmail').value = result.driver.email;
+          document.getElementById('profileLicense').value = result.driver.license_number || 'N/A';
+        }
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      }
+    }
+    
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        document.getElementById(`page-${this.dataset.page}`).style.display = 'block';
+      });
+    });
+    
+    checkDriverAuth();
+    loadDriverProfile();
+  </script>
+</body>
+</html>
