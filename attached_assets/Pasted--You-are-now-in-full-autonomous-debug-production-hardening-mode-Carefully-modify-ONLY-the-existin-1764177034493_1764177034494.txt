@@ -1,0 +1,242 @@
+“You are now in full autonomous debug + production hardening mode.
+Carefully modify ONLY the existing main.py without removing any major architecture. Keep all routes, logs, and integrations. Apply ALL fixes below in ONE pass and return ONLY the final working main.py.
+
+1️⃣ BACKEND CONNECTIVITY (CRITICAL)
+
+Force ALL backend API calls to use:
+
+BASE_API_URL = "https://5ef5530c-38d9-4731-b470-827087d7bc6f-00-2j327r1fnap1d.sisko.replit.dev:8000/api"
+
+
+Remove any reference to port 5000 for backend.
+
+Add 5-second timeout + exponential retry (max 2 attempts) for all backend requests.
+
+If backend still unreachable → speak:
+
+“Our booking system is temporarily unavailable, but I will save your request and confirm shortly.”
+
+2️⃣ JWT AUTH FIX
+
+Remove ALL module-level global JWT_TOKEN.
+
+Implement:
+
+Auto login on startup
+
+Auto refresh token on 401
+
+Never block call flow when login temporarily fails
+
+If login fails, do NOT break AI conversation.
+
+3️⃣ NLU MEMORY LOOP FIX (DROP-OFF ISSUE)
+
+Once these fields are captured, NEVER ask again unless user explicitly changes it:
+
+pickup_location
+
+dropoff_location
+
+datetime
+
+passengers
+
+Add hard lock flags:
+
+pickup_locked
+dropoff_locked
+time_locked
+passengers_locked
+
+
+Only ask next missing slot.
+
+Prevent the system from resetting slots after backend failure.
+
+4️⃣ CONTACT NUMBER CONFIRMATION (PROPER LOGIC)
+
+Ask exactly like this (ONLY ONCE):
+
+“Aap jis number se call kar rahe hain, kya main isi number ko contact number ke taur par confirm kar loon, ya aap koi aur number dena chahte hain?”
+
+Logic:
+
+If user says “yes / same / isi ko” → save caller number.
+
+If user says “different” → explicitly ask new number.
+
+Never re-ask this again once saved.
+
+5️⃣ CUSTOMER FULL NAME RE-CONFIRMATION (BEFORE BOOKING)
+
+Before booking confirmation, ALWAYS ask ONCE:
+
+“Booking confirm karne se pehle main aap ka poora naam dobara verify kar loon?”
+
+Overwrite any previously stored name with latest answer.
+
+6️⃣ EMAIL CAPTURE (ANTI-LOOP + STRICT VALIDATION)
+
+Ask email ONLY ONCE after name confirmation.
+
+Use regex validation.
+
+If invalid → ask again max 2 attempts only.
+
+If still invalid → continue booking without email (do NOT loop).
+
+Never ask email again after stored.
+
+7️⃣ FARE CALCULATION GUARANTEE
+
+After pickup + dropoff + vehicle + passengers:
+
+Always call:
+
+POST /api/bookings/calculate-fare
+
+
+Speak fare in this exact format:
+
+“Aap ka estimated fare AED {fare} hai.”
+
+Do NOT skip fare under any condition.
+
+8️⃣ BOOKING CONFIRMATION FLOW (STRICT)
+
+After fare:
+Ask:
+
+“Kya main is fare par aap ki booking confirm kar doon?”
+
+If:
+
+YES → Call:
+
+POST /api/bookings/create-booking
+
+
+Speak:
+
+“Aap ki booking successfully confirm ho chuki hai. Shukriya.”
+
+NO → Cancel politely.
+
+9️⃣ URDU MODE FIX (LANGUAGE LOCK)
+
+If user says:
+
+“Urdu mein baat karein”
+
+“Speak in Urdu”
+
+Lock:
+
+language_mode = "ur"
+
+
+From that point onward:
+✅ All GPT responses
+✅ All TTS
+✅ All confirmations
+MUST be in pure Urdu (not Roman Urdu).
+
+Never revert to English unless user explicitly switches.
+
+🔟 TTS + COST OPTIMIZATION
+
+Enable:
+
+MD5 audio caching
+
+Silence trimming
+
+Max TTS length = 240 characters per chunk
+
+Never regenerate same audio twice.
+
+Prevent TTS generation if backend retrying.
+
+Log estimated Twilio + ElevenLabs cost per call.
+
+1️⃣1️⃣ BACKEND HTML ERROR GUARD
+
+If backend returns:
+
+HTML
+
+Empty
+
+502 / 503
+
+Then:
+
+Do NOT reset conversation
+
+Do NOT re-ask pickup/dropoff
+
+Just retry silently once
+
+1️⃣2️⃣ FINAL STATE MACHINE SEQUENCE (ENFORCED)
+
+Conversation order MUST be:
+
+Greeting
+
+Pickup
+
+Drop-off
+
+Date/Time
+
+Passengers
+
+Vehicle preference (optional)
+
+Fare
+
+Name verification
+
+Contact number confirmation
+
+Email
+
+Booking confirmation
+
+API submission
+
+Success message
+
+Never jump backwards unless user explicitly changes something.
+
+✅ FINAL REQUIREMENTS
+
+App must start with:
+
+python main.py
+
+
+with zero syntax errors.
+
+No repeated questions.
+
+No infinite API retries.
+
+No repeated TTS spending.
+
+No repeated email prompts.
+
+No repeated drop-off loop.
+
+Full flow must complete booking in one call.
+
+✅ After applying all changes:
+
+Restart the workflow
+
+Run one full call test
+
+Ensure booking appears in dashboard
+
+Return ONLY final main.py — no explanations, no notes.”

@@ -1,0 +1,177 @@
+We still have NO DATA showing in the backend UI.
+This means the database is seeded but UI is not reading data OR tables don’t have the correct fields populated.
+
+Please fix these items NOW so that the dashboard, drivers, vehicles, customers, and bookings all load properly.
+
+✅ 1️⃣ Insert DEMO DATA into ALL Required Tables (MANDATORY)
+
+Please insert the following minimum demo rows in each table so UI has something to load.
+
+✔ customers table — insert 10 customers
+
+Columns required:
+
+id
+
+name
+
+phone
+
+email
+
+whatsapp (same as phone)
+
+total_rides
+
+lifetime_spend
+
+preferred_car_type
+
+notes
+
+created_at
+
+📌 Insert REALISTIC sample customers.
+
+✔ drivers table — insert 8 drivers
+
+Columns required:
+
+id
+
+driver_name
+
+phone
+
+email
+
+license_number
+
+license_expiry
+
+vendor_id
+
+status (online/offline)
+
+created_at
+
+📌 Drivers must be connected to valid vendors.
+
+✔ vehicles table — insert 8 vehicles
+
+USE THE ACTUAL SCHEMA:
+
+id
+
+vendor_id
+
+type
+
+plate_number
+
+model
+
+color
+
+status (active/inactive)
+
+created_at
+
+📌 Make sure type and plate_number are correctly populated.
+
+✔ vendors table — insert at least 2 vendors
+
+Columns:
+
+id
+
+name
+
+email
+
+phone
+
+address
+
+created_at
+
+✔ bookings table — THIS IS THE BLOCKER (FIX THIS FIRST)
+
+USE ONLY the REAL columns your DB actually has.
+Insert 15 demo bookings with:
+
+id
+
+customer_id (from customers table)
+
+driver_id (from drivers table)
+
+vehicle_id (from vehicles table)
+
+vendor_id
+
+pickup_location
+
+dropoff_location
+
+distance_km
+
+fare
+
+status (pending / completed / cancelled)
+
+payment_method
+
+pickup_time
+
+dropoff_time
+
+created_at
+
+📌 IMPORTANT:
+Every booking must reference existing customers, drivers, vehicles, vendors.
+
+📌 THIS is the main reason UI is blank — bookings table not populated properly.
+
+✅ 2️⃣ Make Sure API Endpoints Return Data
+
+After demo data insertion, ensure:
+
+/api/customers → returns customer list
+/api/drivers → returns driver list
+/api/vehicles → returns vehicles list
+/api/bookings → returns bookings
+/dashboard/stats → returns metrics
+
+If any return empty → fix controllers.
+
+✅ 3️⃣ Dashboard Must Show This Data (Non-Negotiable)
+
+Dashboard cards MUST load:
+
+Total Customers
+
+Total Drivers
+
+Total Vehicles
+
+Total Bookings
+
+Today’s Bookings
+
+Yesterday’s Bookings
+
+Weekly / Monthly bookings
+
+Revenue
+
+These should query actual demo data.
+
+✅ 4️⃣ Until Data Loads — STOP all other tasks
+
+No more vendor UI
+No more RBAC
+No more notifications
+No more email/WhatsApp work
+
+FIRST priority → data MUST appear in the backend.

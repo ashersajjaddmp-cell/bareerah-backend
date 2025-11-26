@@ -73,7 +73,7 @@ const Customer = {
         COALESCE(SUM(CASE WHEN status = 'completed' THEN fare_aed ELSE 0 END), 0) as lifetime_spend,
         MAX(created_at) as last_booking_date
       FROM bookings
-      WHERE customer_id = $1 OR customer_phone = (SELECT phone FROM customers WHERE id = $1)
+      WHERE customer_phone = (SELECT phone FROM customers WHERE id = $1)
     `, [customerId]);
     return result.rows[0] || {
       total_rides: 0,
