@@ -4,7 +4,8 @@ const seedData = async () => {
   try {
     console.log('🌱 Starting database seed...');
 
-    // Clear existing data
+    // Clear existing data (respect foreign keys)
+    await query('DELETE FROM vendor_payouts');
     await query('DELETE FROM bookings');
     await query('DELETE FROM vehicles');
     await query('DELETE FROM drivers');
