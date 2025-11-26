@@ -96,6 +96,19 @@ const Vehicle = {
       [status, id]
     );
     return result.rows[0];
+  },
+
+  async create(vehicleData) {
+    const { plate_number, model, type, status, max_passengers, max_luggage, per_km_price, hourly_price, vendor_id } = vehicleData;
+    const defaultVendorId = '3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7'; // Gold Rush Limo
+    const result = await query(`
+      INSERT INTO vehicles 
+        (plate_number, model, type, status, max_passengers, max_luggage, per_km_price, hourly_price, vendor_id, active, created_at, updated_at)
+      VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, NOW(), NOW())
+      RETURNING *
+    `, [plate_number, model, type, status || 'available', max_passengers || 4, max_luggage || 3, per_km_price, hourly_price, vendor_id || defaultVendorId]);
+    return result.rows[0];
   }
 };
 
