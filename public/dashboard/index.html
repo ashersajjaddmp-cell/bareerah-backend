@@ -511,3 +511,74 @@
   <script src="js/app.js"></script>
 </body>
 </html>
+
+  <!-- Car Edit Modal -->
+  <div id="carEditModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Vehicle</h3>
+        <button class="modal-close" onclick="closeModal('carEditModal')">×</button>
+      </div>
+      <div class="modal-body" style="display: grid; gap: 15px;">
+        <div class="form-group">
+          <label>🎨 Color</label>
+          <input type="text" id="editCarColor" placeholder="e.g. Silver" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+        <div class="form-group">
+          <label>📷 Image (jpg/png/webp, max 2MB)</label>
+          <input type="file" id="editCarImage" accept=".jpg,.jpeg,.png,.webp" style="width: 100%; padding: 8px;">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="editCarStatus" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px;">
+            <option value="available">Available</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="rented">Rented</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="saveCarChanges()" style="width: 100%; padding: 10px;">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Driver View Modal -->
+  <div id="driverViewModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Driver Details</h3>
+        <button class="modal-close" onclick="closeModal('driverViewModal')">×</button>
+      </div>
+      <div class="modal-body" id="driverViewContent" style="display: grid; gap: 15px;">
+        Loading...
+      </div>
+    </div>
+  </div>
+
+  <!-- Driver Edit Modal -->
+  <div id="driverEditModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Driver</h3>
+        <button class="modal-close" onclick="closeModal('driverEditModal')">×</button>
+      </div>
+      <div class="modal-body" style="display: grid; gap: 15px;">
+        <div class="form-group">
+          <label>📋 License Number</label>
+          <input type="text" id="editLicenseNumber" placeholder="License number" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+        <div class="form-group">
+          <label>📅 License Issue Date</label>
+          <input type="date" id="editLicenseIssue" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+        <div class="form-group">
+          <label>⏰ License Expiry Date</label>
+          <input type="date" id="editLicenseExpiry" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="editAutoAssign" style="width: 20px; height: 20px;">
+          <label style="margin: 0;">🤖 Enable Auto-Assignment</label>
+        </div>
+        <button class="btn btn-primary" onclick="saveDriverChanges()" style="width: 100%; padding: 10px;">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>

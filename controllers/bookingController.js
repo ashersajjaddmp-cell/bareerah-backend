@@ -87,3 +87,15 @@ const bookingController = {
 };
 
 module.exports = bookingController;
+
+// Trigger rating email scheduler
+const ratingScheduler = require('../utils/ratingScheduler');
+
+// Schedule rating emails when booking is marked complete
+async function scheduleRatingIfCompleted(booking) {
+  if (booking.status === 'completed') {
+    ratingScheduler.scheduleRatingEmail(booking.id, 120000); // 2 minutes
+  }
+}
+
+module.exports = { ...module.exports, scheduleRatingIfCompleted: scheduleRatingIfCompleted };

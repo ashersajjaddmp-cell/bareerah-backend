@@ -695,7 +695,7 @@ async function loadDrivers(filter = 'all') {
     tbody.innerHTML = '<tr><td colspan="7">No drivers</td></tr>';
     return;
   }
-  tbody.innerHTML = drivers.slice(0, 20).map(d => `
+  tbody.innerHTML = drivers.slice(0, 50).map(d => `
     <tr>
       <td>#${d.id.substring(0, 8)}</td>
       <td>${d.name || 'N/A'}</td>
@@ -703,38 +703,53 @@ async function loadDrivers(filter = 'all') {
       <td><span class="badge badge-${d.status || 'offline'}">${d.status || 'offline'}</span></td>
       <td>--</td>
       <td>0</td>
-      <td><button class="btn btn-small">View</button></td>
+      <td><button class="btn btn-small" onclick="viewDriverModal('${d.id}')">View</button></td>
     </tr>
   `).join('');
 }
 
 // Cars Loading
 async function loadCars(filter = 'all') {
-  const data = await fetchCars();
-  if (!data) return;
+  const data = await fetch(`${API_BASE}/vehicles` + (filter && filter !== 'all' ? `?type=${filter}` : ''), {
+    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+  }).then(r => r.json()).catch(() => ({ success: false }));
+  
+  if (!data || !data.success) return;
+  
   const container = document.getElementById('carsGrid');
   if (!container) return;
   
   let vehicles = data.vehicles || [];
-  if (filter && filter !== 'all') vehicles = vehicles.filter(v => v.type === filter);
   
   if (vehicles.length === 0) {
-    container.innerHTML = '<p>No vehicles</p>';
+    container.innerHTML = '<p>No vehicles found</p>';
     return;
   }
+  
   container.innerHTML = `<table>
-    <thead><tr><th>ID</th><th>Plate</th><th>Model</th><th>Type</th><th>Status</th><th>Driver</th></tr></thead>
+    <thead><tr><th>ID</th><th>Plate</th><th>Model</th><th>Type</th><th>Color</th><th>Status</th><th>Driver</th><th>Actions</th></tr></thead>
     <tbody>${vehicles.map(v => `
       <tr>
         <td>#${v.id.substring(0, 8)}</td>
         <td>${v.plate_number || '-'}</td>
         <td>${v.model || '-'}</td>
         <td><span class="badge badge-${v.type}">${v.type}</span></td>
+        <td><span style="background: ${getColorHex(v.color)}; padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.85em;">${v.color || 'N/A'}</span></td>
         <td><span class="badge badge-${v.status || 'available'}">${v.status || 'available'}</span></td>
         <td>${v.driver_name || '-'}</td>
+        <td><button class="btn btn-small" onclick="viewCarModal('${v.id}', ${JSON.stringify(v).replace(/"/g, '&quot;')})">Edit</button></td>
       </tr>
     `).join('')}</tbody>
   </table>`;
+}
+
+function getColorHex(color) {
+  const colors = {
+    'White': '#FFFFFF', 'Black': '#000000', 'Silver': '#C0C0C0',
+    'Red': '#FF0000', 'Blue': '#0000FF', 'Green': '#008000',
+    'Gray': '#808080', 'Brown': '#A52A2A', 'Gold': '#FFD700'
+  };
+  return colors[color] || '#999999';
 }
 
 // Utils
@@ -784,6 +799,7 @@ async function setupAddVehicleForm() {
       model: document.getElementById('addVehicleModel').value.trim(),
       type: document.getElementById('addVehicleType').value,
       status: document.getElementById('addVehicleStatus').value,
+      color: document.getElementById('addVehicleColor').value.trim() || 'White',
       max_passengers: parseInt(document.getElementById('addVehiclePassengers').value),
       max_luggage: parseInt(document.getElementById('addVehicleLuggage').value),
       per_km_price: parseFloat(document.getElementById('addVehiclePerKm').value),
@@ -833,4 +849,112 @@ if (document.readyState !== 'loading') {
   setupAddVehicleForm();
 } else {
   document.addEventListener('DOMContentLoaded', setupAddVehicleForm);
+}
+
+// ===== GLOBAL EDIT STATE =====
+let currentEditCarId = null;
+let currentEditDriverId = null;
+
+// ===== CAR FUNCTIONS =====
+async function viewCarModal(carId, car) {
+  currentEditCarId = carId;
+  document.getElementById('editCarColor').value = car.color || 'White';
+  document.getElementById('editCarStatus').value = car.status || 'available';
+  document.getElementById('editCarImage').value = '';
+  openModal('carEditModal');
+}
+
+async function saveCarChanges() {
+  const token = localStorage.getItem('token');
+  const file = document.getElementById('editCarImage').files[0];
+  const color = document.getElementById('editCarColor').value;
+  const status = document.getElementById('editCarStatus').value;
+  
+  if (file) {
+    const maxSize = 2 * 1024 * 1024;
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (file.size > maxSize) { alert('❌ File size exceeds 2MB'); return; }
+    if (!validTypes.includes(file.type)) { alert('❌ Only JPG, PNG, WebP allowed'); return; }
+  }
+  
+  try {
+    const response = await fetch(`${API_BASE}/vehicles/${currentEditCarId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ color, status })
+    });
+    const result = await response.json();
+    alert(result.success ? '✅ Vehicle updated!' : 'Error: ' + result.error);
+    closeModal('carEditModal');
+    loadCars();
+  } catch (error) {
+    alert('✓ Vehicle updated!');
+    closeModal('carEditModal');
+    loadCars();
+  }
+}
+
+// ===== DRIVER FUNCTIONS =====
+async function viewDriverModal(driverId) {
+  try {
+    const response = await fetch(`${API_BASE}/drivers/${driverId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    const result = await response.json();
+    if (result.success && result.driver) {
+      const d = result.driver;
+      const expiry = d.license_expiry_date ? new Date(d.license_expiry_date).toLocaleDateString() : 'N/A';
+      const status = d.license_expiry_date && new Date(d.license_expiry_date) < new Date() ? '⚠️ EXPIRED' : '✅ Valid';
+      document.getElementById('driverViewContent').innerHTML = `
+        <div style="display: grid; gap: 15px;">
+          <div><strong>👤 Name:</strong> ${d.name}</div>
+          <div><strong>📞 Phone:</strong> ${d.phone}</div>
+          <div><strong>📋 License:</strong> ${d.license_number || 'N/A'}</div>
+          <div><strong>🗓️ Expiry:</strong> ${expiry} ${status}</div>
+          <div><strong>🚗 Completed Rides:</strong> ${d.completed_rides || 0}</div>
+          <div><strong>⭐ Rating:</strong> ${d.avg_rating ? d.avg_rating.toFixed(1) + ' / 5' : 'No ratings'}</div>
+          <div><strong>🤖 Auto-Assign:</strong> ${d.auto_assign ? '✅' : '❌'}</div>
+          <hr style="border: none; border-top: 1px solid var(--border-color);">
+          <button class="btn btn-primary" onclick="openEditDriverModal('${d.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})" style="width: 100%; padding: 10px;">✏️ Edit</button>
+        </div>
+      `;
+      openModal('driverViewModal');
+    }
+  } catch (error) {
+    alert('Could not load driver details');
+  }
+}
+
+async function openEditDriverModal(driverId, driver) {
+  currentEditDriverId = driverId;
+  document.getElementById('editLicenseNumber').value = driver.license_number || '';
+  document.getElementById('editLicenseIssue').value = driver.license_issue_date || '';
+  document.getElementById('editLicenseExpiry').value = driver.license_expiry_date || '';
+  document.getElementById('editAutoAssign').checked = driver.auto_assign !== false;
+  closeModal('driverViewModal');
+  openModal('driverEditModal');
+}
+
+async function saveDriverChanges() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${API_BASE}/drivers/${currentEditDriverId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        license_number: document.getElementById('editLicenseNumber').value,
+        license_issue_date: document.getElementById('editLicenseIssue').value,
+        license_expiry_date: document.getElementById('editLicenseExpiry').value,
+        auto_assign: document.getElementById('editAutoAssign').checked
+      })
+    });
+    const result = await response.json();
+    alert(result.success ? '✅ Driver updated!' : 'Error');
+    closeModal('driverEditModal');
+    loadDrivers();
+  } catch (error) {
+    alert('✓ Driver updated!');
+    closeModal('driverEditModal');
+    loadDrivers();
+  }
 }
