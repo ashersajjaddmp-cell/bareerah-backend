@@ -1,19 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../config/db');
+const driverController = require('../controllers/driverController');
+const authMiddleware = require('../middleware/authMiddleware');
+const { rbacMiddleware } = require('../middleware/rbacMiddleware');
 
-router.get('/', async (req, res) => {
-  try {
-    const result = await query(`
-      SELECT d.*, v.name as vendor_name
-      FROM drivers d
-      LEFT JOIN vendors v ON d.vendor_id = v.id
-      ORDER BY d.created_at DESC
-    `);
-    res.json({ success: true, data: result.rows });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+router.get('/', driverController.getAllDrivers);
+router.get('/:id', authMiddleware, driverController.getDriverById);
+router.put('/:id', authMiddleware, rbacMiddleware(['admin']), driverController.updateDriver);
 
 module.exports = router;

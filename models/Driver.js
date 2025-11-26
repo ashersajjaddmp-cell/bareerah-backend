@@ -31,6 +31,37 @@ const Driver = {
       RETURNING *
     `, [data.vendor_id, data.name, data.phone, data.license_number]);
     return result.rows[0];
+  },
+
+  async getDetailedInfo(id) {
+    const result = await query(`
+      SELECT 
+        d.id, d.name, d.phone, d.status, d.license_number, 
+        d.license_issue_date, d.license_expiry_date, d.auto_assign,
+        COUNT(b.id)::int as completed_rides,
+        COALESCE(AVG(dr.driver_rating), 0)::float as avg_rating
+      FROM drivers d
+      LEFT JOIN bookings b ON d.id = b.driver_id AND b.status = 'completed'
+      LEFT JOIN driver_ratings dr ON b.id = dr.booking_id
+      WHERE d.id = $1
+      GROUP BY d.id
+    `, [id]);
+    return result.rows[0] || null;
+  },
+
+  async updateDriver(id, data) {
+    const { license_issue_date, license_expiry_date, auto_assign, status } = data;
+    const result = await query(`
+      UPDATE drivers 
+      SET license_issue_date = COALESCE($1, license_issue_date),
+          license_expiry_date = COALESCE($2, license_expiry_date),
+          auto_assign = COALESCE($3, auto_assign),
+          status = COALESCE($4, status),
+          updated_at = NOW()
+      WHERE id = $5
+      RETURNING *
+    `, [license_issue_date, license_expiry_date, auto_assign, status, id]);
+    return result.rows[0];
   }
 };
 

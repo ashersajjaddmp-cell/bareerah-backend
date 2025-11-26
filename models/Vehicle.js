@@ -98,16 +98,47 @@ const Vehicle = {
     return result.rows[0];
   },
 
+  async getAll(type = null) {
+    let sql = `
+      SELECT id, plate_number, model, type, status, color, image_url, 
+             max_passengers, max_luggage, per_km_price, hourly_price
+      FROM vehicles
+      WHERE active = true
+    `;
+    const params = [];
+    if (type) {
+      sql += ' AND type = $1';
+      params.push(type);
+    }
+    sql += ' ORDER BY model';
+    const result = await query(sql, params);
+    return result.rows;
+  },
+
   async create(vehicleData) {
-    const { plate_number, model, type, status, max_passengers, max_luggage, per_km_price, hourly_price, vendor_id } = vehicleData;
+    const { plate_number, model, type, status, color, max_passengers, max_luggage, per_km_price, hourly_price, vendor_id } = vehicleData;
     const defaultVendorId = '3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7'; // Gold Rush Limo
     const result = await query(`
       INSERT INTO vehicles 
-        (plate_number, model, type, status, max_passengers, max_luggage, per_km_price, hourly_price, vendor_id, active, created_at)
+        (plate_number, model, type, status, color, max_passengers, max_luggage, per_km_price, hourly_price, vendor_id, active, created_at)
       VALUES 
-        ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, NOW())
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, true, NOW())
       RETURNING *
-    `, [plate_number, model, type, status || 'available', max_passengers || 4, max_luggage || 3, per_km_price, hourly_price, vendor_id || defaultVendorId]);
+    `, [plate_number, model, type, status || 'available', color || 'White', max_passengers || 4, max_luggage || 3, per_km_price, hourly_price, vendor_id || defaultVendorId]);
+    return result.rows[0];
+  },
+
+  async updateVehicle(id, data) {
+    const { color, image_url, status } = data;
+    const result = await query(`
+      UPDATE vehicles 
+      SET color = COALESCE($1, color), 
+          image_url = COALESCE($2, image_url),
+          status = COALESCE($3, status),
+          updated_at = NOW()
+      WHERE id = $4
+      RETURNING *
+    `, [color, image_url, status, id]);
     return result.rows[0];
   }
 };
