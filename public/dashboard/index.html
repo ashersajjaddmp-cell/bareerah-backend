@@ -373,6 +373,16 @@
                   <input type="number" id="addVehicleHourly" value="75" step="0.01" min="0" required>
                 </div>
               </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                  <label>🎨 Car Color</label>
+                  <input type="text" id="addVehicleColor" placeholder="e.g. Silver, Black, White" value="White" required>
+                </div>
+                <div class="form-group">
+                  <label>📷 Car Image (jpg/png/webp, max 2MB)</label>
+                  <input type="file" id="addVehicleImage" accept=".jpg,.jpeg,.png,.webp">
+                </div>
+              </div>
               <div class="form-group">
                 <label>Vendor ID (optional)</label>
                 <input type="text" id="addVehicleVendor" placeholder="Leave empty for Gold Rush Limo">
