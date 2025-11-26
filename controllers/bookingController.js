@@ -36,6 +36,34 @@ const bookingController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async assignDriver(req, res, next) {
+    try {
+      const { booking_id, driver_id } = req.body;
+      const Booking = require('../models/Booking');
+      const booking = await Booking.assignDriver(booking_id, driver_id);
+      if (!booking) {
+        return res.status(404).json({ success: false, error: 'Booking not found' });
+      }
+      res.json({ success: true, message: 'Driver assigned successfully', booking });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async assignVehicleType(req, res, next) {
+    try {
+      const { booking_id, vehicle_id, vehicle_type } = req.body;
+      const Booking = require('../models/Booking');
+      const booking = await Booking.assignVehicleAndType(booking_id, vehicle_id, vehicle_type);
+      if (!booking) {
+        return res.status(404).json({ success: false, error: 'Booking not found' });
+      }
+      res.json({ success: true, message: 'Vehicle and type updated successfully', booking });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 

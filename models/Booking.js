@@ -76,6 +76,22 @@ const Booking = {
       [status, id]
     );
     return result.rows[0];
+  },
+
+  async assignDriver(id, driverId) {
+    const result = await query(
+      'UPDATE bookings SET driver_id = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+      [driverId, id]
+    );
+    return result.rows[0];
+  },
+
+  async assignVehicleAndType(id, vehicleId, vehicleType) {
+    const result = await query(
+      'UPDATE bookings SET assigned_vehicle_id = $1, vehicle_type = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
+      [vehicleId, vehicleType, id]
+    );
+    return result.rows[0];
   }
 };
 

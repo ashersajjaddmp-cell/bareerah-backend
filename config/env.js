@@ -7,6 +7,13 @@ module.exports = {
   ADMIN_PASS: process.env.ADMIN_PASS || 'admin123',
   OPERATOR_USER: process.env.OPERATOR_USER || 'operator',
   OPERATOR_PASS: process.env.OPERATOR_PASS || 'operator123',
-  API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000'
+  API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000',
+  // Email Configuration
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'aizaz.dmp@gmail.com',
+  GMAIL_USER: process.env.GMAIL_USER,
+  GMAIL_PASS: process.env.GMAIL_PASS,
+  // WhatsApp Configuration
+  WHATSAPP_API_TOKEN: process.env.WHATSAPP_API_TOKEN,
+  WHATSAPP_PHONE_ID: process.env.WHATSAPP_PHONE_ID
 };
 
