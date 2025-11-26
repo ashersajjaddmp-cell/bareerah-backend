@@ -1,0 +1,134 @@
+You are working on an already-extended production backend with preserved demo data.
+⚠️ ABSOLUTE RULE: DO NOT delete, truncate, or overwrite any table or record. Only modify service logic.
+
+Your remaining tasks are purely service-level business logic fixes:
+
+✅ 1. Fix calculateFare() Logic
+
+Update utils/fareCalculator.js and services/bookingService.js to enforce:
+
+Required Inputs (Strict Validation):
+distance_km
+vehicle_type
+booking_type
+
+
+If ANY missing → return HTTP 400 with message:
+
+"Missing required fields"
+
+
+❌ Do NOT apply AED 150 fallback anymore.
+
+Correct Fare Formula:
+base = distance_km × per_km_price_of_selected_vehicle
+
+if booking_type == 'airport_transfer':
+    final_fare = base × 1.10
+elif booking_type == 'city_tour' or booking_type == 'hourly_rental':
+    final_fare = hours × hourly_price
+else:
+    final_fare = base
+
+
+Return:
+
+distance_km
+vehicle_type
+booking_type
+fare
+currency: AED
+
+✅ 2. Save booking_type During Booking Creation
+
+In /api/bookings/create-booking:
+
+Ensure this field is actually persisted in DB:
+
+booking_type
+
+
+If missing → reject request with:
+
+400 - "booking_type is required"
+
+✅ 3. Enforce Vehicle Capacity Validation
+
+Before assigning vehicle:
+
+if passengers > passenger_capacity OR luggage > luggage_capacity:
+    reject that vehicle
+
+
+Then:
+
+Among remaining eligible vehicles
+
+Pick cheapest per_km_price
+
+This will permanently fix:
+❌ 4 passengers + 6 luggage → sedan
+✅ That will now correctly select SUV or Van
+
+✅ 4. Fix Auto Vehicle Assignment Logic
+
+In /api/bookings/assign-vehicle:
+
+Ensure:
+
+vehicle.active = true
+
+capacity match enforced
+
+cheapest valid vehicle selected
+
+✅ 5. Return Consistent API Errors
+
+All services must follow:
+
+{ success: false, error: "message" }
+
+
+No HTML error pages.
+No silent failures.
+
+✅ 6. API Documentation Output (MANDATORY)
+
+After patch:
+
+PRINT BACK:
+
+✅ Final /api/bookings/calculate-fare payload
+
+✅ Final /api/bookings/create-booking payload
+
+✅ Example successful airport transfer request
+
+✅ Example successful hourly rental request
+
+✅ Example failure when fields missing
+
+✅ Vehicle selection example with passengers+luggage validation
+
+✅ 7. Deployment Verification Message
+
+After restart, console MUST show:
+
+✅ Fare engine patched
+✅ booking_type enforced
+✅ Vehicle capacity validation active
+✅ No demo data altered
+✅ All APIs backward compatible
+
+
+REMINDER:
+You are not allowed to:
+
+Reset DB
+
+Delete vehicles
+
+Delete users
+
+Delete demo bookings
+ONLY patch services.

@@ -3,22 +3,49 @@ const { query } = require('../config/db');
 const Vehicle = {
   async findById(id) {
     const result = await query(
-      'SELECT id, status, vendor_id FROM vehicles WHERE id = $1',
+      'SELECT * FROM vehicles WHERE id = $1',
       [id]
     );
     return result.rows[0] || null;
+  },
+
+  /**
+   * Find available vehicles with capacity validation
+   * @param {number} passengers - number of passengers
+   * @param {number} luggage - amount of luggage
+   * @returns {array} vehicles sorted by cheapest per_km_price
+   */
+  async findAvailableByCapacity(passengers = 1, luggage = 0) {
+    const result = await query(`
+      SELECT 
+        v.id, v.plate_number, v.model, v.type, v.status,
+        v.max_passengers, v.max_luggage, v.per_km_price, v.hourly_price,
+        d.id as driver_id, d.name as driver_name, d.phone as driver_phone,
+        vn.id as vendor_id, vn.name as vendor_name
+      FROM vehicles v
+      LEFT JOIN drivers d ON v.driver_id = d.id
+      LEFT JOIN vendors vn ON v.vendor_id = vn.id
+      WHERE v.status = 'available' 
+        AND v.active = true
+        AND v.max_passengers >= $1 
+        AND v.max_luggage >= $2
+      ORDER BY v.per_km_price ASC, v.model
+    `, [passengers, luggage]);
+    
+    return result.rows;
   },
 
   async findAvailable(type = null) {
     let sql = `
       SELECT 
         v.id, v.plate_number, v.model, v.type, v.status,
+        v.max_passengers, v.max_luggage, v.per_km_price, v.hourly_price,
         d.id as driver_id, d.name as driver_name, d.phone as driver_phone,
-        vn.name as vendor_name
+        vn.id as vendor_id, vn.name as vendor_name
       FROM vehicles v
       LEFT JOIN drivers d ON v.driver_id = d.id
       LEFT JOIN vendors vn ON v.vendor_id = vn.id
-      WHERE v.status = 'available'
+      WHERE v.status = 'available' AND v.active = true
     `;
     
     const params = [];
@@ -27,7 +54,7 @@ const Vehicle = {
       params.push(type);
     }
     
-    sql += ' ORDER BY v.type, v.model';
+    sql += ' ORDER BY v.per_km_price ASC, v.model';
     
     const result = await query(sql, params);
     return result.rows;
@@ -37,18 +64,35 @@ const Vehicle = {
     const result = await query(`
       SELECT 
         v.id, v.plate_number, v.model, v.type,
+        v.max_passengers, v.max_luggage, v.per_km_price, v.hourly_price,
         d.name as driver_name, d.phone as driver_phone
       FROM vehicles v
       LEFT JOIN drivers d ON v.driver_id = d.id
-      WHERE v.status = 'available' AND v.type = $1
+      WHERE v.status = 'available' AND v.active = true AND v.type = $1
+      ORDER BY v.per_km_price ASC
       LIMIT 1
     `, [type]);
     return result.rows[0] || null;
   },
 
+  /**
+   * Get cheapest vehicle matching criteria
+   * @param {number} passengers - passenger count
+   * @param {number} luggage - luggage amount
+   * @returns {object} cheapest eligible vehicle
+   */
+  async findCheapestEligible(passengers = 1, luggage = 0) {
+    const vehicles = await this.findAvailableByCapacity(passengers, luggage);
+    if (vehicles.length === 0) {
+      return null;
+    }
+    // Already sorted by per_km_price, so first is cheapest
+    return vehicles[0];
+  },
+
   async updateStatus(id, status) {
     const result = await query(
-      'UPDATE vehicles SET status = $1 WHERE id = $2 RETURNING *',
+      'UPDATE vehicles SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
       [status, id]
     );
     return result.rows[0];
