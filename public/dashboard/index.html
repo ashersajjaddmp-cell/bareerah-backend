@@ -6,6 +6,7 @@
   <title>Bareerah Admin Dashboard</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKM_1dVEQV4H5JFW52_j8fy0UOhH7KPdQ&libraries=places"></script>
 </head>
 <body>
   <div class="container">
@@ -609,21 +610,23 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
           <div class="form-group">
             <label>📍 Pickup Location *</label>
-            <input type="text" id="bookingPickup" placeholder="e.g., Downtown Dubai" required>
+            <input type="text" id="bookingPickup" placeholder="e.g., Downtown Dubai" autocomplete="off" required>
+            <div id="pickupSuggestions" style="position: absolute; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; min-width: 200px; display: none;"></div>
           </div>
           <div class="form-group">
             <label>🏁 Dropoff Location *</label>
-            <input type="text" id="bookingDropoff" placeholder="e.g., Airport" required>
+            <input type="text" id="bookingDropoff" placeholder="e.g., Airport" autocomplete="off" required>
+            <div id="dropoffSuggestions" style="position: absolute; background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; min-width: 200px; display: none;"></div>
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
           <div class="form-group">
             <label>📏 Distance (km) *</label>
-            <input type="number" id="bookingDistance" placeholder="25" step="0.1" min="0" required>
+            <input type="number" id="bookingDistance" placeholder="25" step="0.1" min="0" readonly style="background: rgba(200,200,200,0.1); cursor: not-allowed;">
           </div>
           <div class="form-group">
             <label>🚗 Vehicle Type *</label>
-            <select id="bookingVehicleType" required>
+            <select id="bookingVehicleType" required onchange="updateBookingFare()">
               <option value="">Select Type</option>
               <option value="sedan">Sedan</option>
               <option value="suv">SUV</option>
@@ -636,8 +639,36 @@
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
           <div class="form-group">
+            <label>🚙 Car Model *</label>
+            <select id="bookingCarModel" required>
+              <option value="">Select Car Model</option>
+              <option value="Toyota Camry">Toyota Camry</option>
+              <option value="Honda Civic">Honda Civic</option>
+              <option value="BMW 5 Series">BMW 5 Series</option>
+              <option value="Mercedes E-Class">Mercedes E-Class</option>
+              <option value="Range Rover">Range Rover</option>
+              <option value="Ford Explorer">Ford Explorer</option>
+              <option value="GMC Yukon">GMC Yukon</option>
+              <option value="BMW 7 Series">BMW 7 Series</option>
+              <option value="Mercedes V Class">Mercedes V Class</option>
+              <option value="Toyota Hiace">Toyota Hiace</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>👨‍✈️ Assign Driver</label>
+            <select id="bookingDriverId">
+              <option value="">Auto-assign</option>
+              <option value="specific">Choose Driver</option>
+            </select>
+            <select id="bookingDriverSelect" style="display: none; margin-top: 8px;">
+              <option value="">Select Driver</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
             <label>📋 Booking Type *</label>
-            <select id="bookingType" required>
+            <select id="bookingType" required onchange="updateBookingFare()">
               <option value="">Select Type</option>
               <option value="point_to_point">Point to Point</option>
               <option value="airport_transfer">Airport Transfer</option>
