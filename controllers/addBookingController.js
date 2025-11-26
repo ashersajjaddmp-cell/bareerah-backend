@@ -1,0 +1,69 @@
+const { query } = require('../config/db');
+const { v4: uuidv4 } = require('uuid');
+const fareCalculator = require('../utils/fareCalculator');
+const logger = require('../utils/logger');
+
+const addBookingController = {
+  async createManualBooking(req, res, next) {
+    try {
+      const {
+        customer_name,
+        customer_phone,
+        customer_email,
+        pickup_location,
+        dropoff_location,
+        distance_km,
+        booking_type,
+        vehicle_type,
+        payment_method,
+        status,
+        notes
+      } = req.body;
+
+      // Validate required fields
+      if (!customer_name || !customer_phone || !pickup_location || !dropoff_location || !distance_km || !booking_type || !vehicle_type) {
+        return res.status(400).json({ success: false, error: 'Missing required fields' });
+      }
+
+      // Calculate fare
+      const fare = fareCalculator.calculateFare({
+        distance_km: parseFloat(distance_km),
+        vehicle_type: vehicle_type.toLowerCase(),
+        booking_type: booking_type.toLowerCase()
+      });
+
+      // Create booking
+      const bookingId = uuidv4();
+      const result = await query(`
+        INSERT INTO bookings 
+          (id, customer_name, customer_phone, customer_email, pickup_location, dropoff_location, 
+           distance_km, fare_aed, booking_type, vehicle_type, payment_method, status, notes, created_at)
+        VALUES 
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+        RETURNING *
+      `, [
+        bookingId, customer_name, customer_phone, customer_email || null, pickup_location,
+        dropoff_location, distance_km, fare, booking_type, vehicle_type, payment_method || 'cash',
+        status || 'pending', notes || null
+      ]);
+
+      logger.info(`Manual booking created: ${bookingId}`);
+      
+      // Send confirmation email if email provided
+      if (customer_email) {
+        const emailService = require('../utils/emailService');
+        emailService.sendCustomerNotification(result.rows[0], null);
+      }
+
+      res.status(201).json({
+        success: true,
+        message: 'Booking created successfully',
+        booking: result.rows[0]
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+};
+
+module.exports = addBookingController;

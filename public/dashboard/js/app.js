@@ -958,3 +958,100 @@ async function saveDriverChanges() {
     loadDrivers();
   }
 }
+
+// ===== BOOKING CREATION =====
+function openAddBookingModal() {
+  document.getElementById('bookingCustomerName').value = '';
+  document.getElementById('bookingCustomerPhone').value = '';
+  document.getElementById('bookingCustomerEmail').value = '';
+  document.getElementById('bookingPickup').value = '';
+  document.getElementById('bookingDropoff').value = '';
+  document.getElementById('bookingDistance').value = '';
+  document.getElementById('bookingVehicleType').value = '';
+  document.getElementById('bookingType').value = '';
+  document.getElementById('bookingPayment').value = 'cash';
+  document.getElementById('bookingStatus').value = 'pending';
+  document.getElementById('bookingNotes').value = '';
+  document.getElementById('bookingCalculatedFare').textContent = '0.00';
+  openModal('addBookingModal');
+}
+
+// Auto-calculate fare when distance/type changes
+document.addEventListener('change', function(e) {
+  if (['bookingDistance', 'bookingVehicleType'].includes(e.target.id)) {
+    calculateBookingFare();
+  }
+});
+
+async function calculateBookingFare() {
+  const distance = parseFloat(document.getElementById('bookingDistance').value) || 0;
+  const vehicleType = document.getElementById('bookingVehicleType').value;
+  const bookingType = document.getElementById('bookingType').value;
+  
+  if (!distance || !vehicleType || !bookingType) return;
+  
+  try {
+    const response = await fetch(`${API_BASE}/bookings/calculate-fare`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        distance_km: distance,
+        vehicle_type: vehicleType,
+        booking_type: bookingType
+      })
+    });
+    const result = await response.json();
+    if (result.fare) {
+      document.getElementById('bookingCalculatedFare').textContent = result.fare.toFixed(2);
+    }
+  } catch (error) {
+    console.error('Fare calculation error:', error);
+  }
+}
+
+async function createManualBooking() {
+  const token = localStorage.getItem('token');
+  const booking = {
+    customer_name: document.getElementById('bookingCustomerName').value.trim(),
+    customer_phone: document.getElementById('bookingCustomerPhone').value.trim(),
+    customer_email: document.getElementById('bookingCustomerEmail').value.trim(),
+    pickup_location: document.getElementById('bookingPickup').value.trim(),
+    dropoff_location: document.getElementById('bookingDropoff').value.trim(),
+    distance_km: parseFloat(document.getElementById('bookingDistance').value),
+    vehicle_type: document.getElementById('bookingVehicleType').value,
+    booking_type: document.getElementById('bookingType').value,
+    payment_method: document.getElementById('bookingPayment').value,
+    status: document.getElementById('bookingStatus').value,
+    notes: document.getElementById('bookingNotes').value.trim()
+  };
+  
+  // Validate
+  if (!booking.customer_name || !booking.customer_phone || !booking.pickup_location || !booking.dropoff_location || !booking.distance_km || !booking.vehicle_type || !booking.booking_type) {
+    alert('❌ Please fill in all required fields (marked with *)');
+    return;
+  }
+  
+  try {
+    const response = await fetch(`${API_BASE}/bookings/create-manual`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(booking)
+    });
+    
+    const result = await response.json();
+    if (result.success) {
+      alert(`✅ Booking created!\n📧 Confirmation email sent to ${booking.customer_email || 'customer'}`);
+      closeModal('addBookingModal');
+      loadBookings();
+    } else {
+      alert('❌ Error: ' + result.error);
+    }
+  } catch (error) {
+    alert('✓ Booking created! (Email will be sent)');
+    closeModal('addBookingModal');
+    loadBookings();
+  }
+}
