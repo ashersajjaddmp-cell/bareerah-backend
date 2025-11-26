@@ -107,10 +107,10 @@ const seedData = async () => {
 
     for (let i = 0; i < 15; i++) {
       const status = statuses[i % statuses.length];
-      const customerId = customerIds[i % customerIds.length];
       const driverId = driverIds[i % driverIds.length];
       const vehicleId = vehicleIds[i % vehicleIds.length];
       const vendorId = vendorIds[i % vendorIds.length];
+      const customerData = customers[i % customers.length];
       const pickup = locations.pickups[i % locations.pickups.length];
       const dropoff = locations.dropoffs[i % locations.dropoffs.length];
       const distance = 15 + (i % 30);
@@ -121,17 +121,15 @@ const seedData = async () => {
 
       await query(`
         INSERT INTO bookings (
-          customer_id, customer_name, customer_phone, driver_id, driver_name,
+          customer_name, customer_phone, driver_id,
           pickup_location, dropoff_location, distance_km, fare_aed, vehicle_type,
-          assigned_vehicle_id, vendor_id, status, payment_method, created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 
-                  NOW() - INTERVAL '${i} days')
+          assigned_vehicle_id, vendor_id, status, payment_method, created_at, updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 
+                  NOW() - INTERVAL '${i} days', NOW() - INTERVAL '${i} days')
       `, [
-        customerId,
-        customers[i % customers.length].name,
-        customers[i % customers.length].phone,
+        customerData.name,
+        customerData.phone,
         driverId,
-        drivers[i % drivers.length].name,
         pickup,
         dropoff,
         distance,
