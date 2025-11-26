@@ -1,0 +1,251 @@
+Backend UI abhi bhi blank hai, is ka matlab ya to demo data properly insert nahi hua ya APIs us data ko read nahi kar rahi.
+For demo + testing purpose, please below exact demo data ALL tables mein insert karo.
+Baad mein hum is data ko wipe out kar denge.
+
+✅ 1️⃣ VENDORS TABLE — INSERT DEMO DATA
+
+Please insert at least 2 vendors:
+
+Vendor 1
+
+name: Bareerah Fleet Dubai
+
+email: bareerah@fleet.com
+
+phone: +971501111111
+
+address: Dubai, UAE
+
+Vendor 2
+
+name: Al Safeer Transport
+
+email: alsafeer@fleet.com
+
+phone: +971502222222
+
+address: Sharjah, UAE
+
+✅ 2️⃣ DRIVERS TABLE — INSERT 8 DEMO DRIVERS
+
+All drivers must be connected to a vendor.
+
+Ahmed Khan
+Phone: +971551234001
+License: UAE-DRV-1001
+Vendor: Bareerah Fleet
+Status: Online
+
+Salman Raza
+Phone: +971551234002
+License: UAE-DRV-1002
+Vendor: Bareerah Fleet
+Status: Offline
+
+Bilal Hussain
+Phone: +971551234003
+License: UAE-DRV-1003
+Vendor: Bareerah Fleet
+Status: Online
+
+Usman Ali
+Phone: +971551234004
+License: UAE-DRV-1004
+Vendor: Al Safeer Transport
+Status: Online
+
+Adeel Qureshi
+Phone: +971551234005
+License: UAE-DRV-1005
+Vendor: Al Safeer Transport
+Status: Offline
+
+Imran Sheikh
+Phone: +971551234006
+License: UAE-DRV-1006
+Vendor: Al Safeer Transport
+Status: Online
+
+Hassan Farooq
+Phone: +971551234007
+License: UAE-DRV-1007
+Vendor: Bareerah Fleet
+Status: Online
+
+Zain Malik
+Phone: +971551234008
+License: UAE-DRV-1008
+Vendor: Bareerah Fleet
+Status: Offline
+
+✅ 3️⃣ VEHICLES TABLE — INSERT 8 DEMO CARS
+
+(Using your actual columns: type and plate_number)
+
+Type: Luxury Sedan | Plate: DUB-A-1001 | Model: Mercedes S-Class | Color: Black | Vendor: Bareerah
+
+Type: Business Sedan | Plate: DUB-B-1002 | Model: Toyota Camry | Color: White | Vendor: Bareerah
+
+Type: SUV | Plate: DUB-S-1003 | Model: Toyota Land Cruiser | Color: Black | Vendor: Bareerah
+
+Type: MPV | Plate: DUB-M-1004 | Model: Toyota Hiace | Color: White | Vendor: Bareerah
+
+Type: Luxury SUV | Plate: SHJ-L-2001 | Model: Lexus LX | Color: Black | Vendor: Al Safeer
+
+Type: Business Sedan | Plate: SHJ-B-2002 | Model: Honda Accord | Color: Grey | Vendor: Al Safeer
+
+Type: SUV | Plate: SHJ-S-2003 | Model: Nissan Patrol | Color: Silver | Vendor: Al Safeer
+
+Type: MPV | Plate: SHJ-M-2004 | Model: Toyota Innova | Color: White | Vendor: Al Safeer
+
+✅ 4️⃣ CUSTOMERS TABLE — INSERT 12 DEMO CUSTOMERS
+
+Ali Raza — +971561000001 — ali@gmail.com
+
+Fatima Khan — +971561000002 — fatima@gmail.com
+
+Hamza Sheikh — +971561000003 — hamza@gmail.com
+
+Ayesha Malik — +971561000004 — ayesha@gmail.com
+
+Usman Tariq — +971561000005 — usman@gmail.com
+
+Zara Ali — +971561000006 — zara@gmail.com
+
+Bilal Ahmed — +971561000007 — bilal@gmail.com
+
+Sana Noor — +971561000008 — sana@gmail.com
+
+Hassan Rauf — +971561000009 — hassan@gmail.com
+
+Rabia Iqbal — +971561000010 — rabia@gmail.com
+
+Danish Mehmood — +971561000011 — danish@gmail.com
+
+Hira Salman — +971561000012 — hira@gmail.com
+
+All customers should also have:
+
+whatsapp = same as phone
+
+total_rides
+
+lifetime_spend
+
+✅ 5️⃣ BOOKINGS TABLE — INSERT 15 DEMO BOOKINGS
+
+Each booking must be linked with:
+
+valid customer
+
+valid driver
+
+valid vehicle
+
+valid vendor
+
+Example mix:
+
+6 Completed
+
+5 Pending
+
+4 Cancelled
+
+Each booking must include:
+
+pickup_location (e.g. Dubai Mall, DXB Airport, Marina, JBR, Business Bay)
+
+dropoff_location
+
+distance_km (5–45 km)
+
+fare (AED 60 – AED 450)
+
+pickup_time
+
+dropoff_time
+
+payment_method (cash/card)
+
+status
+
+✅ 6️⃣ ENSURE DATA IS VISIBLE IN UI (NON-NEGOTIABLE)
+
+After insertion, these pages MUST show data:
+
+✅ Dashboard
+
+✅ Drivers
+
+✅ Vehicles
+
+✅ Customers
+
+✅ Bookings
+
+✅ Vendor panel
+
+If UI still shows blank:
+
+Fix controllers
+
+Fix queries
+
+Fix relations
+
+✅ 7️⃣ DEMO DATA WIPE OPTION
+
+Please also create:
+
+A command OR
+
+A button
+
+To wipe all demo data later when we go live.
+
+✅ 8️⃣ WHATSAPP BUSINESS API — CONFIRMATION REQUIRED
+
+Please confirm clearly:
+
+Have you already prepared the WhatsApp Business API structure with:
+
+token placeholder
+
+phone number ID
+
+message template handlers
+
+logging system
+
+Is the system ready to plug API credentials instantly once Meta approves?
+
+Currently our WhatsApp Business account is UNDER META REVIEW.
+As soon as it’s approved, we will provide:
+
+API Token
+
+Phone Number ID
+
+Business ID
+
+So structure must already be 100% ready on your side.
+
+✅ 9️⃣ STOP ALL OTHER WORK UNTIL DEMO DATA SHOWS
+
+No new features until:
+✔ Data appears in backend
+✔ Dashboard loads numbers
+✔ Tables show rows
+
+✅ After completing all above, please send:
+
+Screenshot of Dashboard with data
+
+Screenshot of Drivers table
+
+Screenshot of Vehicles table
+
+Screenshot of Customers table
+
+Screenshot of Bookings table
