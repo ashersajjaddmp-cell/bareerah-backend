@@ -1,0 +1,193 @@
+1️⃣ Integrate Notification Triggers Into Booking Workflow (HIGHEST PRIORITY)
+
+When a booking is created (AI or operator):
+
+Trigger these notifications automatically:
+✔ To Customer
+
+sendWhatsAppToCustomer()
+sendEmailToCustomer()
+
+Content should include (dynamic placeholders):
+
+Booking ID
+
+Car Type
+
+Driver Name
+
+Driver Phone
+
+Car Plate Number
+
+Pickup Location
+
+Dropoff Location
+
+Pickup Time
+
+Estimated Fare
+
+✔ To Driver
+
+sendWhatsAppToDriver()
+sendEmailToDriver()
+
+Content:
+
+New ride assigned
+
+Customer Name
+
+Customer Phone
+
+Pickup Location
+
+Dropoff Location
+
+Fare estimate
+
+✔ To Admin
+
+sendWhatsAppToAdmin()
+sendEmailToAdmin()
+
+Include:
+
+New booking created
+
+Driver assigned
+
+Fare
+
+Customer + driver details
+
+Implementation Notes
+
+Actual messages can be simple console logs for now
+
+All logs MUST also save to the notification logs table
+
+The notification service you created should be imported and triggered from inside the booking controller
+
+2️⃣ Enforce Operator Permissions (RBAC)
+
+Operator should NOT have access to:
+❌ Fare Rules
+❌ Vendors
+❌ System Settings
+❌ API Keys
+❌ Import/Export
+❌ Delete bookings
+❌ Delete drivers
+❌ Delete cars
+❌ Delete customers
+❌ Notification logs
+
+Operator CAN access:
+✔ Booking creation
+✔ Booking listing
+✔ Customer module
+✔ Driver list
+✔ Vehicle list
+✔ Assigning driver to booking
+✔ Viewing dashboard analytics
+✔ Viewing vendors (read-only)
+
+Make sure the middleware checks role:
+
+admin → full access
+
+operator → restricted
+
+vendor → only own entities
+
+3️⃣ Dashboard UI — Add Customer Module Widgets
+
+Add these items to dashboard:
+
+Top Summary Cards
+
+Total Customers
+
+Total Drivers
+
+Total Vehicles
+
+Total Bookings
+
+Total Revenue
+
+Filters
+
+Today
+
+Yesterday
+
+This Week
+
+This Month
+
+Custom Calendar
+
+Latest Customers Table
+
+Columns:
+
+Name
+
+Phone
+
+Email
+
+Total Rides
+
+Lifetime Spend
+
+Last Booking
+
+Latest Bookings Table Mixed With Donations
+
+(Use seeded data for now)
+
+4️⃣ Vendor Dashboard (Second Phase)
+
+Vendor login is ready → now create vendor home dashboard.
+
+Vendor sees:
+
+Vendor Dashboard Should Show:
+
+Their own bookings
+
+Their own drivers
+
+Their own vehicles
+
+Total earnings
+
+Today’s bookings
+
+Pending bookings
+
+Cancelled bookings
+
+Vendor cannot:
+
+Access system configs
+
+Access global drivers/cars/customers
+
+Edit fare rules
+
+5️⃣ Minor Fixes / Enhancements
+
+Add pagination to customers list
+
+Add search: phone, email, name
+
+Add sorting: latest bookings first
+
+Vehicle list should show vendor name + driver assigned
+
+Booking list should show vendor name + customer name

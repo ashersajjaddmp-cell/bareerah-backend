@@ -1,6 +1,15 @@
 const Booking = require('../models/Booking');
 const Vehicle = require('../models/Vehicle');
+const Driver = require('../models/Driver');
 const { calculateFare } = require('../utils/fareCalculator');
+const {
+  sendWhatsAppToCustomer,
+  sendWhatsAppToDriver,
+  sendWhatsAppToAdmin,
+  sendEmailToCustomer,
+  sendEmailToDriver,
+  sendEmailToAdmin
+} = require('./notificationService');
 
 class ValidationError extends Error {
   constructor(message) {
@@ -81,6 +90,39 @@ const bookingService = {
       fare_aed: fare.fare_after_discount,
       vehicle_type: vehicleType
     });
+
+    // Trigger notifications to customer, driver, and admin
+    try {
+      const bookingData = {
+        id: booking.id,
+        customer_name: data.customer_name,
+        customer_phone: data.customer_phone,
+        pickup_location: data.pickup_location,
+        dropoff_location: data.dropoff_location,
+        distance_km: distanceKm,
+        fare_aed: fare.fare_after_discount,
+        vehicle_type: vehicleType,
+        status: booking.status,
+        driver_name: availableVehicle?.driver_name || 'TBD',
+        driver_phone: availableVehicle?.driver_phone || 'TBD',
+        vehicle_plate: availableVehicle?.plate_number || 'TBD'
+      };
+
+      // Send notifications
+      await sendWhatsAppToCustomer(data.customer_phone, bookingData);
+      await sendEmailToCustomer(data.customer_email || '', bookingData);
+      
+      if (availableVehicle?.driver_phone) {
+        await sendWhatsAppToDriver(availableVehicle.driver_phone, bookingData);
+        await sendEmailToDriver(availableVehicle.driver_email || '', bookingData);
+      }
+
+      // Admin notification
+      await sendWhatsAppToAdmin(bookingData);
+      await sendEmailToAdmin('admin@bareerah.ae', bookingData);
+    } catch (notifError) {
+      console.error('Notification error (non-blocking):', notifError.message);
+    }
     
     return {
       booking_id: booking.id,
