@@ -1,6 +1,26 @@
 const bookingService = require('../services/bookingService');
+const { query } = require('../config/db');
 
 const bookingController = {
+  async getAllBookings(req, res, next) {
+    try {
+      const result = await query('SELECT * FROM bookings ORDER BY created_at DESC LIMIT 1000');
+      res.json({ success: true, data: result.rows || [] });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getBookingById(req, res, next) {
+    try {
+      const { id } = req.params;
+      const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
+      res.json({ success: true, data: result.rows[0] || null });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async calculateFare(req, res, next) {
     try {
       const fare = bookingService.calculateFare(req.body);

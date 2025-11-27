@@ -141,7 +141,7 @@ async function loadDrivers() {
         return;
       }
       
-      table.innerHTML = data.data.map(d => `
+      table.innerHTML = (data.vehicles || data.data).map(d => `
         <tr>
           <td>${d.name}</td>
           <td>${d.license_number || 'N/A'}</td>
@@ -231,7 +231,7 @@ async function loadVehicles() {
         return;
       }
       
-      table.innerHTML = data.data.map(v => `
+      table.innerHTML = (data.vehicles || data.data).map(v => `
         <tr>
           <td>${v.model}</td>
           <td>${v.vehicle_type}</td>
@@ -307,7 +307,7 @@ async function loadBookings() {
         return;
       }
       
-      table.innerHTML = data.data.map(b => `
+      table.innerHTML = (data.vehicles || data.data).map(b => `
         <tr>
           <td>${b.customer_name}</td>
           <td>${b.pickup_location}</td>
@@ -365,7 +365,7 @@ async function loadVendors() {
         return;
       }
       
-      table.innerHTML = data.data.map(v => `
+      table.innerHTML = (data.vehicles || data.data).map(v => `
         <tr>
           <td>${v.company_name}</td>
           <td>${v.contact_email}</td>
@@ -427,7 +427,7 @@ async function loadDriverApprovals() {
         return;
       }
       
-      table.innerHTML = data.data.map(d => `
+      table.innerHTML = (data.vehicles || data.data).map(d => `
         <tr>
           <td>${d.name}</td>
           <td>${d.email}</td>
