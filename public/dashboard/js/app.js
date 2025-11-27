@@ -174,7 +174,24 @@ async function loadDrivers(status = null, targetTableId = 'drivers-table-body') 
 }
 
 function editDriver(id) {
-  alert('Edit Driver: ' + id);
+  fetch(API_BASE + '/drivers/' + id, {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.data) {
+      const modal = document.getElementById('driverEditModal');
+      if (modal) {
+        document.getElementById('driverEditId').value = d.data.id;
+        document.getElementById('driverName').value = d.data.name || '';
+        document.getElementById('driverPhone').value = d.data.phone || '';
+        document.getElementById('driverStatus').value = d.data.status || 'offline';
+        modal.style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+      }
+    }
+  })
+  .catch(e => console.log(e));
 }
 
 // Vehicles
@@ -266,11 +283,47 @@ function applyCustomRange() {
 }
 
 function saveCarChanges() {
-  alert('Vehicle updated');
+  const id = document.getElementById('vehicleEditId').value;
+  const token = localStorage.getItem('token');
+  fetch(API_BASE + '/vehicles/' + id, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({
+      model: document.getElementById('vehicleModel').value,
+      type: document.getElementById('vehicleType').value,
+      status: document.getElementById('vehicleStatus').value
+    })
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      closeModal('vehicleEditModal');
+      loadVehicles();
+    }
+  }).catch(e => console.log(e));
 }
 
 function saveDriverChanges() {
-  alert('Driver updated');
+  const id = document.getElementById('driverEditId').value;
+  const token = localStorage.getItem('token');
+  fetch(API_BASE + '/drivers/' + id, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({
+      name: document.getElementById('driverName').value,
+      phone: document.getElementById('driverPhone').value,
+      status: document.getElementById('driverStatus').value
+    })
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      closeModal('driverEditModal');
+      loadDrivers();
+    }
+  }).catch(e => console.log(e));
 }
 
 function exportBookings(format) {
@@ -293,9 +346,41 @@ function exportBookings(format) {
 }
 
 function openAddBookingModal() {
-  alert('Add booking feature');
+  const modal = document.getElementById('addBookingModal');
+  if (modal) {
+    modal.style.display = 'block';
+    document.getElementById('modalOverlay').style.display = 'block';
+  }
 }
 
 function createManualBooking() {
-  alert('Booking created');
+  const token = localStorage.getItem('token');
+  fetch(API_BASE + '/bookings/create-manual', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({
+      customer_name: document.getElementById('bookingCustomerName').value,
+      customer_phone: document.getElementById('bookingCustomerPhone').value,
+      pickup_location: document.getElementById('bookingPickup').value,
+      dropoff_location: document.getElementById('bookingDropoff').value,
+      distance_km: parseFloat(document.getElementById('bookingDistance').value) || 0,
+      passengers_count: parseInt(document.getElementById('bookingPassengers').value) || 1,
+      luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
+      booking_type: document.getElementById('bookingType').value || 'point-to-point'
+    })
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      closeModal('addBookingModal');
+      loadBookings();
+    }
+  }).catch(e => console.log(e));
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = 'none';
+  document.getElementById('modalOverlay').style.display = 'none';
 }
