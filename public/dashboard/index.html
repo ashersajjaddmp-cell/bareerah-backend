@@ -580,38 +580,88 @@
       <div class="modal-body" id="bookingDetailContent">
         Loading...
       </div>
+      <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end;">
+        <button onclick="closeModal('bookingDetailModal')" class="btn" style="background: var(--bg-secondary);">Close</button>
+        <button id="detailEditBtn" onclick="openDetailEditModal()" class="btn btn-primary">Edit Booking</button>
+      </div>
     </div>
   </div>
 
   <!-- Edit Booking Modal -->
   <div id="editBookingModal" class="modal" style="display: none;">
-    <div class="modal-content">
+    <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
       <div class="modal-header">
         <h3>Edit Booking</h3>
         <button class="modal-close" onclick="closeModal('editBookingModal')">×</button>
       </div>
       <div class="modal-body">
-        <form id="editBookingForm">
+        <form id="editBookingForm" style="display: grid; gap: 12px;">
+          <input type="hidden" id="editBookingId">
           <div class="form-group">
-            <label>Status</label>
-            <select id="editStatus">
+            <label>Booking Status</label>
+            <select id="editStatus" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
               <option value="pending">Pending</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
           <div class="form-group">
+            <label>Booking Type</label>
+            <select id="editBookingType" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+              <option value="point_to_point">Point to Point</option>
+              <option value="airport_transfer">Airport Transfer</option>
+              <option value="city_tour">City Tour</option>
+              <option value="hourly_rental">Hourly Rental</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pickup Location</label>
+            <input type="text" id="editPickup" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+            <div id="pickupSuggestions" style="position: absolute; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 100; width: 280px; display: none;"></div>
+          </div>
+          <div class="form-group">
+            <label>Dropoff Location</label>
+            <input type="text" id="editDropoff" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+            <div id="dropoffSuggestions" style="position: absolute; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 100; width: 280px; display: none;"></div>
+          </div>
+          <div class="form-group">
+            <label>Vehicle Type</label>
+            <select id="editVehicleType" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+              <option value="sedan">Sedan</option>
+              <option value="suv">SUV</option>
+              <option value="luxury">Luxury</option>
+              <option value="van">Van</option>
+              <option value="bus">Bus</option>
+              <option value="minibus">Mini Bus</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Vehicle Model</label>
+            <input type="text" id="editVehicleModel" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+          </div>
+          <div class="form-group">
             <label>Payment Method</label>
-            <select id="editPayment">
+            <select id="editPayment" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
               <option value="cash">Cash</option>
               <option value="card">Card</option>
             </select>
           </div>
           <div class="form-group">
             <label>Fare Amount (AED)</label>
-            <input type="number" id="editFare" step="0.01">
+            <input type="number" id="editFare" step="0.01" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
           </div>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <div class="form-group">
+            <label>Driver Assignment</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <button type="button" onclick="setAssignmentMode('manual')" id="manualAssignBtn" class="btn" style="background: var(--bg-secondary);">Manual Assign</button>
+              <button type="button" onclick="setAssignmentMode('auto')" id="autoAssignBtn" class="btn" style="background: #10b981; color: white;">Auto Assign</button>
+            </div>
+            <select id="editDriver" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; display: none;">
+              <option value="">-- Select Driver --</option>
+            </select>
+            <div id="autoAssignStatus" style="padding: 8px; background: #10b981; color: white; border-radius: 6px; display: none; text-align: center;">Will auto-assign on save</div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
         </form>
       </div>
     </div>
@@ -701,10 +751,12 @@
         <div class="form-group">
           <label>Pickup Location</label>
           <input type="text" id="bookingPickup" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+          <div id="addPickupSuggestions" style="position: absolute; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 100; width: 280px; display: none;"></div>
         </div>
         <div class="form-group">
           <label>Dropoff Location</label>
           <input type="text" id="bookingDropoff" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+          <div id="addDropoffSuggestions" style="position: absolute; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 100; width: 280px; display: none;"></div>
         </div>
         <div class="form-group">
           <label>Distance (km)</label>

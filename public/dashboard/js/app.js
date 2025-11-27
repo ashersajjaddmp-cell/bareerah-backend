@@ -292,9 +292,12 @@ function viewBooking(id) {
     })
     .then(d => {
       if (d.data) {
+        window.currentBooking = d.data;
+        const b = d.data;
         const content = document.getElementById('bookingDetailContent');
         if (content) {
-          content.innerHTML = '<div style="display: grid; gap: 12px;"><div><strong>Customer:</strong> ' + d.data.customer_name + '</div><div><strong>Phone:</strong> ' + d.data.customer_phone + '</div><div><strong>Pickup:</strong> ' + d.data.pickup_location + '</div><div><strong>Dropoff:</strong> ' + d.data.dropoff_location + '</div><div><strong>Distance:</strong> ' + d.data.distance_km + ' km</div><div><strong>Fare:</strong> AED ' + (d.data.fare_aed || d.data.total_fare || 0) + '</div><div><strong>Status:</strong> ' + d.data.status + '</div></div>';
+          const driverInfo = b.driver_id ? (b.driver_name || 'Driver ID: ' + b.driver_id.substring(0, 8)) : '<span style="color: #ef4444;">Driver not assigned yet</span>';
+          content.innerHTML = '<div style="display: grid; gap: 12px; font-size: 14px;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking ID:</strong><br>' + b.id.substring(0, 8) + '</div><div><strong>Status:</strong><br><span style="padding: 2px 6px; border-radius: 3px; background: ' + (b.status === 'completed' ? '#10b981' : b.status === 'pending' ? '#f59e0b' : '#ef4444') + '; color: white; font-size: 12px;">' + b.status + '</span></div></div><div><strong>Customer:</strong><br>' + b.customer_name + ' (' + b.customer_phone + ')</div><div><strong>Pickup:</strong><br>' + b.pickup_location + '</div><div><strong>Dropoff:</strong><br>' + b.dropoff_location + '</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Distance:</strong><br>' + b.distance_km + ' km</div><div><strong>Fare:</strong><br>AED ' + (b.fare_aed || b.total_fare || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Vehicle Type:</strong><br>' + (b.vehicle_type || 'N/A') + '</div><div><strong>Vehicle Model:</strong><br>' + (b.vehicle_model || 'N/A') + '</div></div><div><strong>Driver:</strong><br>' + driverInfo + '</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Passengers:</strong><br>' + (b.passengers_count || 1) + '</div><div><strong>Luggage:</strong><br>' + (b.luggage_count || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Payment:</strong><br>' + (b.payment_method || 'N/A') + '</div><div><strong>Date:</strong><br>' + new Date(b.created_at).toLocaleDateString() + '</div></div></div>';
           const modal = document.getElementById('bookingDetailModal');
           const overlay = document.getElementById('modalOverlay');
           if (modal) modal.style.display = 'block';
@@ -303,6 +306,13 @@ function viewBooking(id) {
       }
     })
     .catch(e => console.error('View booking error:', e));
+}
+
+function openDetailEditModal() {
+  if (window.currentBooking) {
+    editBooking(window.currentBooking.id);
+    closeModal('bookingDetailModal');
+  }
 }
 
 // Helper Functions
@@ -392,8 +402,66 @@ function exportBookings(format) {
 function openAddBookingModal() {
   const modal = document.getElementById('addBookingModal');
   if (modal) {
+    document.getElementById('bookingCustomerName').value = '';
+    document.getElementById('bookingCustomerPhone').value = '';
+    document.getElementById('bookingPickup').value = '';
+    document.getElementById('bookingDropoff').value = '';
+    document.getElementById('bookingDistance').value = '';
+    document.getElementById('bookingPassengers').value = '1';
+    document.getElementById('bookingLuggage').value = '0';
+    document.getElementById('bookingType').value = 'point-to-point';
     modal.style.display = 'block';
     document.getElementById('modalOverlay').style.display = 'block';
+    setTimeout(() => initAddMapAutocomplete(), 100);
+  }
+}
+
+function initAddMapAutocomplete() {
+  if (typeof google === 'undefined') return;
+  
+  const pickupInput = document.getElementById('bookingPickup');
+  const dropoffInput = document.getElementById('bookingDropoff');
+  
+  if (pickupInput) {
+    const pickupAuto = new google.maps.places.Autocomplete(pickupInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
+    pickupAuto.addListener('place_changed', () => {
+      const place = pickupAuto.getPlace();
+      if (place.formatted_address) pickupInput.value = place.formatted_address;
+    });
+    
+    pickupInput.addEventListener('input', () => {
+      if (pickupInput.value.length > 2) {
+        const service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions({ input: pickupInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
+          const suggestionsDiv = document.getElementById('addPickupSuggestions');
+          if (suggestionsDiv && predictions) {
+            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 8px; cursor: pointer;" onclick="setLocation(\'bookingPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
+            suggestionsDiv.style.display = 'block';
+          }
+        });
+      }
+    });
+  }
+  
+  if (dropoffInput) {
+    const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
+    dropoffAuto.addListener('place_changed', () => {
+      const place = dropoffAuto.getPlace();
+      if (place.formatted_address) dropoffInput.value = place.formatted_address;
+    });
+    
+    dropoffInput.addEventListener('input', () => {
+      if (dropoffInput.value.length > 2) {
+        const service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions({ input: dropoffInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
+          const suggestionsDiv = document.getElementById('addDropoffSuggestions');
+          if (suggestionsDiv && predictions) {
+            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 8px; cursor: pointer;" onclick="setLocation(\'bookingDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
+            suggestionsDiv.style.display = 'block';
+          }
+        });
+      }
+    });
   }
 }
 
@@ -446,22 +514,177 @@ function viewDriver(id) {
 
 // Edit Booking
 function editBooking(id) {
-  fetch(API_BASE + '/bookings/' + id, {
-    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.data) {
-      document.getElementById('editStatus').value = d.data.status || 'pending';
-      document.getElementById('editPayment').value = d.data.payment_method || 'cash';
-      document.getElementById('editFare').value = d.data.fare_aed || 0;
+  const token = localStorage.getItem('token');
+  Promise.all([
+    fetch(getCacheBustUrl(API_BASE + '/bookings/' + id), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json()),
+    fetch(getCacheBustUrl(API_BASE + '/drivers'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json())
+  ])
+  .then(([booking, drivers]) => {
+    if (booking.data) {
+      const b = booking.data;
+      document.getElementById('editBookingId').value = id;
+      document.getElementById('editStatus').value = b.status || 'pending';
+      document.getElementById('editBookingType').value = b.booking_type || 'point_to_point';
+      document.getElementById('editPickup').value = b.pickup_location || '';
+      document.getElementById('editDropoff').value = b.dropoff_location || '';
+      document.getElementById('editVehicleType').value = b.vehicle_type || 'sedan';
+      document.getElementById('editVehicleModel').value = b.vehicle_model || '';
+      document.getElementById('editPayment').value = b.payment_method || 'cash';
+      document.getElementById('editFare').value = b.fare_aed || 0;
+      
+      // Load drivers for selection
+      const driverSelect = document.getElementById('editDriver');
+      driverSelect.innerHTML = '<option value="">-- Select Driver --</option>';
+      if (drivers.data && drivers.data.length) {
+        drivers.data.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = d.name + ' (' + (d.status === 'online' ? '🟢 Online' : '🔴 Offline') + ')';
+          if (b.driver_id === d.id) opt.selected = true;
+          driverSelect.appendChild(opt);
+        });
+      }
+      
+      // Set assignment mode
+      window.assignmentMode = b.driver_id ? 'manual' : 'auto';
+      setAssignmentMode(window.assignmentMode);
+      
+      // Initialize Google Maps autocomplete
+      setTimeout(() => {
+        initEditMapAutocomplete();
+      }, 100);
+      
       const modal = document.getElementById('editBookingModal');
       if (modal) modal.style.display = 'block';
       document.getElementById('modalOverlay').style.display = 'block';
       window.editingBookingId = id;
+      
+      // Handle form submission
+      const form = document.getElementById('editBookingForm');
+      form.onsubmit = saveBookingChanges;
     }
   })
-  .catch(e => console.error(e));
+  .catch(e => console.error('Edit booking error:', e));
+}
+
+function setAssignmentMode(mode) {
+  window.assignmentMode = mode;
+  const driverSelect = document.getElementById('editDriver');
+  const autoStatus = document.getElementById('autoAssignStatus');
+  const manualBtn = document.getElementById('manualAssignBtn');
+  const autoBtn = document.getElementById('autoAssignBtn');
+  
+  if (mode === 'manual') {
+    driverSelect.style.display = 'block';
+    autoStatus.style.display = 'none';
+    manualBtn.style.background = '#3b82f6';
+    manualBtn.style.color = 'white';
+    autoBtn.style.background = 'var(--bg-secondary)';
+    autoBtn.style.color = 'var(--text)';
+  } else {
+    driverSelect.style.display = 'none';
+    autoStatus.style.display = 'block';
+    autoBtn.style.background = '#10b981';
+    autoBtn.style.color = 'white';
+    manualBtn.style.background = 'var(--bg-secondary)';
+    manualBtn.style.color = 'var(--text)';
+  }
+}
+
+function saveBookingChanges(e) {
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+  const id = document.getElementById('editBookingId').value;
+  
+  const body = {
+    status: document.getElementById('editStatus').value,
+    booking_type: document.getElementById('editBookingType').value,
+    pickup_location: document.getElementById('editPickup').value,
+    dropoff_location: document.getElementById('editDropoff').value,
+    vehicle_type: document.getElementById('editVehicleType').value,
+    vehicle_model: document.getElementById('editVehicleModel').value,
+    payment_method: document.getElementById('editPayment').value,
+    fare_aed: parseFloat(document.getElementById('editFare').value) || 0
+  };
+  
+  if (window.assignmentMode === 'manual') {
+    const driverId = document.getElementById('editDriver').value;
+    if (driverId) body.driver_id = driverId;
+  }
+  
+  fetch(API_BASE + '/bookings/' + id, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify(body)
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) {
+      alert('Booking updated successfully!');
+      closeModal('editBookingModal');
+      loadBookings();
+    } else {
+      alert('Error: ' + (d.error || 'Failed to update booking'));
+    }
+  })
+  .catch(e => alert('Error: ' + e.message));
+}
+
+function initEditMapAutocomplete() {
+  if (typeof google === 'undefined') return;
+  
+  const pickupInput = document.getElementById('editPickup');
+  const dropoffInput = document.getElementById('editDropoff');
+  
+  if (pickupInput) {
+    const pickupAuto = new google.maps.places.Autocomplete(pickupInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
+    pickupAuto.addListener('place_changed', () => {
+      const place = pickupAuto.getPlace();
+      if (place.formatted_address) pickupInput.value = place.formatted_address;
+    });
+    
+    pickupInput.addEventListener('input', () => {
+      if (pickupInput.value.length > 2) {
+        const service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions({ input: pickupInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
+          const suggestionsDiv = document.getElementById('pickupSuggestions');
+          if (suggestionsDiv && predictions) {
+            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 8px; cursor: pointer; hover: background: var(--bg-secondary);" onclick="setLocation(\'editPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
+            suggestionsDiv.style.display = 'block';
+          }
+        });
+      }
+    });
+  }
+  
+  if (dropoffInput) {
+    const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
+    dropoffAuto.addListener('place_changed', () => {
+      const place = dropoffAuto.getPlace();
+      if (place.formatted_address) dropoffInput.value = place.formatted_address;
+    });
+    
+    dropoffInput.addEventListener('input', () => {
+      if (dropoffInput.value.length > 2) {
+        const service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions({ input: dropoffInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
+          const suggestionsDiv = document.getElementById('dropoffSuggestions');
+          if (suggestionsDiv && predictions) {
+            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 8px; cursor: pointer;" onclick="setLocation(\'editDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
+            suggestionsDiv.style.display = 'block';
+          }
+        });
+      }
+    });
+  }
+}
+
+function setLocation(fieldId, location) {
+  document.getElementById(fieldId).value = location;
+  document.getElementById(fieldId === 'editPickup' ? 'pickupSuggestions' : 'dropoffSuggestions').style.display = 'none';
 }
 
 // Load Alerts
