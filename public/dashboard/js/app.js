@@ -648,3 +648,68 @@ window.addEventListener('load', () => {
     initGoogleMapsAutocomplete();
   }
 });
+
+// ===== MISSING FUNCTIONS THAT HTML CALLS =====
+
+// Toggle submenu for drivers/cars
+function toggleSubmenu(element) {
+  const submenu = element.nextElementSibling;
+  if (submenu && submenu.classList.contains('nav-submenu')) {
+    submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+// Apply custom date range
+function applyCustomRange() {
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  if (start && end) {
+    currentStartDate = start;
+    currentEndDate = end;
+    loadDashboard();
+  }
+}
+
+// Load KPI page
+function loadKPI() {
+  navigateToPage('kpi');
+  const token = localStorage.getItem('token');
+  fetch(`${API_BASE}/stats/summary?range=today`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  }).then(r => r.json()).then(d => {
+    if (d.data) {
+      document.getElementById('totalRevenue').textContent = (d.data.total_revenue || 0).toFixed(2);
+      document.getElementById('totalProfit').textContent = (d.data.total_revenue * 0.8 || 0).toFixed(2);
+    }
+  }).catch(e => console.log(e));
+}
+
+// Save car changes
+function saveCarChanges() {
+  saveVehicle();
+}
+
+// Save driver changes
+function saveDriverChanges() {
+  saveDriver();
+}
+
+// Export bookings
+function exportBookings(format) {
+  const token = localStorage.getItem('token');
+  fetch(`${API_BASE}/bookings`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  }).then(r => r.json()).then(d => {
+    if (!d.data) return;
+    let csv = 'Customer,Phone,Pickup,Dropoff,Distance,Fare,Status\n';
+    d.data.forEach(b => {
+      csv += `"${b.customer_name}","${b.customer_phone}","${b.pickup_location}","${b.dropoff_location}",${b.distance_km},${b.total_fare},${b.status}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bookings.${format}`;
+    a.click();
+  }).catch(e => console.log(e));
+}
