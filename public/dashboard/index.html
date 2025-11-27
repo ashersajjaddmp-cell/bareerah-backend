@@ -57,11 +57,11 @@
           <!-- Filter Controls -->
           <div class="filter-bar">
             <div class="filter-group">
-              <button class="filter-btn active" data-range="today">Today</button>
-              <button class="filter-btn" data-range="yesterday">Yesterday</button>
-              <button class="filter-btn" data-range="week">This Week</button>
-              <button class="filter-btn" data-range="month">This Month</button>
-              <button class="filter-btn" data-range="custom">Custom Range</button>
+              <button class="filter-btn active" onclick="setDashboardRange('today'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">Today</button>
+              <button class="filter-btn" onclick="setDashboardRange('yesterday'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">Yesterday</button>
+              <button class="filter-btn" onclick="setDashboardRange('week'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">This Week</button>
+              <button class="filter-btn" onclick="setDashboardRange('month'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">This Month</button>
+              <button class="filter-btn" onclick="toggleCustomRange()">Custom Range</button>
             </div>
             <div class="date-picker" style="display: none;" id="customDatePicker">
               <input type="date" id="startDate">
@@ -308,11 +308,121 @@
           </div>
         </div>
 
+        <!-- Drivers Online Page -->
+        <div id="page-drivers-online" class="page">
+          <h2 class="page-title">Online Drivers</h2>
+          <div class="card">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Car Assigned</th>
+                    <th>Total Trips</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="drivers-online-table-body">
+                  <tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drivers Offline Page -->
+        <div id="page-drivers-offline" class="page">
+          <h2 class="page-title">Offline Drivers</h2>
+          <div class="card">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Car Assigned</th>
+                    <th>Total Trips</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="drivers-offline-table-body">
+                  <tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Cars Pages -->
         <div id="page-cars-all" class="page">
           <h2 class="page-title">Vehicles</h2>
           <div class="card">
             <div class="table-container" id="carsGrid">
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sedan Cars Page -->
+        <div id="page-cars-sedan" class="page">
+          <h2 class="page-title">Sedan Vehicles</h2>
+          <div class="card">
+            <div class="table-container" id="carsGridSedan">
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUV Cars Page -->
+        <div id="page-cars-suv" class="page">
+          <h2 class="page-title">SUV Vehicles</h2>
+          <div class="card">
+            <div class="table-container" id="carsGridSuv">
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Luxury Cars Page -->
+        <div id="page-cars-luxury" class="page">
+          <h2 class="page-title">Luxury Vehicles</h2>
+          <div class="card">
+            <div class="table-container" id="carsGridLuxury">
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Van Cars Page -->
+        <div id="page-cars-van" class="page">
+          <h2 class="page-title">Vans</h2>
+          <div class="card">
+            <div class="table-container" id="carsGridVan">
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bus Cars Page -->
+        <div id="page-cars-bus" class="page">
+          <h2 class="page-title">Bus Vehicles</h2>
+          <div class="card">
+            <div class="table-container" id="carsGridBus">
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Bus Cars Page -->
+        <div id="page-cars-minibus" class="page">
+          <h2 class="page-title">Mini Bus Vehicles</h2>
+          <div class="card">
+            <div class="table-container" id="carsGridMinibus">
               <p>Loading...</p>
             </div>
           </div>

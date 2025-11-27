@@ -34,11 +34,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=8000 node index.js"
-waitForPort = 8000
+args = "PORT=5000 node index.js"
+waitForPort = 5000
 
 [workflows.workflow.metadata]
-outputType = "console"
+outputType = "webview"
 
 [[ports]]
 localPort = 3000
@@ -49,8 +49,8 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 8000
-externalPort = 8000
+localPort = 33965
+externalPort = 3003
 
 [[ports]]
 localPort = 43841

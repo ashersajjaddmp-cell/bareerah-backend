@@ -65,8 +65,16 @@ function navigateToPage(page) {
   const pageEl = document.getElementById('page-' + page);
   if (pageEl) {
     pageEl.style.display = 'block';
-    if (page === 'drivers-all') loadDrivers();
-    else if (page === 'cars-all') loadVehicles();
+    if (page === 'drivers-all') loadDrivers(null, 'drivers-table-body');
+    else if (page === 'drivers-online') loadDrivers('online', 'drivers-online-table-body');
+    else if (page === 'drivers-offline') loadDrivers('offline', 'drivers-offline-table-body');
+    else if (page === 'cars-all') loadVehicles(null, 'carsGrid');
+    else if (page === 'cars-sedan') loadVehicles('sedan', 'carsGridSedan');
+    else if (page === 'cars-suv') loadVehicles('suv', 'carsGridSuv');
+    else if (page === 'cars-luxury') loadVehicles('luxury', 'carsGridLuxury');
+    else if (page === 'cars-van') loadVehicles('van', 'carsGridVan');
+    else if (page === 'cars-bus') loadVehicles('bus', 'carsGridBus');
+    else if (page === 'cars-minibus') loadVehicles('minibus', 'carsGridMinibus');
     else if (page === 'bookings') loadBookings();
     else if (page === 'kpi') loadKPI();
   }
@@ -138,7 +146,7 @@ async function loadKPI() {
 }
 
 // Drivers
-async function loadDrivers(status = null) {
+async function loadDrivers(status = null, targetTableId = 'drivers-table-body') {
   try {
     const token = localStorage.getItem('token');
     let url = API_BASE + '/drivers';
@@ -149,7 +157,7 @@ async function loadDrivers(status = null) {
     
     if (response.ok) {
       const data = await response.json();
-      const tbody = document.getElementById('drivers-table-body');
+      const tbody = document.getElementById(targetTableId);
       if (!tbody) return;
       
       const drivers = data.data || [];
@@ -165,16 +173,12 @@ async function loadDrivers(status = null) {
   }
 }
 
-function filterDrivers(status) {
-  loadDrivers(status);
-}
-
 function editDriver(id) {
   alert('Edit Driver: ' + id);
 }
 
 // Vehicles
-async function loadVehicles(type = null) {
+async function loadVehicles(type = null, targetContainerId = 'carsGrid') {
   try {
     const token = localStorage.getItem('token');
     let url = API_BASE + '/vehicles';
@@ -185,7 +189,7 @@ async function loadVehicles(type = null) {
     
     if (response.ok) {
       const data = await response.json();
-      const container = document.getElementById('carsGrid');
+      const container = document.getElementById(targetContainerId);
       if (!container) return;
       
       const vehicles = data.data || data.vehicles || [];
@@ -199,11 +203,6 @@ async function loadVehicles(type = null) {
   } catch (e) {
     console.log('Vehicles error:', e);
   }
-}
-
-// Filter vehicles by type
-function filterVehicles(type) {
-  loadVehicles(type);
 }
 
 // Bookings
@@ -255,6 +254,11 @@ function toggleSubmenu(element) {
   if (submenu && submenu.classList.contains('nav-submenu')) {
     submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
   }
+}
+
+function toggleCustomRange() {
+  const picker = document.getElementById('customDatePicker');
+  if (picker) picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
 }
 
 function applyCustomRange() {
