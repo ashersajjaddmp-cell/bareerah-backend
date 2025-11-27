@@ -678,22 +678,22 @@ function saveBookingChanges(e) {
   .catch(e => alert('Error: ' + e.message));
 }
 
-function initEditMapAutocomplete() {
+async function initEditMapAutocomplete() {
   if (typeof google === 'undefined') return;
   
   const pickupInput = document.getElementById('editPickup');
   const dropoffInput = document.getElementById('editDropoff');
   const vehicleTypeSelect = document.getElementById('editVehicleType');
   
-  // Load all vehicles for model selection
-  loadVehiclesForModels();
+  // Load all vehicles for model selection - WAIT for data
+  await loadVehiclesForModels();
   
   // Vehicle type change handler - update models dropdown
   if (vehicleTypeSelect) {
     vehicleTypeSelect.addEventListener('change', () => {
       updateVehicleModels(vehicleTypeSelect.value, 'editVehicleModel');
     });
-    // Initialize on first load
+    // Initialize on first load - NOW data is loaded
     updateVehicleModels(vehicleTypeSelect.value, 'editVehicleModel');
   }
   
@@ -760,14 +760,18 @@ let vehiclesList = [];
 
 function loadVehiclesForModels() {
   const token = localStorage.getItem('token');
-  fetch(getCacheBustUrl(API_BASE + '/vehicles'), {
+  return fetch(getCacheBustUrl(API_BASE + '/vehicles'), {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(r => r.json())
   .then(d => {
     if (d.data) vehiclesList = d.data;
+    return vehiclesList;
   })
-  .catch(e => console.error('Error loading vehicles:', e));
+  .catch(e => {
+    console.error('Error loading vehicles:', e);
+    return [];
+  });
 }
 
 function updateVehicleModels(vehicleType, targetId = 'editVehicleModel') {
