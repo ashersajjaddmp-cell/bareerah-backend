@@ -698,18 +698,7 @@ async function initEditMapAutocomplete() {
   }
   
   if (pickupInput) {
-    const pickupAuto = new google.maps.places.Autocomplete(pickupInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
-    pickupAuto.addListener('place_changed', () => {
-      const place = pickupAuto.getPlace();
-      if (place.formatted_address) pickupInput.value = place.formatted_address;
-      setTimeout(() => calculateDistanceAndFare(), 100);
-    });
-    
-    // Prevent Google's arrow key dropdown
-    pickupInput.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') e.preventDefault();
-    });
-    
+    // Use ONLY custom suggestions - don't create Google's Autocomplete UI
     pickupInput.addEventListener('input', () => {
       if (pickupInput.value.length > 2) {
         const service = new google.maps.places.AutocompleteService();
@@ -724,21 +713,15 @@ async function initEditMapAutocomplete() {
         document.getElementById('pickupSuggestions').style.display = 'none';
       }
     });
+    
+    // Prevent default autocomplete on Enter
+    pickupInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.preventDefault();
+    });
   }
   
   if (dropoffInput) {
-    const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
-    dropoffAuto.addListener('place_changed', () => {
-      const place = dropoffAuto.getPlace();
-      if (place.formatted_address) dropoffInput.value = place.formatted_address;
-      setTimeout(() => calculateDistanceAndFare(), 100);
-    });
-    
-    // Prevent Google's arrow key dropdown
-    dropoffInput.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') e.preventDefault();
-    });
-    
+    // Use ONLY custom suggestions - don't create Google's Autocomplete UI
     dropoffInput.addEventListener('input', () => {
       if (dropoffInput.value.length > 2) {
         const service = new google.maps.places.AutocompleteService();
@@ -752,6 +735,11 @@ async function initEditMapAutocomplete() {
       } else {
         document.getElementById('dropoffSuggestions').style.display = 'none';
       }
+    });
+    
+    // Prevent default autocomplete on Enter
+    dropoffInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.preventDefault();
     });
   }
 }
