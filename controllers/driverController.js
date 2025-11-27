@@ -3,10 +3,19 @@ const Driver = require('../models/Driver');
 const driverController = {
   async getAllDrivers(req, res, next) {
     try {
-      const drivers = await Driver.findAll();
+      const { status } = req.query;
+      const { query } = require('../config/db');
+      let sql = 'SELECT * FROM drivers';
+      const params = [];
+      if (status) {
+        sql += ' WHERE status = $1';
+        params.push(status);
+      }
+      sql += ' ORDER BY name';
+      const result = await query(sql, params);
       res.json({
         success: true,
-        data: drivers
+        data: result.rows
       });
     } catch (error) {
       next(error);

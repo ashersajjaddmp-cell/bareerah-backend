@@ -86,6 +86,52 @@ const bookingController = {
     }
   },
 
+  async updateBooking(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { status, driver_id, assigned_vehicle_id, payment_method } = req.body;
+      const Booking = require('../models/Booking');
+      const { query } = require('../config/db');
+      
+      let updateSql = 'UPDATE bookings SET updated_at = NOW()';
+      const params = [];
+      let paramIndex = 1;
+      
+      if (status) {
+        updateSql += ', status = $' + (paramIndex);
+        params.push(status);
+        paramIndex++;
+      }
+      if (driver_id) {
+        updateSql += ', driver_id = $' + (paramIndex);
+        params.push(driver_id);
+        paramIndex++;
+      }
+      if (assigned_vehicle_id) {
+        updateSql += ', assigned_vehicle_id = $' + (paramIndex);
+        params.push(assigned_vehicle_id);
+        paramIndex++;
+      }
+      if (payment_method) {
+        updateSql += ', payment_method = $' + (paramIndex);
+        params.push(payment_method);
+        paramIndex++;
+      }
+      
+      updateSql += ' WHERE id = $' + (paramIndex) + ' RETURNING *';
+      params.push(id);
+      
+      const result = await query(updateSql, params);
+      if (!result.rows[0]) {
+        return res.status(404).json({ success: false, error: 'Booking not found' });
+      }
+      
+      res.json({ success: true, message: 'Booking updated', data: result.rows[0] });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async resendNotifications(req, res, next) {
     try {
       const { booking_id } = req.body;

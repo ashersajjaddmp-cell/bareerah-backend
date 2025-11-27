@@ -76,58 +76,61 @@ function navigateToPage(page) {
 async function loadDashboard() {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(API_BASE + '/stats/summary?range=today', {
+    const range = localStorage.getItem('dashboardRange') || 'today';
+    const response = await fetch(API_BASE + '/stats/summary?range=' + range, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     
     if (response.ok) {
       const data = await response.json();
-      if (data.data) {
-        const d = data.data;
-        const stat = (id, val) => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = val;
-        };
-        stat('stat-bookings', d.total_bookings || 0);
-        stat('stat-completed', d.completed_bookings || 0);
-        stat('stat-pending', d.pending_bookings || 0);
-        stat('stat-cancelled', d.cancelled_bookings || 0);
-        stat('stat-revenue', 'AED ' + ((d.total_revenue || 0).toFixed(2)));
-        stat('stat-cash', 'AED ' + ((d.cash_revenue || 0).toFixed(2)));
-        stat('stat-card', 'AED ' + ((d.card_revenue || 0).toFixed(2)));
-      }
+      const d = data.data && data.data.summary ? data.data.summary : (data.data || {});
+      const stat = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+      stat('stat-bookings', d.total_bookings || 0);
+      stat('stat-completed', d.completed_bookings || 0);
+      stat('stat-pending', d.pending_bookings || 0);
+      stat('stat-cancelled', d.cancelled_bookings || 0);
+      stat('stat-revenue', 'AED ' + ((d.total_revenue || 0).toFixed(2)));
+      stat('stat-cash', 'AED ' + ((d.cash_revenue || 0).toFixed(2)));
+      stat('stat-card', 'AED ' + ((d.card_revenue || 0).toFixed(2)));
     }
   } catch (e) {
     console.log('Dashboard error:', e);
   }
 }
 
+// Range filter handlers
+function setDashboardRange(range) {
+  localStorage.setItem('dashboardRange', range);
+  loadDashboard();
+}
+
 // KPI Page
 async function loadKPI() {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(API_BASE + '/stats/summary?range=today', {
+    const response = await fetch(API_BASE + '/stats/summary?range=month', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     
     if (response.ok) {
       const data = await response.json();
-      if (data.data) {
-        const d = data.data;
-        const totalRev = d.total_revenue || 0;
-        const vendorComm = totalRev * 0.8;
-        const profit = totalRev * 0.2;
-        
-        const stat = (id, val) => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = val;
-        };
-        
-        stat('kpi-total-revenue', 'AED ' + (totalRev.toFixed(2)));
-        stat('kpi-vendor-commission', 'AED ' + (vendorComm.toFixed(2)));
-        stat('kpi-company-profit', 'AED ' + (profit.toFixed(2)));
-        stat('kpi-profit-margin', (((profit / totalRev) * 100) || 0).toFixed(1) + '%');
-      }
+      const d = data.data && data.data.summary ? data.data.summary : (data.data || {});
+      const totalRev = d.total_revenue || 0;
+      const vendorComm = totalRev * 0.8;
+      const profit = totalRev * 0.2;
+      
+      const stat = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+      
+      stat('kpi-total-revenue', 'AED ' + (totalRev.toFixed(2)));
+      stat('kpi-vendor-commission', 'AED ' + (vendorComm.toFixed(2)));
+      stat('kpi-company-profit', 'AED ' + (profit.toFixed(2)));
+      stat('kpi-profit-margin', (((profit / totalRev) * 100) || 0).toFixed(1) + '%');
     }
   } catch (e) {
     console.log('KPI error:', e);
@@ -135,10 +138,12 @@ async function loadKPI() {
 }
 
 // Drivers
-async function loadDrivers() {
+async function loadDrivers(status = null) {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(API_BASE + '/drivers', {
+    let url = API_BASE + '/drivers';
+    if (status) url += '?status=' + status;
+    const response = await fetch(url, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     
@@ -147,16 +152,21 @@ async function loadDrivers() {
       const tbody = document.getElementById('drivers-table-body');
       if (!tbody) return;
       
-      if (!data.data || !data.data.length) {
+      const drivers = data.data || [];
+      if (!drivers || !drivers.length) {
         tbody.innerHTML = '<tr><td colspan="7">No drivers</td></tr>';
         return;
       }
       
-      tbody.innerHTML = data.data.map(d => '<tr><td>' + d.id.substring(0, 8) + '</td><td>' + d.name + '</td><td>' + (d.phone || 'N/A') + '</td><td>' + (d.status || 'online') + '</td><td>-</td><td>0</td><td><button onclick="editDriver(' + d.id + ')" class="btn-small">Edit</button></td></tr>').join('');
+      tbody.innerHTML = drivers.map(d => '<tr><td>' + d.id.substring(0, 8) + '</td><td>' + d.name + '</td><td>' + (d.phone || 'N/A') + '</td><td><span style="padding: 4px 8px; border-radius: 4px; background: ' + (d.status === 'online' ? '#10b981' : '#ef4444') + '; color: white; font-size: 12px;">' + (d.status || 'offline') + '</span></td><td>-</td><td>0</td><td><button onclick="editDriver(\'' + d.id + '\')" class="btn-small">Edit</button></td></tr>').join('');
     }
   } catch (e) {
     console.log('Drivers error:', e);
   }
+}
+
+function filterDrivers(status) {
+  loadDrivers(status);
 }
 
 function editDriver(id) {
@@ -164,10 +174,12 @@ function editDriver(id) {
 }
 
 // Vehicles
-async function loadVehicles() {
+async function loadVehicles(type = null) {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(API_BASE + '/vehicles', {
+    let url = API_BASE + '/vehicles';
+    if (type) url += '?type=' + type;
+    const response = await fetch(url, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     
@@ -176,16 +188,22 @@ async function loadVehicles() {
       const container = document.getElementById('carsGrid');
       if (!container) return;
       
-      if (!data.vehicles || !data.vehicles.length) {
-        container.innerHTML = '<p>No vehicles</p>';
+      const vehicles = data.data || data.vehicles || [];
+      if (!vehicles || !vehicles.length) {
+        container.innerHTML = '<p>No vehicles found</p>';
         return;
       }
       
-      container.innerHTML = '<div style="display: grid; gap: 15px;">' + data.vehicles.map(v => '<div style="border: 1px solid var(--border); border-radius: 8px; padding: 15px;"><h4>' + v.model + '</h4><p><strong>Type:</strong> ' + v.vehicle_type + '</p><p><strong>Plate:</strong> ' + (v.license_plate || 'N/A') + '</p><p><strong>Color:</strong> ' + (v.color || 'N/A') + '</p><p><strong>Status:</strong> ' + (v.status || 'active') + '</p></div>').join('') + '</div>';
+      container.innerHTML = '<div style="display: grid; gap: 15px;">' + vehicles.map(v => '<div style="border: 1px solid var(--border); border-radius: 8px; padding: 15px;"><h4>' + v.model + '</h4><p><strong>Type:</strong> ' + v.type + '</p><p><strong>Plate:</strong> ' + (v.plate_number || 'N/A') + '</p><p><strong>Capacity:</strong> ' + v.max_passengers + ' pax / ' + v.max_luggage + ' luggage</p><p><strong>Status:</strong> ' + (v.status || 'available') + '</p></div>').join('') + '</div>';
     }
   } catch (e) {
     console.log('Vehicles error:', e);
   }
+}
+
+// Filter vehicles by type
+function filterVehicles(type) {
+  loadVehicles(type);
 }
 
 // Bookings

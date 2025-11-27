@@ -1,0 +1,313 @@
+MASTER FUNCTIONAL FIX PROMPT — DASHBOARD, FILTERS, VIEW/EDIT, DRIVERS & VEHICLES
+
+Even though the database is fully populated, the admin UI is still non-functional in multiple core areas. This is now a frontend + API wiring + routing + permission enforcement issue, not a database issue.
+
+Please fix the following IN THIS EXACT ORDER:
+
+✅ 1️⃣ DASHBOARD NUMBERS ALL ZERO — FIX STATS API WIRING
+🔴 Current Problem
+
+Dashboard shows no numbers
+
+Date filters (Yesterday / Week / Month / Custom) are not clickable
+
+This means:
+
+Either stats API is not being called
+
+OR frontend is calling wrong endpoint
+
+OR response format is not being parsed
+
+✅ Required Fix
+
+Confirm which endpoint dashboard is calling:
+
+Example:
+
+GET /api/dashboard/stats?range=today
+
+
+That endpoint MUST return:
+
+{
+  "success": true,
+  "data": {
+    "total_bookings": 0,
+    "completed": 0,
+    "pending": 0,
+    "cancelled": 0,
+    "revenue": 0,
+    "online_drivers": 0,
+    "active_vehicles": 0
+  }
+}
+
+
+Range handling MUST work for:
+
+today
+
+yesterday
+
+week
+
+month
+
+custom (start_date + end_date)
+
+SQL example for Yesterday:
+
+WHERE created_at >= CURRENT_DATE - INTERVAL '1 day'
+AND created_at < CURRENT_DATE
+
+
+Frontend must:
+
+Attach onClick handlers to Yesterday/Week/Month buttons
+
+Actually refetch stats API on click
+
+Update state with new numbers
+
+❌ Right now buttons are visually present but not wired to any state or API call.
+
+✅ 2️⃣ BOOKINGS PAGE — VIEW & EDIT NOT WORKING
+🔴 Current Problem
+
+Bookings appear in list ✅
+
+Clicking View does nothing ❌
+
+Pending booking cannot be edited ❌
+
+✅ Required Fix
+
+Confirm these routes exist:
+
+GET /api/bookings/:id
+
+PUT /api/bookings/:id
+
+On frontend:
+
+View button must route to:
+
+/bookings/view/:id
+
+
+Edit button must route to:
+
+/bookings/edit/:id
+
+
+The edit form must load data using:
+
+GET /api/bookings/:id
+
+
+Save must use:
+
+PUT /api/bookings/:id
+
+
+If RBAC is blocking edit:
+
+Allow admin + operator to edit:
+
+status
+
+assigned_vehicle_id
+
+driver_id
+
+✅ 3️⃣ DRIVERS — ONLINE & OFFLINE TABS EMPTY
+🔴 Current Problem
+
+All drivers list shows data ✅
+
+Online / Offline sub-tabs show no data ❌
+
+✅ Required Fix
+
+Confirm drivers table uses:
+
+status = 'online' or 'offline'
+
+
+Online tab query MUST be:
+
+SELECT * FROM drivers WHERE status = 'online';
+
+
+Offline tab query MUST be:
+
+SELECT * FROM drivers WHERE status = 'offline';
+
+
+Frontend must:
+
+NOT filter locally only
+
+Must call separate API or same API with status query param:
+
+/api/drivers?status=online
+/api/drivers?status=offline
+
+✅ 4️⃣ VEHICLES — CATEGORY FILTERS SHOWING EMPTY
+🔴 Current Problem
+
+Main vehicle list shows “No Vehicles” ❌
+
+Category filters:
+
+Sedan
+
+SUV
+
+Luxury
+
+Vans
+
+Bus
+
+Mini Bus
+all show no data
+
+✅ Required Fix
+
+Confirm real vehicle type values in DB:
+Examples:
+
+sedan
+
+suv
+
+luxury
+
+mpv
+
+bus
+
+mini_bus
+
+Category filter API MUST map correctly:
+
+SELECT * FROM vehicles WHERE type = 'sedan';
+SELECT * FROM vehicles WHERE type = 'suv';
+SELECT * FROM vehicles WHERE type = 'luxury';
+SELECT * FROM vehicles WHERE type = 'mpv';
+
+
+Frontend must:
+
+Send correct type string (case-sensitive)
+
+NOT hard-code old values like Luxury Sedan, Business, etc., if DB uses luxury, sedan
+
+Also confirm:
+
+active = true
+
+
+is not filtering out everything.
+
+If yes, use:
+
+WHERE active = true OR active IS NULL
+
+✅ 5️⃣ RBAC IS OVER-BLOCKING (EDIT BUTTONS DISABLED)
+🔴 Current Problem
+
+You cannot edit drivers
+
+You cannot edit pending bookings
+
+Permissions are being blocked incorrectly
+
+✅ Required Fix
+
+Admin MUST have:
+
+Full edit access to:
+
+drivers
+
+vehicles
+
+bookings
+
+customers
+
+Operator MUST have:
+
+Edit access to:
+
+bookings (status, vehicle, driver)
+
+customers
+
+RBAC middleware must:
+
+Not block based on HTTP method alone
+
+Must check role + route pair correctly
+
+✅ 6️⃣ GLOBAL UI BUG — TABLES SHOW "NO DATA" DESPITE API HAVING DATA
+
+For ALL list pages (drivers, vehicles, bookings, customers):
+
+Log API response in browser console:
+
+console.log(response)
+console.log(response.data)
+console.log(response.data.data)
+
+
+Make sure frontend is reading:
+
+response.data.data
+
+
+NOT:
+
+response.data
+
+
+or
+
+response.data.rows
+
+✅ 7️⃣ AFTER ALL FIXES — MANDATORY PROOF
+
+Please send these 6 screenshots after fixing:
+
+Dashboard showing real numbers
+
+Bookings list with View/Edit working
+
+One booking opened in View mode
+
+Drivers page with Online & Offline tabs populated
+
+Vehicles page showing at least 5 vehicles
+
+Vehicles category filter (e.g., SUV) showing data
+
+🚫 STOP ALL OTHER DEV WORK
+
+No new features. No redesign. No integrations.
+
+Only fix:
+
+Dashboard stats
+
+Filters
+
+View/Edit
+
+Driver online/offline
+
+Vehicle categories
+
+RBAC over-blocking

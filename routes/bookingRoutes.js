@@ -8,6 +8,7 @@ const { rbacMiddleware, operatorRestrictions } = require('../middleware/rbacMidd
 
 router.get('/', authMiddleware, bookingController.getAllBookings);
 router.get('/:id', authMiddleware, bookingController.getBookingById);
+router.put('/:id', authMiddleware, rbacMiddleware(['admin', 'operator']), bookingController.updateBooking);
 router.post('/calculate-fare', bookingController.calculateFare);
 router.get('/available-vehicles', vehicleController.getAvailableVehicles);
 router.post('/create-booking', authMiddleware, rbacMiddleware(['admin', 'operator']), operatorRestrictions, bookingController.createBooking);
