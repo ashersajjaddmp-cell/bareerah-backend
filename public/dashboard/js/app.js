@@ -399,7 +399,7 @@ function exportBookings(format) {
   }).catch(e => console.error('Export error:', e));
 }
 
-function openAddBookingModal() {
+async function openAddBookingModal() {
   const modal = document.getElementById('addBookingModal');
   if (modal) {
     document.getElementById('bookingCustomerName').value = '';
@@ -416,7 +416,8 @@ function openAddBookingModal() {
     document.getElementById('bookingPayment').value = 'cash';
     modal.style.display = 'block';
     document.getElementById('modalOverlay').style.display = 'block';
-    loadVehiclesForModels();
+    await loadVehiclesForModels();
+    updateVehicleModels('sedan', 'bookingVehicleModel');
     setTimeout(() => initAddMapAutocomplete(), 100);
   }
 }
@@ -433,7 +434,6 @@ function initAddMapAutocomplete() {
     vehicleTypeSelect.addEventListener('change', () => {
       updateVehicleModels(vehicleTypeSelect.value, 'bookingVehicleModel');
     });
-    updateVehicleModels(vehicleTypeSelect.value, 'bookingVehicleModel');
   }
   
   if (pickupInput) {
