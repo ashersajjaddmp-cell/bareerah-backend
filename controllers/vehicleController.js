@@ -7,7 +7,7 @@ const vehicleController = {
       const vehicles = await vehicleService.getAvailableVehicles(type);
       res.json({
         success: true,
-        vehicles
+        data: vehicles
       });
     } catch (error) {
       next(error);
@@ -52,7 +52,7 @@ const vehicleController = {
       const vehicles = await Vehicle.getAll(type);
       res.json({
         success: true,
-        vehicles
+        data: vehicles
       });
     } catch (error) {
       next(error);

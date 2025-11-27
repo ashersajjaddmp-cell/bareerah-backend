@@ -27,11 +27,13 @@ const statsController = {
 
       res.json({
         success: true,
-        summary,
-        trend,
-        revenueByType,
-        driverStats,
-        period: { startDate, endDate }
+        data: {
+          summary,
+          trend,
+          revenueByType,
+          driverStats,
+          period: { startDate, endDate }
+        }
       });
     } catch (error) {
       next(error);
@@ -62,8 +64,10 @@ const statsController = {
 
       res.json({
         success: true,
-        bookings,
-        period: { startDate, endDate }
+        data: {
+          bookings,
+          period: { startDate, endDate }
+        }
       });
     } catch (error) {
       next(error);
