@@ -403,6 +403,7 @@ function openAddBookingModal() {
   const modal = document.getElementById('addBookingModal');
   if (modal) {
     document.getElementById('bookingCustomerName').value = '';
+    document.getElementById('bookingCustomerEmail').value = '';
     document.getElementById('bookingCustomerPhone').value = '';
     document.getElementById('bookingPickup').value = '';
     document.getElementById('bookingDropoff').value = '';
@@ -410,8 +411,12 @@ function openAddBookingModal() {
     document.getElementById('bookingPassengers').value = '1';
     document.getElementById('bookingLuggage').value = '0';
     document.getElementById('bookingType').value = 'point-to-point';
+    document.getElementById('bookingVehicleType').value = 'sedan';
+    document.getElementById('bookingVehicleModel').value = '';
+    document.getElementById('bookingPayment').value = 'cash';
     modal.style.display = 'block';
     document.getElementById('modalOverlay').style.display = 'block';
+    loadVehiclesForModels();
     setTimeout(() => initAddMapAutocomplete(), 100);
   }
 }
@@ -421,6 +426,14 @@ function initAddMapAutocomplete() {
   
   const pickupInput = document.getElementById('bookingPickup');
   const dropoffInput = document.getElementById('bookingDropoff');
+  const vehicleTypeSelect = document.getElementById('bookingVehicleType');
+  
+  // Vehicle type change handler
+  if (vehicleTypeSelect) {
+    vehicleTypeSelect.addEventListener('change', () => {
+      updateVehicleModels(vehicleTypeSelect.value);
+    });
+  }
   
   if (pickupInput) {
     const pickupAuto = new google.maps.places.Autocomplete(pickupInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
@@ -435,7 +448,7 @@ function initAddMapAutocomplete() {
         service.getPlacePredictions({ input: pickupInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
           const suggestionsDiv = document.getElementById('addPickupSuggestions');
           if (suggestionsDiv && predictions) {
-            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocation(\'bookingPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
+            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocationBooking(\'bookingPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
             suggestionsDiv.style.display = 'block';
           }
         });
@@ -458,7 +471,7 @@ function initAddMapAutocomplete() {
         service.getPlacePredictions({ input: dropoffInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
           const suggestionsDiv = document.getElementById('addDropoffSuggestions');
           if (suggestionsDiv && predictions) {
-            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocation(\'bookingDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
+            suggestionsDiv.innerHTML = predictions.map(p => '<div style="padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocationBooking(\'bookingDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')">' + p.description + '</div>').join('');
             suggestionsDiv.style.display = 'block';
           }
         });
@@ -467,6 +480,12 @@ function initAddMapAutocomplete() {
       }
     });
   }
+}
+
+function setLocationBooking(fieldId, location) {
+  document.getElementById(fieldId).value = location;
+  const suggestionId = fieldId === 'bookingPickup' ? 'addPickupSuggestions' : 'addDropoffSuggestions';
+  document.getElementById(suggestionId).style.display = 'none';
 }
 
 function createManualBooking() {
@@ -479,20 +498,30 @@ function createManualBooking() {
     },
     body: JSON.stringify({
       customer_name: document.getElementById('bookingCustomerName').value,
+      customer_email: document.getElementById('bookingCustomerEmail').value,
       customer_phone: document.getElementById('bookingCustomerPhone').value,
       pickup_location: document.getElementById('bookingPickup').value,
       dropoff_location: document.getElementById('bookingDropoff').value,
       distance_km: parseFloat(document.getElementById('bookingDistance').value) || 0,
       passengers_count: parseInt(document.getElementById('bookingPassengers').value) || 1,
       luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
-      booking_type: document.getElementById('bookingType').value || 'point-to-point'
+      booking_type: document.getElementById('bookingType').value || 'point-to-point',
+      vehicle_type: document.getElementById('bookingVehicleType').value || 'sedan',
+      vehicle_model: document.getElementById('bookingVehicleModel').value,
+      payment_method: document.getElementById('bookingPayment').value || 'cash'
     })
   }).then(r => r.json()).then(d => {
     if (d.success) {
+      alert('Booking created successfully!');
       closeModal('addBookingModal');
       loadBookings();
+    } else {
+      alert('Error: ' + (d.error || 'Failed to create booking'));
     }
-  }).catch(e => console.log(e));
+  }).catch(e => {
+    alert('Error: ' + e.message);
+    console.error(e);
+  });
 }
 
 function closeModal(modalId) {
