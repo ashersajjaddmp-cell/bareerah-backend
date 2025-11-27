@@ -37,6 +37,9 @@ function setupLocationAutocomplete(inputId, suggestionsId) {
   const suggestionsDiv = document.getElementById(suggestionsId);
   if (!input || !suggestionsDiv) return;
   
+  // Set container background to solid white
+  suggestionsDiv.style.background = '#ffffff';
+  
   input.addEventListener('input', (e) => {
     const value = e.target.value.toLowerCase();
     if (value.length < 2) {
@@ -46,7 +49,7 @@ function setupLocationAutocomplete(inputId, suggestionsId) {
     const matches = DUBAI_LOCATIONS.filter(loc => loc.toLowerCase().includes(value));
     if (matches.length > 0) {
       suggestionsDiv.innerHTML = matches.slice(0, 8).map((loc) => 
-        `<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='var(--bg-primary)'" onclick="setLocationAuto('${inputId}', '${loc}', '${suggestionsId}')">${loc}</div>`
+        `<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid #e5e7eb; background: #ffffff; color: #1f2937; font-size: 13px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#ffffff'" onclick="setLocationAuto('${inputId}', '${loc}', '${suggestionsId}')">${loc}</div>`
       ).join('');
       suggestionsDiv.style.display = 'block';
     } else {
