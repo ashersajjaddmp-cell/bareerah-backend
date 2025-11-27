@@ -698,48 +698,30 @@ async function initEditMapAutocomplete() {
   }
   
   if (pickupInput) {
-    // Use ONLY custom suggestions - don't create Google's Autocomplete UI
-    pickupInput.addEventListener('input', () => {
-      if (pickupInput.value.length > 2) {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions({ input: pickupInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
-          const suggestionsDiv = document.getElementById('pickupSuggestions');
-          if (suggestionsDiv && predictions && predictions.length > 0) {
-            suggestionsDiv.innerHTML = predictions.map((p, idx) => '<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocation(\'editPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')" key="' + idx + '">' + p.description + '</div>').join('');
-            suggestionsDiv.style.display = 'block';
-          }
-        });
-      } else {
-        document.getElementById('pickupSuggestions').style.display = 'none';
-      }
-    });
+    // Create Autocomplete to get place details
+    const pickupAuto = new google.maps.places.Autocomplete(pickupInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
     
-    // Prevent default autocomplete on Enter
-    pickupInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') e.preventDefault();
+    pickupAuto.addListener('place_changed', () => {
+      const place = pickupAuto.getPlace();
+      if (place && place.formatted_address) {
+        pickupInput.value = place.formatted_address;
+        document.getElementById('pickupSuggestions').style.display = 'none';
+        setTimeout(() => calculateDistanceAndFare(), 100);
+      }
     });
   }
   
   if (dropoffInput) {
-    // Use ONLY custom suggestions - don't create Google's Autocomplete UI
-    dropoffInput.addEventListener('input', () => {
-      if (dropoffInput.value.length > 2) {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions({ input: dropoffInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
-          const suggestionsDiv = document.getElementById('dropoffSuggestions');
-          if (suggestionsDiv && predictions && predictions.length > 0) {
-            suggestionsDiv.innerHTML = predictions.map((p, idx) => '<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocation(\'editDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')" key="' + idx + '">' + p.description + '</div>').join('');
-            suggestionsDiv.style.display = 'block';
-          }
-        });
-      } else {
-        document.getElementById('dropoffSuggestions').style.display = 'none';
-      }
-    });
+    // Create Autocomplete to get place details
+    const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput, { types: ['geocode'], componentRestrictions: { country: 'ae' } });
     
-    // Prevent default autocomplete on Enter
-    dropoffInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') e.preventDefault();
+    dropoffAuto.addListener('place_changed', () => {
+      const place = dropoffAuto.getPlace();
+      if (place && place.formatted_address) {
+        dropoffInput.value = place.formatted_address;
+        document.getElementById('dropoffSuggestions').style.display = 'none';
+        setTimeout(() => calculateDistanceAndFare(), 100);
+      }
     });
   }
 }
