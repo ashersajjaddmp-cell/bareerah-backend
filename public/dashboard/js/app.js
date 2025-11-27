@@ -2,9 +2,65 @@
 let currentRange = 'today';
 const API_BASE = window.location.origin + '/api';
 
+// Dubai Locations for Autocomplete (No API Key Issues)
+const DUBAI_LOCATIONS = [
+  'Dubai Marina',
+  'Dubai Marina Mall',
+  'Burj Khalifa',
+  'Downtown Dubai',
+  'Dubai Mall',
+  'Palm Jumeirah',
+  'Jumeirah Beach',
+  'Arabian Ranches',
+  'Business Bay',
+  'Deira',
+  'Bur Dubai',
+  'Al Baraha',
+  'Sheikh Zayed Road',
+  'Emirates Hills',
+  'Motor City',
+  'Dubai Sports City',
+  'Dubai Investment Park',
+  'Dubai Silicon Oasis',
+  'Dubai Internet City',
+  'Jebel Ali'
+];
+
 // Cache busting utility
 function getCacheBustUrl(url) {
   return url + (url.indexOf('?') > -1 ? '&' : '?') + 't=' + Date.now();
+}
+
+// Simple Location Autocomplete - Works Without API Key Issues
+function setupLocationAutocomplete(inputId, suggestionsId) {
+  const input = document.getElementById(inputId);
+  const suggestionsDiv = document.getElementById(suggestionsId);
+  if (!input || !suggestionsDiv) return;
+  
+  input.addEventListener('input', (e) => {
+    const value = e.target.value.toLowerCase();
+    if (value.length < 2) {
+      suggestionsDiv.style.display = 'none';
+      return;
+    }
+    const matches = DUBAI_LOCATIONS.filter(loc => loc.toLowerCase().includes(value));
+    if (matches.length > 0) {
+      suggestionsDiv.innerHTML = matches.slice(0, 8).map((loc) => 
+        `<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='var(--bg-primary)'" onclick="setLocationAuto('${inputId}', '${loc}', '${suggestionsId}')">${loc}</div>`
+      ).join('');
+      suggestionsDiv.style.display = 'block';
+    } else {
+      suggestionsDiv.style.display = 'none';
+    }
+  });
+}
+
+function setLocationAuto(inputId, location, suggestionsId) {
+  document.getElementById(inputId).value = location;
+  document.getElementById(suggestionsId).style.display = 'none';
+  if (inputId.includes('edit') || inputId.includes('booking')) {
+    setTimeout(() => calculateDistanceAndFare?.(), 100);
+  }
 }
 
 // Auth
@@ -423,52 +479,18 @@ async function openAddBookingModal() {
 }
 
 function initAddMapAutocomplete() {
-  if (typeof google === 'undefined') return;
-  
-  const pickupInput = document.getElementById('bookingPickup');
-  const dropoffInput = document.getElementById('bookingDropoff');
   const vehicleTypeSelect = document.getElementById('bookingVehicleType');
   
-  // Vehicle type change handler - populate models dropdown
+  // Vehicle type change handler
   if (vehicleTypeSelect) {
     vehicleTypeSelect.addEventListener('change', () => {
       updateVehicleModels(vehicleTypeSelect.value, 'bookingVehicleModel');
     });
   }
   
-  if (pickupInput) {
-    pickupInput.addEventListener('input', () => {
-      if (pickupInput.value.length > 2) {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions({ input: pickupInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
-          const suggestionsDiv = document.getElementById('addPickupSuggestions');
-          if (suggestionsDiv && predictions && predictions.length > 0) {
-            suggestionsDiv.innerHTML = predictions.map((p, idx) => '<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocationBooking(\'bookingPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')" key="' + idx + '">' + p.description + '</div>').join('');
-            suggestionsDiv.style.display = 'block';
-          }
-        });
-      } else {
-        document.getElementById('addPickupSuggestions').style.display = 'none';
-      }
-    });
-  }
-  
-  if (dropoffInput) {
-    dropoffInput.addEventListener('input', () => {
-      if (dropoffInput.value.length > 2) {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions({ input: dropoffInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
-          const suggestionsDiv = document.getElementById('addDropoffSuggestions');
-          if (suggestionsDiv && predictions && predictions.length > 0) {
-            suggestionsDiv.innerHTML = predictions.map((p, idx) => '<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocationBooking(\'bookingDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')" key="' + idx + '">' + p.description + '</div>').join('');
-            suggestionsDiv.style.display = 'block';
-          }
-        });
-      } else {
-        document.getElementById('addDropoffSuggestions').style.display = 'none';
-      }
-    });
-  }
+  // Setup location autocomplete
+  setupLocationAutocomplete('bookingPickup', 'addPickupSuggestions');
+  setupLocationAutocomplete('bookingDropoff', 'addDropoffSuggestions');
 }
 
 function setLocationBooking(fieldId, location) {
@@ -656,16 +678,12 @@ function saveBookingChanges(e) {
 }
 
 async function initEditMapAutocomplete() {
-  if (typeof google === 'undefined') return;
-  
-  const pickupInput = document.getElementById('editPickup');
-  const dropoffInput = document.getElementById('editDropoff');
   const vehicleTypeSelect = document.getElementById('editVehicleType');
   
-  // Load all vehicles for model selection - WAIT for data
+  // Load all vehicles - WAIT for data
   await loadVehiclesForModels();
   
-  // Vehicle type change handler - update models dropdown
+  // Vehicle type change handler
   if (vehicleTypeSelect) {
     vehicleTypeSelect.addEventListener('change', () => {
       updateVehicleModels(vehicleTypeSelect.value, 'editVehicleModel');
@@ -673,39 +691,9 @@ async function initEditMapAutocomplete() {
     updateVehicleModels(vehicleTypeSelect.value, 'editVehicleModel');
   }
   
-  if (pickupInput) {
-    pickupInput.addEventListener('input', () => {
-      if (pickupInput.value.length > 2) {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions({ input: pickupInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
-          const suggestionsDiv = document.getElementById('pickupSuggestions');
-          if (suggestionsDiv && predictions && predictions.length > 0) {
-            suggestionsDiv.innerHTML = predictions.map((p, idx) => '<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocation(\'editPickup\', \'' + p.description.replace(/'/g, "\\'") + '\')" key="' + idx + '">' + p.description + '</div>').join('');
-            suggestionsDiv.style.display = 'block';
-          }
-        });
-      } else {
-        document.getElementById('pickupSuggestions').style.display = 'none';
-      }
-    });
-  }
-  
-  if (dropoffInput) {
-    dropoffInput.addEventListener('input', () => {
-      if (dropoffInput.value.length > 2) {
-        const service = new google.maps.places.AutocompleteService();
-        service.getPlacePredictions({ input: dropoffInput.value, componentRestrictions: { country: 'ae' } }, (predictions, status) => {
-          const suggestionsDiv = document.getElementById('dropoffSuggestions');
-          if (suggestionsDiv && predictions && predictions.length > 0) {
-            suggestionsDiv.innerHTML = predictions.map((p, idx) => '<div style="padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); background: var(--bg-primary); color: var(--text); font-size: 13px;" onmouseover="this.style.background=\'var(--bg-secondary)\'" onmouseout="this.style.background=\'var(--bg-primary)\'" onclick="setLocation(\'editDropoff\', \'' + p.description.replace(/'/g, "\\'") + '\')" key="' + idx + '">' + p.description + '</div>').join('');
-            suggestionsDiv.style.display = 'block';
-          }
-        });
-      } else {
-        document.getElementById('dropoffSuggestions').style.display = 'none';
-      }
-    });
-  }
+  // Setup location autocomplete
+  setupLocationAutocomplete('editPickup', 'pickupSuggestions');
+  setupLocationAutocomplete('editDropoff', 'dropoffSuggestions');
 }
 
 let vehiclesList = [];
