@@ -1354,31 +1354,31 @@ function updateVehicleModels(vehicleType, targetId = 'editVehicleModel') {
   }
 }
 
-// UAE Location Distance Map - More Accurate
+// UAE Location Distance Map - Coordinates scaled to real distances
 const locationDistances = {
-  'Burj Khalifa': { x: 10, y: 8 },
-  'Dubai Mall': { x: 10, y: 8 },
-  'Zabeel Park': { x: 10.5, y: 10 },
-  'Downtown Dubai': { x: 10, y: 8 },
-  'Marina': { x: 8, y: 12 },
-  'Palm Jumeirah': { x: 6, y: 14 },
-  'Atlantis': { x: 5, y: 16 },
-  'Jebel Ali': { x: 15, y: 18 },
-  'Dubai Airport': { x: 15, y: 5 },
-  'Deira': { x: 12, y: 6 },
-  'Bur Dubai': { x: 11, y: 7 },
-  'Sheikh Zayed Road': { x: 9, y: 10 },
-  'JBR': { x: 7, y: 11 },
-  'Arabian Ranches': { x: 9, y: 20 },
-  'Emirates Hills': { x: 7, y: 22 },
-  'Jumeirah Golf Estate': { x: 5, y: 19 },
-  'Sharjah Airport': { x: 25, y: 8 },
-  'Sharjah': { x: 25, y: 10 },
-  'Ajman': { x: 35, y: 8 },
-  'Abu Dhabi': { x: 8, y: -100 },
-  'RAK': { x: 60, y: 80 },
-  'Fujairah': { x: 80, y: 40 },
-  'Umm Al Quwain': { x: 50, y: 15 }
+  'Burj Khalifa': { x: 30, y: 25 },
+  'Dubai Mall': { x: 30, y: 25 },
+  'Zabeel Park': { x: 32, y: 30 },
+  'Downtown Dubai': { x: 30, y: 25 },
+  'Marina': { x: 25, y: 38 },
+  'Palm Jumeirah': { x: 18, y: 42 },
+  'Atlantis': { x: 15, y: 48 },
+  'Jebel Ali': { x: 45, y: 55 },
+  'Dubai Airport': { x: 45, y: 15 },
+  'Deira': { x: 36, y: 18 },
+  'Bur Dubai': { x: 33, y: 21 },
+  'Sheikh Zayed Road': { x: 27, y: 32 },
+  'JBR': { x: 21, y: 35 },
+  'Arabian Ranches': { x: 27, y: 62 },
+  'Emirates Hills': { x: 21, y: 68 },
+  'Jumeirah Golf Estate': { x: 15, y: 58 },
+  'Sharjah Airport': { x: 70, y: 25 },
+  'Sharjah': { x: 75, y: 32 },
+  'Ajman': { x: 100, y: 28 },
+  'Abu Dhabi': { x: 25, y: -285 },
+  'RAK': { x: 180, y: 240 },
+  'Fujairah': { x: 240, y: 120 },
+  'Umm Al Quwain': { x: 150, y: 45 }
 };
 
 function estimateDistance(pickup, dropoff) {
@@ -1402,7 +1402,7 @@ function estimateDistance(pickup, dropoff) {
     const dx = pickupCoords.x - dropoffCoords.x;
     const dy = pickupCoords.y - dropoffCoords.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    return Math.max(2, Math.round(distance * 1.2 * 10) / 10); // Add 20% for actual road distance
+    return Math.max(2, Math.round(distance * 0.8 * 10) / 10); // Adjust for actual road distance
   }
   
   // Fallback: reasonable city distance
