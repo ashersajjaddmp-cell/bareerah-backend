@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const { query } = require('./config/db');
 const { PORT } = require('./config/env');
 const errorHandler = require('./middleware/errorHandler');
@@ -18,6 +19,36 @@ const ratingRoutes = require('./routes/ratingRoutes');
 const fareRuleRoutes = require('./routes/fareRuleRoutes');
 
 const app = express();
+
+// CORS Configuration - Allow Replit preview and local development
+app.use(cors({
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5000',
+      'http://127.0.0.1:5000',
+      'http://0.0.0.0:5000',
+      'http://localhost:8000',
+      'http://127.0.0.1:8000',
+      'http://0.0.0.0:8000'
+    ];
+    
+    // Allow requests from Replit preview (any subdomain)
+    if (origin && origin.includes('replit.dev')) {
+      callback(null, true);
+      return;
+    }
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now to debug
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
+}));
 
 app.use(express.json());
 
