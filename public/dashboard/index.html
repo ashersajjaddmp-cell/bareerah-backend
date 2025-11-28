@@ -706,6 +706,38 @@
     </div>
   </div>
 
+  <!-- Edit Fare Rule Modal -->
+  <div id="editFareRuleModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Fare Rule</h3>
+        <button class="modal-close" onclick="closeModal('editFareRuleModal')">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="editFareRuleForm" style="display: grid; gap: 15px;">
+          <input type="hidden" id="editFareRuleType">
+          <div class="form-group">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Vehicle Type</label>
+            <div id="editFareRuleTypeDisplay" style="padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; font-weight: 500;"></div>
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 600;">Base Fare (AED)</label>
+            <input type="number" id="editFareRuleBase" step="0.01" min="0" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 1em;" required>
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 600;">Per KM Rate (AED)</label>
+            <input type="number" id="editFareRulePerKm" step="0.01" min="0" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 1em;" required>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 13px; margin: 10px 0;">Changes apply only to new bookings created after this update.</p>
+        </form>
+      </div>
+      <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end;">
+        <button onclick="closeModal('editFareRuleModal')" class="btn" style="background: var(--bg-secondary);">Cancel</button>
+        <button onclick="saveFareRuleChanges()" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Driver View Modal -->
   <div id="driverViewModal" class="modal" style="display: none;">
     <div class="modal-content">

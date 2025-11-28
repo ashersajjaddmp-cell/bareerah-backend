@@ -1653,11 +1653,27 @@ async function loadFareRules() {
 }
 
 function editFareRule(type, baseFare, perKmRate) {
-  const newBase = prompt('Enter new Base Fare (AED):', baseFare);
-  if (newBase === null) return;
+  const typeLabel = type.replace(/_/g, ' ').toUpperCase();
+  document.getElementById('editFareRuleType').value = type;
+  document.getElementById('editFareRuleTypeDisplay').textContent = typeLabel;
+  document.getElementById('editFareRuleBase').value = baseFare;
+  document.getElementById('editFareRulePerKm').value = perKmRate;
   
-  const newRate = prompt('Enter new Per KM Rate (AED):', perKmRate);
-  if (newRate === null) return;
+  const modal = document.getElementById('editFareRuleModal');
+  const overlay = document.getElementById('modalOverlay');
+  if (modal) modal.style.display = 'block';
+  if (overlay) overlay.style.display = 'block';
+}
+
+function saveFareRuleChanges() {
+  const type = document.getElementById('editFareRuleType').value;
+  const baseFare = parseFloat(document.getElementById('editFareRuleBase').value);
+  const perKmRate = parseFloat(document.getElementById('editFareRulePerKm').value);
+  
+  if (!baseFare && baseFare !== 0 || !perKmRate && perKmRate !== 0) {
+    alert('Please enter valid values for both fields');
+    return;
+  }
   
   fetch(API_BASE + '/fare-rules/' + type, {
     method: 'PUT',
@@ -1666,14 +1682,15 @@ function editFareRule(type, baseFare, perKmRate) {
       'Authorization': 'Bearer ' + localStorage.getItem('token')
     },
     body: JSON.stringify({
-      base_fare: parseFloat(newBase),
-      per_km_rate: parseFloat(newRate)
+      base_fare: baseFare,
+      per_km_rate: perKmRate
     })
   })
     .then(r => r.json())
     .then(d => {
       if (d.success) {
-        alert('Fare rule updated! Changes apply to new bookings.');
+        closeModal('editFareRuleModal');
+        alert('✅ Fare rule updated! Changes apply to new bookings.');
         loadFareRules();
       } else {
         alert('Error: ' + (d.error || 'Update failed'));
