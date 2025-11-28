@@ -744,41 +744,33 @@ async function loadDrivers(status = null, targetTableId = 'drivers-table-body') 
 }
 
 function editDriver(id) {
-  console.log('editDriver called with id:', id);
   const url = getCacheBustUrl(API_BASE + '/drivers/' + id);
-  console.log('Fetching from:', url);
   fetch(url, {
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
   })
   .then(r => {
-    console.log('Response status:', r.status);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
   .then(d => {
-    console.log('Driver data received:', d);
-    if (d.data) {
+    // API returns {success:true, driver:{...}}
+    const driver = d.driver || d.data;
+    if (driver) {
       const modal = document.getElementById('driverEditModal');
-      console.log('Modal element:', modal);
       if (modal) {
-        document.getElementById('driverEditId').value = d.data.id;
-        document.getElementById('driverName').value = d.data.name || '';
-        document.getElementById('driverPhone').value = d.data.phone || '';
-        document.getElementById('driverEmail').value = d.data.email || '';
-        document.getElementById('driverStatus').value = d.data.status || 'offline';
+        document.getElementById('driverEditId').value = driver.id;
+        document.getElementById('driverName').value = driver.name || '';
+        document.getElementById('driverPhone').value = driver.phone || '';
+        document.getElementById('driverEmail').value = driver.email || '';
+        document.getElementById('driverStatus').value = driver.status || 'offline';
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
-        console.log('Modal opened successfully');
-      } else {
-        console.error('Modal element not found!');
       }
-    } else {
-      console.error('No data in response');
     }
   })
   .catch(e => {
     console.error('Edit driver error:', e);
-    alert('Error loading driver details: ' + e.message);
+    alert('Error loading driver details');
   });
 }
 
@@ -1068,42 +1060,34 @@ function closeModal(modalId) {
 
 // View Driver
 function viewDriver(id) {
-  console.log('viewDriver called with id:', id);
   const url = getCacheBustUrl(API_BASE + '/drivers/' + id);
-  console.log('Fetching from:', url);
   fetch(url, {
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
   })
   .then(r => {
-    console.log('Response status:', r.status);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
   .then(d => {
-    console.log('Driver data received:', d);
-    if (d.data) {
+    // API returns {success:true, driver:{...}} 
+    const driver = d.driver || d.data;
+    if (driver) {
       const modal = document.getElementById('driverViewModal');
-      console.log('Modal element:', modal);
       if (modal) {
-        document.getElementById('driverViewId').value = d.data.id || '';
-        document.getElementById('driverViewName').value = d.data.name || '';
-        document.getElementById('driverViewPhone').value = d.data.phone || '';
-        document.getElementById('driverViewStatus').value = (d.data.status || 'offline').toUpperCase();
-        document.getElementById('driverViewEmail').value = d.data.email || '';
-        document.getElementById('driverViewLicense').value = d.data.license_number || '';
+        document.getElementById('driverViewId').value = driver.id || '';
+        document.getElementById('driverViewName').value = driver.name || '';
+        document.getElementById('driverViewPhone').value = driver.phone || '';
+        document.getElementById('driverViewStatus').value = (driver.status || 'offline').toUpperCase();
+        document.getElementById('driverViewEmail').value = driver.email || '';
+        document.getElementById('driverViewLicense').value = driver.license_number || '';
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
-        console.log('Modal opened successfully');
-      } else {
-        console.error('Modal element not found!');
       }
-    } else {
-      console.error('No data in response');
     }
   })
   .catch(e => {
     console.error('View driver error:', e);
-    alert('Error loading driver details: ' + e.message);
+    alert('Error loading driver details');
   });
 }
 
