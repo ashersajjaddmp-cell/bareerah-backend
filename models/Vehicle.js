@@ -76,18 +76,60 @@ const Vehicle = {
   },
 
   /**
-   * Get cheapest vehicle matching criteria
+   * Get cheapest vehicle - COMPANY PRIORITY then VENDOR
    * @param {number} passengers - passenger count
    * @param {number} luggage - luggage amount
    * @returns {object} cheapest eligible vehicle
    */
   async findCheapestEligible(passengers = 1, luggage = 0) {
-    const vehicles = await this.findAvailableByCapacity(passengers, luggage);
-    if (vehicles.length === 0) {
-      return null;
+    // STEP 1: Try company vehicles FIRST (vendor_id IS NULL)
+    const companyResult = await query(`
+      SELECT v.*, 
+             d.name as driver_name, 
+             d.phone as driver_phone,
+             d.email as driver_email,
+             'company' as vehicle_source
+      FROM vehicles v
+      LEFT JOIN drivers d ON v.driver_id = d.id
+      WHERE v.max_passengers >= $1 
+            AND v.max_luggage >= $2
+            AND v.status = 'available'
+            AND v.vendor_id IS NULL
+      ORDER BY v.per_km_price ASC, v.hourly_price ASC
+      LIMIT 1
+    `, [passengers, luggage]);
+    
+    if (companyResult.rows.length > 0) {
+      return companyResult.rows[0];
     }
-    // Already sorted by per_km_price, so first is cheapest
-    return vehicles[0];
+
+    // STEP 2: If no company vehicles, try APPROVED vendor vehicles (NOT disabled)
+    const vendorResult = await query(`
+      SELECT v.*, 
+             d.name as driver_name, 
+             d.phone as driver_phone,
+             d.email as driver_email,
+             vn.name as vendor_name,
+             'vendor' as vehicle_source
+      FROM vehicles v
+      LEFT JOIN drivers d ON v.driver_id = d.id
+      LEFT JOIN vendors vn ON v.vendor_id = vn.id
+      WHERE v.max_passengers >= $1 
+            AND v.max_luggage >= $2
+            AND v.status = 'available'
+            AND v.vendor_id IS NOT NULL
+            AND vn.status = 'approved'
+            AND vn.auto_assign_disabled = false
+      ORDER BY v.per_km_price ASC, v.hourly_price ASC
+      LIMIT 1
+    `, [passengers, luggage]);
+    
+    if (vendorResult.rows.length > 0) {
+      return vendorResult.rows[0];
+    }
+
+    // STEP 3: No vehicles available
+    return null;
   },
 
   async updateStatus(id, status) {

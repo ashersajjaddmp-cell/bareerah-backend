@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/env');
 const vendorController = require('../controllers/vendorController');
 const authMiddleware = require('../middleware/authMiddleware');
+const { rbacMiddleware } = require('../middleware/rbacMiddleware');
 
 // Vendor login endpoint
 router.post('/login', (req, res) => {
@@ -34,10 +35,15 @@ router.post('/login', (req, res) => {
   }
 });
 
-// Vendor portal routes (protected)
-router.get('/', authMiddleware, vendorController.getAllVendors);
+// Admin routes (protected)
+router.get('/', authMiddleware, rbacMiddleware(['admin']), vendorController.getAllVendors);
+router.get('/status/:status', authMiddleware, rbacMiddleware(['admin']), vendorController.getVendorsByStatus);
 router.get('/:id', authMiddleware, vendorController.getVendorById);
-router.post('/', authMiddleware, vendorController.createVendor);
+router.post('/', authMiddleware, rbacMiddleware(['admin']), vendorController.createVendor);
+router.post('/:id/approve', authMiddleware, rbacMiddleware(['admin']), vendorController.approveVendor);
+router.post('/:id/reject', authMiddleware, rbacMiddleware(['admin']), vendorController.rejectVendor);
+router.post('/:id/toggle-auto-assign', authMiddleware, rbacMiddleware(['admin']), vendorController.toggleAutoAssign);
+router.get('/:vendor_id/bookings', authMiddleware, vendorController.getVendorBookings);
 router.get('/:id/drivers', authMiddleware, vendorController.getVendorDrivers);
 
 module.exports = router;

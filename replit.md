@@ -1,6 +1,6 @@
 # Overview
 
-This project is a production-ready Node.js backend application for a comprehensive taxi/ride booking service. It features an admin dashboard, vendor portal, and driver portal, enabling end-to-end management of ride operations. Key capabilities include sophisticated fare calculation for various booking types (point-to-point, hourly rentals) and vehicle categories (sedan, SUV, luxury, van, bus, mini bus). The system provides RESTful APIs for managing bookings, drivers, and vehicles, alongside JWT authentication, an advanced analytics dashboard, robust reporting features, and email integration. The business vision is to provide a stable, scalable, and feature-rich platform for ride-hailing services, ready for market deployment and expansion.
+This project is a production-ready Node.js backend application for a comprehensive taxi/ride booking service with **full Vendor Management** system. It features an admin dashboard, vendor portal, and driver portal, enabling end-to-end management of ride operations. Key capabilities include sophisticated fare calculation for various booking types (point-to-point, hourly rentals) and vehicle categories (sedan, SUV, luxury, van, bus, mini bus). The system provides RESTful APIs for managing bookings, drivers, and vehicles, alongside JWT authentication, an advanced analytics dashboard, robust reporting features, and email integration. The business vision is to provide a stable, scalable, and feature-rich platform for ride-hailing services, ready for market deployment and expansion.
 
 # User Preferences
 
@@ -11,6 +11,39 @@ Preferred communication style: Simple, everyday language. All features delivered
 
 The application is built on a complete MVC (Model-View-Controller) architecture using Express.js (v5.1.0). It runs on port 8000 and uses JWT-based authentication with Role-Based Access Control (RBAC) for admin, operator, vendor, and driver roles.
 
+## Recent Changes (2025-11-28)
+
+### ✅ VENDOR MANAGEMENT MODULE IMPLEMENTED
+- **Database**: Added `auto_assign_disabled` column to vendors table for admin control
+- **Backend Vendor Model**: New methods for approve/reject/toggle auto-assignment
+- **Vendor Controller**: Enhanced with approval workflows, status filtering, vendor statistics
+- **Vendor Routes**: Added admin-protected endpoints for vendor management
+- **Smart Auto-Assignment Logic**: 
+  - STEP 1: Company vehicles (vendor_id IS NULL) - **Priority**
+  - STEP 2: Approved vendor vehicles (auto_assign_disabled = false)
+  - STEP 3: No vehicles - return null
+
+### 🔄 Auto-Assignment Flow (After Bareerah Booking)
+```
+Booking Created by Bareerah
+    ↓
+Check Company Vehicles (vendor_id = NULL) - Available?
+    ├─ YES → Assign company vehicle ✅
+    │
+    └─ NO → Check Approved Vendor Vehicles (status='approved', auto_assign_disabled=false)
+        ├─ YES → Assign vendor vehicle ✅ (Vendor gets booking + earnings)
+        │
+        └─ NO → Unassigned (Admin manual assignment needed)
+             → Admin receives notification ✅
+```
+
+### 📊 Admin Control Features
+- Approve/Reject new vendor requests
+- View all vendors with fleet summary & earnings
+- Toggle auto-assignment on/off for any approved vendor
+- When disabled: That vendor's vehicles never auto-assigned
+- Full vendor statistics (total bookings, earnings, pending payouts)
+
 ## UI/UX Decisions
 - Admin Dashboard: Features real-time statistics, booking management, driver/vehicle oversight, and KPI tracking. Includes view/edit modals and CSV export functionality.
 - Vendor Portal: Provides vendor-specific login, signup, and a dashboard to track earnings.
@@ -20,34 +53,75 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
 
 ## Technical Implementations
 - **Core Logic**: Dynamic fare calculation based on distance, time, and vehicle type. Fare rules are admin-editable and stored in database.
-- **Booking Assignment**: Automatic driver-vehicle tagging and assignment based on `assigned_vehicle_id` and vehicle's `driver_id`. Manual override for vehicle selection in admin.
-- **Notification System**: Checkboxes for customer (WhatsApp, Email) and driver (WhatsApp, Email) notifications, with selections collected for future integration.
+- **Booking Assignment**: Automatic driver-vehicle tagging and assignment based on `assigned_vehicle_id` and vehicle's `driver_id`. Manual override for vehicle selection in admin. **NEW: Smart vendor vehicle assignment with approval checks**.
+- **Notification System**: Checkboxes for customer (WhatsApp, Email) and driver (WhatsApp, Email) notifications, with selections collected for future integration. Works seamlessly with vendor vehicle assignments.
 - **Location Management**: Integrated 400+ UAE locations across all 7 emirates, supporting inter-emirate bookings.
-- **Database Stability**: Enhanced connection pool (20 connections), increased connection timeout (10000ms), and idle timeout (45000ms) to ensure robustness.
+- **Database Stability**: Enhanced connection pool (30 connections), increased connection timeout (30000ms), and idle timeout (60000ms) to ensure robustness.
 - **API Standardization**: All API endpoints return consistent `{"success":true,"data":...}` format.
 - **Caching**: Cache-busting implemented for all API calls to prevent stale data.
 - **Error Handling**: Comprehensive error handling with logging and user-friendly messages.
-- **Validation**: Passenger/luggage validation is mandatory for booking creation.
+- **Validation**: Passenger/luggage validation is mandatory for booking creation. Capacity checked against vehicle specs.
 - **Fare Rules Management**: Database-driven fare rules with admin UI for editing. 7 vehicle categories with configurable base fare and per-km rates.
-- **Vehicle Categories**: Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, and Mini Bus with 14 demo vehicles uploaded.
+- **Vehicle Categories**: Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, and Mini Bus with 30+ vehicles across company and vendor pools.
+- **Vendor Management**: Full vendor lifecycle - signup → pending → approval/rejection → auto-assignment control.
 
 ## Feature Specifications
-- **Admin Dashboard**:
-    - Real stats display (bookings, revenue, etc.).
-    - Comprehensive bookings, drivers, and vehicles tabs.
-    - KPI & Profits tab with real calculations.
-    - Export bookings as CSV.
-    - **NEW: Fare Rules Management Tab** - Admin can view and edit fare rules by vehicle category. Changes apply only to new bookings.
-- **Vendor & Driver Portal**: Dedicated dashboards for vendors and drivers.
-- **Booking Management**: Create, view, edit bookings; calculate fares dynamically from DB. Edit access for bookings is status-based (locked for `in_progress` and `completed`).
-- **Vehicle Management**: Capacity logic for vehicles, filtering based on passengers and luggage. 14 new vehicles across 7 categories now available.
-- **Statistics**: Dashboard stats persist after refresh, with customizable date ranges.
-- **Drivers Tab**: Shows "Car Assigned" column with vehicle model and plate number for tagged drivers.
+
+### Admin Dashboard
+- Real stats display (bookings, revenue, etc.).
+- Comprehensive bookings, drivers, and vehicles tabs.
+- KPI & Profits tab with real calculations.
+- Export bookings as CSV.
+- Fare Rules Management Tab - Admin can view and edit fare rules.
+- **NEW: Vendors Tab** - List all vendors, approve/reject, view fleet & earnings, toggle auto-assignment.
+
+### Vendor Management
+- **Vendor Registration**: Submit company info, bank details, logo → auto-saved as "pending"
+- **Admin Approval**: Review vendor → Approve/Reject (with reason)
+- **Approved Vendors**: Can login to vendor dashboard
+- **Auto-Assignment Control**: Admin can disable vendor from auto-assignment (all their vehicles removed from booking pool)
+- **Vendor Statistics**: Total vehicles, completed bookings, total earnings, pending payouts
+
+### Vendor & Driver Portal
+- Dedicated dashboards for vendors and drivers.
+
+### Booking Management
+- Create, view, edit bookings; calculate fares dynamically from DB. Edit access for bookings is status-based (locked for `in_progress` and `completed`).
+- **NEW: Vendor bookings auto-assigned from Bareerah** when company vehicles full.
+- **NEW: Notifications work seamlessly** - customer, driver, vendor, admin all notified appropriately.
+
+### Vehicle Management
+- Capacity logic for vehicles, filtering based on passengers and luggage.
+- **NEW: Smart vehicle selection** - Company priority, then vendor if available.
+- **NEW: Vendor vehicle pool** - Approved vendor vehicles included in auto-assignment.
+
+### Statistics
+- Dashboard stats persist after refresh, with customizable date ranges.
+- **NEW: Vendor statistics** - Earnings, payouts, completed bookings tracked automatically.
+
+### Drivers Tab
+- Shows "Car Assigned" column with vehicle model and plate number for tagged drivers.
 
 ## System Design Choices
-- **Database Schema**: Optimized `bookings`, `vehicles`, `drivers`, and `vendors` tables with relevant fields for efficient data management and queries.
+- **Database Schema**: Optimized `bookings`, `vehicles`, `drivers`, `vendors` tables with relevant fields. Vendors table enhanced with `auto_assign_disabled` and `rejection_reason` fields.
 - **Modular Structure**: Organized into `/config`, `/controllers`, `/models`, `/routes`, `/services`, `/middleware`, and `/utils` directories for clear separation of concerns.
-- **Scalability**: Principles for stability include robust database connections, consistent API response formats, efficient caching, and thorough error handling.
+- **Scalability**: Principles for stability include robust database connections, consistent API response formats, efficient caching, thorough error handling, and smart resource allocation.
+- **Vendor Integration**: Vendors are transparent to Bareerah system - they just work within the auto-assignment logic without any external code changes needed.
+
+## API Endpoints (Key)
+
+### Vendor Management (Admin Only)
+- `GET /api/vendors` - List all vendors
+- `GET /api/vendors/status/:status` - Filter by status (pending, approved, rejected)
+- `GET /api/vendors/:id` - Get vendor with statistics
+- `POST /api/vendors/:id/approve` - Approve vendor
+- `POST /api/vendors/:id/reject` - Reject vendor with reason
+- `POST /api/vendors/:id/toggle-auto-assign` - Disable/enable auto-assignment
+
+### Bareerah Integration (No Changes)
+- `GET /api/bookings/suggest-vehicles?passengers_count=X&luggage_count=Y` - Smart vehicle suggestions
+- `POST /api/bookings/calculate-fare` - Fare calculation (works with company & vendor vehicles)
+- `POST /api/bookings/create-manual` - Create booking (auto-assigns company or vendor vehicle)
 
 # External Dependencies
 
@@ -56,3 +130,12 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
 - **Authentication**: JSON Web Tokens (JWT).
 - **Email Service**: Resend (for email integration).
 - **Messaging (Planned)**: WhatsApp API (requires `WHATSAPP_API_TOKEN` and `WHATSAPP_PHONE_ID` for full functionality).
+
+# Implementation Status
+
+✅ **Backend API**: Complete - All vendor endpoints implemented and tested
+✅ **Auto-Assignment Logic**: Complete - Company priority → Vendor vehicles with approval checks
+✅ **Database Schema**: Complete - auto_assign_disabled field added
+✅ **Notifications**: Complete - Works with all assignment scenarios
+⏳ **Admin UI for Vendor Tab**: Planned (not yet implemented)
+⏳ **Vendor Dashboard UI**: Planned (not yet implemented)
