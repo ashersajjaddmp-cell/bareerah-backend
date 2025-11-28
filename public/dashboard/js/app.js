@@ -985,8 +985,33 @@ async function openAddBookingModal() {
     document.getElementById('bookingPayment').value = 'cash';
     modal.style.display = 'block';
     document.getElementById('modalOverlay').style.display = 'block';
+    
+    // Load vehicles and drivers
     await loadVehiclesForModels();
     updateVehicleModels('sedan', 'bookingVehicleModel');
+    
+    // Load drivers for assignment
+    const token = localStorage.getItem('token');
+    fetch(getCacheBustUrl(API_BASE + '/drivers'), { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(r => r.json())
+      .then(d => {
+        const driverSelect = document.getElementById('createDriver');
+        driverSelect.innerHTML = '<option value="">-- Select Driver --</option>';
+        if (d.data && d.data.length) {
+          d.data.forEach(driver => {
+            const opt = document.createElement('option');
+            opt.value = driver.id;
+            opt.textContent = driver.name + ' (' + (driver.status === 'online' ? '🟢 Online' : '🔴 Offline') + ')';
+            driverSelect.appendChild(opt);
+          });
+        }
+      })
+      .catch(e => console.error('Error loading drivers:', e));
+    
+    // Set default to auto-assign
+    window.createAssignmentMode = 'auto';
+    setCreateAssignmentMode('auto');
+    
     setTimeout(() => initAddMapAutocomplete(), 100);
   }
 }
@@ -1052,29 +1077,61 @@ function setLocationBooking(fieldId, location) {
   document.getElementById(suggestionId).style.display = 'none';
 }
 
+function setCreateAssignmentMode(mode) {
+  window.createAssignmentMode = mode;
+  const driverSelect = document.getElementById('createDriver');
+  const autoStatus = document.getElementById('createAutoAssignStatus');
+  const manualBtn = document.getElementById('createManualAssignBtn');
+  const autoBtn = document.getElementById('createAutoAssignBtn');
+  
+  if (mode === 'manual') {
+    driverSelect.style.display = 'block';
+    autoStatus.style.display = 'none';
+    manualBtn.style.background = '#3b82f6';
+    manualBtn.style.color = 'white';
+    autoBtn.style.background = 'var(--bg-secondary)';
+    autoBtn.style.color = 'var(--text)';
+  } else {
+    driverSelect.style.display = 'none';
+    autoStatus.style.display = 'block';
+    autoBtn.style.background = '#10b981';
+    autoBtn.style.color = 'white';
+    manualBtn.style.background = 'var(--bg-secondary)';
+    manualBtn.style.color = 'var(--text)';
+  }
+}
+
 function createManualBooking() {
   const token = localStorage.getItem('token');
+  const body = {
+    customer_name: document.getElementById('bookingCustomerName').value,
+    customer_email: document.getElementById('bookingCustomerEmail').value,
+    customer_phone: document.getElementById('bookingCustomerPhone').value,
+    pickup_location: document.getElementById('bookingPickup').value,
+    dropoff_location: document.getElementById('bookingDropoff').value,
+    distance_km: parseFloat(document.getElementById('bookingDistance').value) || 0,
+    fare_aed: parseFloat(document.getElementById('bookingFare').value) || 0,
+    passengers_count: parseInt(document.getElementById('bookingPassengers').value) || 1,
+    luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
+    booking_type: document.getElementById('bookingType').value || 'point-to-point',
+    vehicle_type: document.getElementById('bookingVehicleType').value || 'sedan',
+    vehicle_model: document.getElementById('bookingVehicleModel').value,
+    payment_method: document.getElementById('bookingPayment').value || 'cash'
+  };
+  
+  // Add driver assignment
+  if (window.createAssignmentMode === 'manual') {
+    const driverId = document.getElementById('createDriver').value;
+    if (driverId) body.driver_id = driverId;
+  }
+  
   fetch(API_BASE + '/bookings/create-manual', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token
     },
-    body: JSON.stringify({
-      customer_name: document.getElementById('bookingCustomerName').value,
-      customer_email: document.getElementById('bookingCustomerEmail').value,
-      customer_phone: document.getElementById('bookingCustomerPhone').value,
-      pickup_location: document.getElementById('bookingPickup').value,
-      dropoff_location: document.getElementById('bookingDropoff').value,
-      distance_km: parseFloat(document.getElementById('bookingDistance').value) || 0,
-      fare_aed: parseFloat(document.getElementById('bookingFare').value) || 0,
-      passengers_count: parseInt(document.getElementById('bookingPassengers').value) || 1,
-      luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
-      booking_type: document.getElementById('bookingType').value || 'point-to-point',
-      vehicle_type: document.getElementById('bookingVehicleType').value || 'sedan',
-      vehicle_model: document.getElementById('bookingVehicleModel').value,
-      payment_method: document.getElementById('bookingPayment').value || 'cash'
-    })
+    body: JSON.stringify(body)
   }).then(r => r.json()).then(d => {
     if (d.success) {
       alert('Booking created successfully!');
