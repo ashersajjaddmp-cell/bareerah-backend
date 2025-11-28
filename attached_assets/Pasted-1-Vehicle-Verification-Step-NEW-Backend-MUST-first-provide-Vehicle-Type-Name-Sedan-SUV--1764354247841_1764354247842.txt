@@ -1,0 +1,51 @@
+1. 🚨 Vehicle Verification Step (NEW)
+Backend MUST first provide:
+
+Vehicle Type Name (Sedan, SUV, Luxury, Van, Bus, Mini Bus)
+Max Passengers (e.g., Sedan = 4)
+Max Luggage (e.g., Sedan = 3 bags)
+Price per km (for fare calculation)
+Minimum charge
+2. 📊 New VEHICLES Table
+CREATE TABLE vehicles (
+  type VARCHAR(50),        -- sedan, suv, luxury, van, bus, mini_bus
+  max_passengers INT,      -- e.g., 4 for sedan, 14 for bus
+  max_luggage INT,         -- e.g., 3 for sedan, 12 for bus
+  price_per_km DECIMAL,    -- e.g., 3.50 for sedan
+  min_charge DECIMAL       -- e.g., 25 AED
+);
+
+3. 🧠 Smart Vehicle Selection Logic
+Customer bolta hai: "5 passengers, 4 luggage"
+Bareerah suggest karega:
+✅ SUV (max 6 pax, max 5 luggage) ← BEST FIT
+❌ Sedan (max 4 pax, max 3 luggage) ← Too small
+✅ Van (max 7 pax, max 8 luggage) ← Also works but expensive
+
+4. ✅ Capacity Validation
+Booking rejected if passengers > vehicle max_passengers
+Booking rejected if luggage > vehicle max_luggage
+📋 YEH UPDATED PROMPT USE KARO:
+Backend ko iska use karo (corrected version):
+
+Copy the CORRECTED prompt I just created above (starting with # ⚠️ CORRECTED - BAREERAH BACKEND...)
+
+🎯 BACKEND TEAM KO YEH BATAO:
+First: Verify aur provide karo:
+
+{
+  "vehicles": [
+    {"type": "sedan", "max_passengers": 4, "max_luggage": 3, "price_per_km": 3.50, "min_charge": 25},
+    {"type": "suv", "max_passengers": 6, "max_luggage": 5, "price_per_km": 4.50, "min_charge": 30},
+    {"type": "luxury", "max_passengers": 4, "max_luggage": 4, "price_per_km": 6.00, "min_charge": 50},
+    {"type": "van", "max_passengers": 7, "max_luggage": 8, "price_per_km": 5.00, "min_charge": 40},
+    {"type": "bus", "max_passengers": 14, "max_luggage": 12, "price_per_km": 8.00, "min_charge": 100},
+    {"type": "mini_bus", "max_passengers": 10, "max_luggage": 10, "price_per_km": 6.50, "min_charge": 70}
+  ]
+}
+
+Phir: Use this vehicle data in:
+
+VEHICLES table (database)
+calculate-fare endpoint (price calculation)
+create-booking endpoint (capacity validation)

@@ -163,7 +163,79 @@ Fare = 1050 + (120 × 12.50) = 2550 AED
 
 ## 🔌 API ENDPOINTS FOR BAREERAH
 
-### 1. Calculate Fare
+### 1. Suggest Vehicles (Smart Selection Based on Capacity)
+**Endpoint:** `GET /bookings/suggest-vehicles`  
+**Authentication:** NOT Required (public)
+
+**Query Parameters:**
+- `passengers_count`: Number of passengers (required, >= 1)
+- `luggage_count`: Number of luggage items (required, >= 0)
+
+**Request Example:**
+```
+GET /bookings/suggest-vehicles?passengers_count=5&luggage_count=4
+```
+
+**Response (Success - 200):**
+```json
+{
+  "success": true,
+  "data": {
+    "requested": {
+      "passengers_count": 5,
+      "luggage_count": 4
+    },
+    "suggested_vehicles": [
+      {
+        "vehicle_type": "urban_suv",
+        "max_passengers": 7,
+        "max_luggage": 4,
+        "available_count": 2,
+        "base_fare": 108.00,
+        "per_km_rate": 1.00,
+        "capacity_fit": {
+          "passengers": 2,
+          "luggage": 0
+        },
+        "fitness_score": 1.0
+      },
+      {
+        "vehicle_type": "elite_van",
+        "max_passengers": 7,
+        "max_luggage": 5,
+        "available_count": 1,
+        "base_fare": 165.00,
+        "per_km_rate": 2.00,
+        "capacity_fit": {
+          "passengers": 2,
+          "luggage": 1
+        },
+        "fitness_score": 1.5
+      }
+    ],
+    "message": "Found 2 suitable vehicle(s) for your requirements"
+  }
+}
+```
+
+**How It Works:**
+1. Bareerah sends: `passengers_count=5`, `luggage_count=4`
+2. Backend finds ALL vehicles that fit: `max_passengers >= 5` AND `max_luggage >= 4`
+3. Returns sorted by best fit (smallest excess capacity first)
+4. Includes pricing for each option
+5. Bareerah shows options to customer in WhatsApp
+
+**Error Response (400 - No suitable vehicles):**
+```json
+{
+  "success": false,
+  "error": "No vehicles available for 5 passengers and 4 luggage"
+}
+```
+
+---
+
+### 2. Calculate Fare
 **Endpoint:** `POST /bookings/calculate-fare`  
 **Authentication:** Required (Bearer token)
 

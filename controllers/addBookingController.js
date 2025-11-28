@@ -20,12 +20,44 @@ const addBookingController = {
         assigned_vehicle_id,
         payment_method,
         status,
-        booking_source
+        booking_source,
+        passengers_count,
+        luggage_count
       } = req.body;
 
       // Validate required fields
       if (!customer_name || !customer_phone || !pickup_location || !dropoff_location || !distance_km || !booking_type || !vehicle_type) {
         return res.status(400).json({ success: false, error: 'Missing required fields' });
+      }
+
+      // Validate passenger and luggage counts
+      if (!passengers_count || passengers_count < 1) {
+        return res.status(400).json({ success: false, error: 'passengers_count must be >= 1' });
+      }
+      if (luggage_count === undefined || luggage_count < 0) {
+        return res.status(400).json({ success: false, error: 'luggage_count must be >= 0' });
+      }
+
+      // Check vehicle capacity
+      const vehicleCapacityResult = await query(
+        'SELECT max_passengers, max_luggage FROM vehicles WHERE type = $1 LIMIT 1',
+        [vehicle_type.toLowerCase()]
+      );
+
+      if (vehicleCapacityResult.rows.length > 0) {
+        const { max_passengers, max_luggage } = vehicleCapacityResult.rows[0];
+        if (passengers_count > max_passengers) {
+          return res.status(400).json({
+            success: false,
+            error: `Vehicle capacity exceeded. Max passengers: ${max_passengers}, Requested: ${passengers_count}`
+          });
+        }
+        if (luggage_count > max_luggage) {
+          return res.status(400).json({
+            success: false,
+            error: `Luggage capacity exceeded. Max luggage: ${max_luggage}, Requested: ${luggage_count}`
+          });
+        }
       }
 
       // Calculate fare (async - reads from database)

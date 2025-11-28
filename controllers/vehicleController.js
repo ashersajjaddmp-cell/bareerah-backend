@@ -1,6 +1,87 @@
 const vehicleService = require('../services/vehicleService');
+const { query } = require('../config/db');
+const fareCalculator = require('../utils/fareCalculator');
 
 const vehicleController = {
+  async suggestVehicles(req, res, next) {
+    try {
+      const { passengers_count, luggage_count } = req.query;
+      
+      // Validate input
+      if (!passengers_count || !luggage_count) {
+        return res.status(400).json({
+          success: false,
+          error: 'passengers_count and luggage_count are required'
+        });
+      }
+
+      const pax = parseInt(passengers_count);
+      const luggage = parseInt(luggage_count);
+
+      if (pax < 1 || luggage < 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'passengers_count must be >= 1, luggage_count must be >= 0'
+        });
+      }
+
+      // Get all vehicles
+      const result = await query(`
+        SELECT DISTINCT 
+          type, 
+          max_passengers, 
+          max_luggage,
+          COUNT(*) as available_count
+        FROM vehicles 
+        WHERE max_passengers >= $1 AND max_luggage >= $2
+        GROUP BY type, max_passengers, max_luggage
+        ORDER BY max_passengers ASC, max_luggage ASC
+      `, [pax, luggage]);
+
+      if (result.rows.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: `No vehicles available for ${pax} passengers and ${luggage} luggage`
+        });
+      }
+
+      // Get fare rules for each vehicle type to include pricing
+      const suggestions = [];
+      for (const vehicle of result.rows) {
+        const fareRuleResult = await query(
+          'SELECT base_fare, per_km_rate FROM fare_rules WHERE vehicle_type = $1 LIMIT 1',
+          [vehicle.type]
+        );
+
+        const fareRule = fareRuleResult.rows[0] || { base_fare: 0, per_km_rate: 0 };
+        suggestions.push({
+          vehicle_type: vehicle.type,
+          max_passengers: vehicle.max_passengers,
+          max_luggage: vehicle.max_luggage,
+          available_count: vehicle.available_count,
+          base_fare: parseFloat(fareRule.base_fare),
+          per_km_rate: parseFloat(fareRule.per_km_rate),
+          capacity_fit: {
+            passengers: vehicle.max_passengers - pax,
+            luggage: vehicle.max_luggage - luggage
+          },
+          fitness_score: ((vehicle.max_passengers - pax) + (vehicle.max_luggage - luggage)) / 2
+        });
+      }
+
+      res.json({
+        success: true,
+        data: {
+          requested: { passengers_count: pax, luggage_count: luggage },
+          suggested_vehicles: suggestions,
+          message: `Found ${suggestions.length} suitable vehicle(s) for your requirements`
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async getAvailableVehicles(req, res, next) {
     try {
       const { type } = req.query;

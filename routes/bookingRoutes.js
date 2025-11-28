@@ -7,10 +7,11 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { rbacMiddleware, operatorRestrictions } = require('../middleware/rbacMiddleware');
 
 router.get('/', authMiddleware, bookingController.getAllBookings);
-router.get('/:id', authMiddleware, bookingController.getBookingById);
-router.put('/:id', authMiddleware, rbacMiddleware(['admin', 'operator']), bookingController.updateBooking);
 router.post('/calculate-fare', bookingController.calculateFare);
 router.get('/available-vehicles', vehicleController.getAvailableVehicles);
+router.get('/suggest-vehicles', vehicleController.suggestVehicles);
+router.get('/:id', authMiddleware, bookingController.getBookingById);
+router.put('/:id', authMiddleware, rbacMiddleware(['admin', 'operator']), bookingController.updateBooking);
 router.post('/create-booking', authMiddleware, rbacMiddleware(['admin', 'operator']), operatorRestrictions, bookingController.createBooking);
 router.post('/create-manual', authMiddleware, rbacMiddleware(['admin']), addBookingController.createManualBooking);
 router.post('/assign-vehicle', authMiddleware, rbacMiddleware(['admin', 'operator']), operatorRestrictions, bookingController.assignVehicle);
