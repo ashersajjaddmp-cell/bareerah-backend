@@ -859,7 +859,12 @@ async function loadBookings() {
       return;
     }
     
-    tbody.innerHTML = data.data.map(b => '<tr><td>' + b.id.substring(0, 8) + '</td><td>' + b.customer_name + '</td><td>' + b.customer_phone + '</td><td>' + b.pickup_location + '</td><td>' + b.dropoff_location + '</td><td>' + b.distance_km + '</td><td>-</td><td>AED ' + (b.fare_aed || b.total_fare || 0) + '</td><td>' + (b.driver_name || 'Unassigned') + '</td><td>-</td><td>' + b.status + '</td><td>' + new Date(b.created_at).toLocaleDateString() + '</td><td><button onclick="viewBooking(\'' + b.id + '\')" class="btn-small">View</button> <button onclick="editBooking(\'' + b.id + '\')" class="btn-small">Edit</button></td></tr>').join('');
+    tbody.innerHTML = data.data.map(b => {
+      const driverDisplay = b.driver_name || (b.driver_id ? 'Driver assigned' : 'Unassigned');
+      const statusDisplay = b.status || 'pending';
+      const sourceLabel = b.booking_source === 'bareerah' ? '📱 Bareerah' : '👤 Manual';
+      return '<tr><td>' + b.id.substring(0, 8) + '</td><td>' + b.customer_name + '</td><td>' + b.customer_phone + '</td><td>' + b.pickup_location + '</td><td>' + b.dropoff_location + '</td><td>' + b.distance_km + '</td><td>' + sourceLabel + '</td><td>AED ' + (b.fare_aed || b.total_fare || 0) + '</td><td>' + driverDisplay + '</td><td>-</td><td>' + statusDisplay + '</td><td>' + new Date(b.created_at).toLocaleDateString() + '</td><td><button onclick="viewBooking(\'' + b.id + '\')" class="btn-small">View</button> <button onclick="editBooking(\'' + b.id + '\')" class="btn-small">Edit</button></td></tr>';
+    }).join('');
   } catch (e) {
     const tbody = document.getElementById('bookings-table-body');
     if (tbody) tbody.innerHTML = '<tr><td colspan="13" style="color:red;">Error loading bookings: ' + e.message + '</td></tr>';
@@ -882,12 +887,13 @@ function viewBooking(id) {
         const b = d.data;
         const content = document.getElementById('bookingDetailContent');
         if (content) {
-          const driverInfo = b.driver_name ? ('<strong>' + b.driver_name + '</strong>') : (b.driver_id ? 'Driver ID: ' + b.driver_id.substring(0, 8) : '<span style="color: #ef4444;">Driver not assigned</span>');
+          const driverInfo = b.driver_name ? ('<strong>' + b.driver_name + '</strong>') : (b.driver_id ? 'Assigned (Driver ID: ' + b.driver_id.substring(0, 8) + ')' : '<span style="color: #ef4444;">Not assigned</span>');
           const bookingTypeDisplay = b.booking_type ? b.booking_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'N/A';
-          const vehicleModelDisplay = b.vehicle_model || b.car_model || 'N/A';
+          const vehicleModelDisplay = b.vehicle_model && b.vehicle_model !== 'Not specified' ? b.vehicle_model : (b.car_model || 'N/A');
           const assignedVehicleDisplay = b.assigned_vehicle_model ? b.assigned_vehicle_model : (b.assigned_vehicle_id ? b.assigned_vehicle_id.substring(0, 8) : 'None');
+          const sourceDisplay = b.booking_source === 'bareerah' ? '📱 Bareerah' : '👤 Manually Created';
           
-          content.innerHTML = '<div style="display: grid; gap: 12px; font-size: 14px;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking ID:</strong><br>' + b.id.substring(0, 8) + '</div><div><strong>Status:</strong><br><span style="padding: 2px 6px; border-radius: 3px; background: ' + (b.status === 'completed' ? '#10b981' : b.status === 'pending' ? '#f59e0b' : '#ef4444') + '; color: white; font-size: 12px;">' + b.status + '</span></div></div><div><strong>Customer:</strong><br>' + b.customer_name + ' (' + b.customer_phone + ')</div><div><strong>Pickup:</strong><br>' + b.pickup_location + '</div><div><strong>Dropoff:</strong><br>' + b.dropoff_location + '</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Distance:</strong><br>' + b.distance_km + ' km</div><div><strong>Fare:</strong><br>AED ' + (b.fare_aed || b.total_fare || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking Type:</strong><br>' + bookingTypeDisplay + '</div><div><strong>Payment:</strong><br>' + (b.payment_method || 'N/A').toUpperCase() + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Vehicle Type:</strong><br>' + (b.vehicle_type || 'N/A').toUpperCase() + '</div><div><strong>Vehicle Model:</strong><br>' + vehicleModelDisplay + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Assigned Vehicle:</strong><br>' + assignedVehicleDisplay + '</div><div><strong>Driver:</strong><br>' + driverInfo + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Passengers:</strong><br>' + (b.passengers_count || 1) + '</div><div><strong>Luggage:</strong><br>' + (b.luggage_count || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Date:</strong><br>' + new Date(b.created_at).toLocaleDateString() + '</div><div><strong>Time:</strong><br>' + new Date(b.created_at).toLocaleTimeString() + '</div></div></div>';
+          content.innerHTML = '<div style="display: grid; gap: 12px; font-size: 14px;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking ID:</strong><br>' + b.id.substring(0, 8) + '</div><div><strong>Status:</strong><br><span style="padding: 2px 6px; border-radius: 3px; background: ' + (b.status === 'completed' ? '#10b981' : b.status === 'in-process' ? '#3b82f6' : b.status === 'pending' ? '#f59e0b' : '#ef4444') + '; color: white; font-size: 12px;">' + (b.status || 'pending').toUpperCase() + '</span></div></div><div><strong>Source:</strong><br>' + sourceDisplay + '</div><div><strong>Customer:</strong><br>' + b.customer_name + ' (' + b.customer_phone + ')</div><div><strong>Pickup:</strong><br>' + b.pickup_location + '</div><div><strong>Dropoff:</strong><br>' + b.dropoff_location + '</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Distance:</strong><br>' + b.distance_km + ' km</div><div><strong>Fare:</strong><br>AED ' + (b.fare_aed || b.total_fare || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking Type:</strong><br>' + bookingTypeDisplay + '</div><div><strong>Payment:</strong><br>' + (b.payment_method || 'N/A').toUpperCase() + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Vehicle Type:</strong><br>' + (b.vehicle_type || 'N/A').toUpperCase() + '</div><div><strong>Vehicle Model:</strong><br>' + vehicleModelDisplay + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Assigned Vehicle:</strong><br>' + assignedVehicleDisplay + '</div><div><strong>Driver:</strong><br>' + driverInfo + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Passengers:</strong><br>' + (b.passengers_count || 1) + '</div><div><strong>Luggage:</strong><br>' + (b.luggage_count || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Date:</strong><br>' + new Date(b.created_at).toLocaleDateString() + '</div><div><strong>Time:</strong><br>' + new Date(b.created_at).toLocaleTimeString() + '</div></div></div>';
           const modal = document.getElementById('bookingDetailModal');
           const overlay = document.getElementById('modalOverlay');
           if (modal) modal.style.display = 'block';
@@ -1156,8 +1162,9 @@ function createManualBooking() {
     luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
     booking_type: bookingType,
     vehicle_type: vehicleType,
-    vehicle_model: document.getElementById('bookingVehicleModel').value || '',
-    payment_method: document.getElementById('bookingPayment').value || 'cash'
+    vehicle_model: document.getElementById('bookingVehicleModel').value || 'Not specified',
+    payment_method: document.getElementById('bookingPayment').value || 'cash',
+    booking_source: 'manually_created'
   };
   
   // Add driver assignment

@@ -18,7 +18,8 @@ const addBookingController = {
         car_model,
         driver_id,
         payment_method,
-        status
+        status,
+        booking_source
       } = req.body;
 
       // Validate required fields
@@ -36,20 +37,20 @@ const addBookingController = {
       const fare = fareResult.fare;
 
       // Determine vehicle model - use vehicle_model if provided, otherwise car_model
-      const finalVehicleModel = vehicle_model || car_model || null;
+      const finalVehicleModel = vehicle_model || car_model || 'Not specified';
       
       // Create booking (database auto-generates UUID)
       const result = await query(`
         INSERT INTO bookings 
           (customer_name, customer_phone, customer_email, pickup_location, dropoff_location, 
-           distance_km, fare_aed, booking_type, vehicle_type, vehicle_model, driver_id, payment_method, status, created_at)
+           distance_km, fare_aed, booking_type, vehicle_type, vehicle_model, driver_id, payment_method, status, booking_source, created_at)
         VALUES 
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW())
         RETURNING *
       `, [
         customer_name, customer_phone, customer_email || null, pickup_location,
         dropoff_location, distance_km, fare, booking_type, vehicle_type, finalVehicleModel, driver_id || null, payment_method || 'cash',
-        status || 'pending'
+        status || 'in-process', booking_source || 'manually_created'
       ])
 
       logger.info(`Manual booking created: ${result.rows[0].id}`);

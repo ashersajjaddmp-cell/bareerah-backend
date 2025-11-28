@@ -4,7 +4,13 @@ const { query } = require('../config/db');
 const bookingController = {
   async getAllBookings(req, res, next) {
     try {
-      const result = await query('SELECT * FROM bookings ORDER BY created_at DESC LIMIT 1000');
+      const result = await query(`
+        SELECT b.*, 
+               d.name as driver_name
+        FROM bookings b
+        LEFT JOIN drivers d ON b.driver_id = d.id
+        ORDER BY b.created_at DESC LIMIT 1000
+      `);
       res.json({ success: true, data: result.rows || [] });
     } catch (error) {
       next(error);
