@@ -662,11 +662,56 @@ function navigateToPage(page) {
     else if (page === 'cars-bus') loadVehicles('bus', 'carsGridBus');
     else if (page === 'cars-minibus') loadVehicles('minibus', 'carsGridMinibus');
     else if (page === 'bookings') loadBookings();
+    else if (page === 'vendors') loadVendors();
     else if (page === 'kpi') loadKPI();
     else if (page === 'fares') loadFareRules();
     else if (page === 'settings') setupUserInfo();
     else if (page === 'alerts') loadAlerts();
   }
+}
+
+// Vendors
+async function loadVendors(status = null) {
+  try {
+    const token = localStorage.getItem('token');
+    let url = API_BASE + '/vendors';
+    if (status) url += '/status/' + status;
+    url = getCacheBustUrl(url);
+    
+    const response = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    
+    const data = await response.json();
+    const tbody = document.getElementById('vendors-table-body');
+    if (!tbody) return;
+    
+    const vendors = data.data || [];
+    if (!vendors || !vendors.length) {
+      tbody.innerHTML = '<tr><td colspan="10">No vendors found</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = vendors.map(v => {
+      const statusColor = v.status === 'approved' ? '#10b981' : v.status === 'rejected' ? '#ef4444' : '#f59e0b';
+      const autoAssignStatus = v.auto_assign_disabled ? '❌ Disabled' : '✅ Enabled';
+      return '<tr><td>' + v.id.substring(0, 8) + '</td><td>' + (v.company_name || v.name || 'N/A') + '</td><td>' + (v.email || 'N/A') + '</td><td>' + (v.phone || 'N/A') + '</td><td><span style="padding: 4px 8px; border-radius: 4px; background: ' + statusColor + '; color: white; font-size: 12px;">' + (v.status || 'pending') + '</span></td><td>' + (v.total_vehicles || 0) + '</td><td>AED ' + ((v.total_earnings || 0).toFixed(2)) + '</td><td>' + (v.completed_bookings || 0) + '</td><td>' + autoAssignStatus + '</td><td><button onclick="viewVendor(\'' + v.id + '\')" class="btn-small">View</button></td></tr>';
+    }).join('');
+  } catch (e) {
+    const tbody = document.getElementById('vendors-table-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="color:red;">Error: ' + e.message + '</td></tr>';
+    console.error('Vendors error:', e.message, e);
+  }
+}
+
+function filterVendors(status) {
+  loadVendors(status || null);
+}
+
+function viewVendor(id) {
+  showToast('Opening vendor details for: ' + id.substring(0, 8), 'info');
 }
 
 // Dashboard - Load Stats

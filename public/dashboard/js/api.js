@@ -8,6 +8,12 @@ const api = {
       ...options.headers
     };
 
+    // Add JWT token if available
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
     const response = await fetch(url, {
       ...options,
       headers

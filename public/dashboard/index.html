@@ -29,6 +29,7 @@
         <a class="nav-item active" data-page="dashboard">📊 Dashboard</a>
         <a class="nav-item" data-page="kpi">💹 KPI & Profits</a>
         <a class="nav-item" data-page="bookings">📅 Bookings</a>
+        <a class="nav-item" data-page="vendors">🏢 Vendors</a>
         <div class="nav-submenu-toggle" onclick="toggleSubmenu(this)">👥 Drivers ▼</div>
         <div class="nav-submenu" style="display: none;">
           <a class="nav-item" data-page="drivers-all">All Drivers</a>
@@ -280,6 +281,42 @@
                 </thead>
                 <tbody id="bookings-table-body">
                   <tr><td colspan="13" style="text-align: center; color: var(--text-secondary);">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vendors Page -->
+        <div id="page-vendors" class="page">
+          <h2 class="page-title">Vendors Management</h2>
+          <div class="filter-bar">
+            <select id="vendor-status-filter" onchange="filterVendors(this.value)" class="filter-select">
+              <option value="">All Vendors</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="card">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Company Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Vehicles</th>
+                    <th>Earnings</th>
+                    <th>Completed Bookings</th>
+                    <th>Auto-Assign</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="vendors-table-body">
+                  <tr><td colspan="10" style="text-align: center; color: var(--text-secondary);">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
