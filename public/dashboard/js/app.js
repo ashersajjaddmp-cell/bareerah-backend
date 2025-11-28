@@ -744,17 +744,22 @@ async function loadDrivers(status = null, targetTableId = 'drivers-table-body') 
 }
 
 function editDriver(id) {
+  console.log('editDriver called with id:', id);
   const url = getCacheBustUrl(API_BASE + '/drivers/' + id);
+  console.log('Fetching from:', url);
   fetch(url, {
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
   })
   .then(r => {
+    console.log('Response status:', r.status);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
   .then(d => {
+    console.log('Driver data received:', d);
     if (d.data) {
       const modal = document.getElementById('driverEditModal');
+      console.log('Modal element:', modal);
       if (modal) {
         document.getElementById('driverEditId').value = d.data.id;
         document.getElementById('driverName').value = d.data.name || '';
@@ -763,12 +768,17 @@ function editDriver(id) {
         document.getElementById('driverStatus').value = d.data.status || 'offline';
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
+        console.log('Modal opened successfully');
+      } else {
+        console.error('Modal element not found!');
       }
+    } else {
+      console.error('No data in response');
     }
   })
   .catch(e => {
     console.error('Edit driver error:', e);
-    alert('Error loading driver details');
+    alert('Error loading driver details: ' + e.message);
   });
 }
 
@@ -1058,17 +1068,22 @@ function closeModal(modalId) {
 
 // View Driver
 function viewDriver(id) {
+  console.log('viewDriver called with id:', id);
   const url = getCacheBustUrl(API_BASE + '/drivers/' + id);
+  console.log('Fetching from:', url);
   fetch(url, {
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
   })
   .then(r => {
+    console.log('Response status:', r.status);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
   .then(d => {
+    console.log('Driver data received:', d);
     if (d.data) {
       const modal = document.getElementById('driverViewModal');
+      console.log('Modal element:', modal);
       if (modal) {
         document.getElementById('driverViewId').value = d.data.id || '';
         document.getElementById('driverViewName').value = d.data.name || '';
@@ -1078,12 +1093,17 @@ function viewDriver(id) {
         document.getElementById('driverViewLicense').value = d.data.license_number || '';
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
+        console.log('Modal opened successfully');
+      } else {
+        console.error('Modal element not found!');
       }
+    } else {
+      console.error('No data in response');
     }
   })
   .catch(e => {
     console.error('View driver error:', e);
-    alert('Error loading driver details');
+    alert('Error loading driver details: ' + e.message);
   });
 }
 
