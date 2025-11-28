@@ -1,7 +1,8 @@
 // Global State
 let currentRange = 'today';
 const API_BASE = window.location.origin + '/api';
-let fareRules = {}; // Cache for fare rules
+let fareRules = {}; // Cache for fare rules (gets refreshed)
+let lastFareRulesFetch = 0;
 
 // Toast Notification System
 function showToast(message, type = 'success') {
@@ -1084,25 +1085,14 @@ async function calculateCreateBookingDistanceAndFare() {
   };
   const fareRuleType = typeMapping[vehicleType] || 'classic';
   
-  // Get fare rule from cache or API
+  // Always get fresh from DB - NO STALE CACHE
   let baseFare = 95, perKmRate = 1;
+  if (!fareRules[fareRuleType] || !Object.keys(fareRules).length) {
+    await getFreshFareRules(); // Fetch if empty
+  }
   if (fareRules[fareRuleType]) {
     baseFare = parseFloat(fareRules[fareRuleType].base_fare);
     perKmRate = parseFloat(fareRules[fareRuleType].per_km_rate);
-  } else {
-    try {
-      const res = await fetch(API_BASE + '/fare-rules', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }});
-      if (res.ok) {
-        const data = await res.json();
-        if (data.data && data.data.length) {
-          data.data.forEach(rule => { fareRules[rule.vehicle_type] = rule; });
-          if (fareRules[fareRuleType]) {
-            baseFare = parseFloat(fareRules[fareRuleType].base_fare);
-            perKmRate = parseFloat(fareRules[fareRuleType].per_km_rate);
-          }
-        }
-      }
-    } catch (e) {}
   }
   
   // Calculate: base_fare + (distance * per_km_rate)
@@ -1628,6 +1618,25 @@ function estimateDistance(pickup, dropoff) {
   return (Math.random() * 25 + 10).toFixed(1);
 }
 
+// Always fetch FRESH fare rules from DB (no stale cache)
+async function getFreshFareRules() {
+  try {
+    const token = localStorage.getItem('token');
+    const res = await fetch(API_BASE + '/fare-rules?t=' + Date.now(), { 
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.data && data.data.length) {
+        fareRules = {}; // Clear old cache
+        data.data.forEach(rule => { fareRules[rule.vehicle_type] = rule; });
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching fresh fare rules:', e);
+  }
+}
+
 async function calculateDistanceAndFare() {
   const pickupInput = document.getElementById('editPickup');
   const dropoffInput = document.getElementById('editDropoff');
@@ -1654,25 +1663,14 @@ async function calculateDistanceAndFare() {
   };
   const fareRuleType = typeMapping[vehicleType] || 'classic';
   
-  // Get fare rule from cache or API
+  // Always get fresh from DB
   let baseFare = 95, perKmRate = 1;
+  if (!fareRules[fareRuleType] || !Object.keys(fareRules).length) {
+    await getFreshFareRules(); // Fetch if empty
+  }
   if (fareRules[fareRuleType]) {
     baseFare = parseFloat(fareRules[fareRuleType].base_fare);
     perKmRate = parseFloat(fareRules[fareRuleType].per_km_rate);
-  } else {
-    try {
-      const res = await fetch(API_BASE + '/fare-rules', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }});
-      if (res.ok) {
-        const data = await res.json();
-        if (data.data && data.data.length) {
-          data.data.forEach(rule => { fareRules[rule.vehicle_type] = rule; });
-          if (fareRules[fareRuleType]) {
-            baseFare = parseFloat(fareRules[fareRuleType].base_fare);
-            perKmRate = parseFloat(fareRules[fareRuleType].per_km_rate);
-          }
-        }
-      }
-    } catch (e) {}
   }
   
   // Calculate: base_fare + (distance * per_km_rate)
