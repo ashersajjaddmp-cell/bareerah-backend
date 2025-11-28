@@ -763,6 +763,11 @@ function editDriver(id) {
         document.getElementById('driverPhone').value = driver.phone || '';
         document.getElementById('driverEmail').value = driver.email || '';
         document.getElementById('driverStatus').value = driver.status || 'offline';
+        
+        // Auto Assign Checkbox
+        const autoAssignCheckbox = document.getElementById('driverAutoAssign');
+        autoAssignCheckbox.checked = driver.auto_assign === true || driver.auto_assign === 1;
+        
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
       }
@@ -922,7 +927,8 @@ function saveDriverChanges() {
       name: document.getElementById('driverName').value,
       phone: document.getElementById('driverPhone').value,
       email: document.getElementById('driverEmail').value,
-      status: document.getElementById('driverStatus').value
+      status: document.getElementById('driverStatus').value,
+      auto_assign: document.getElementById('driverAutoAssign').checked
     })
   }).then(r => r.json()).then(d => {
     if (d.success) {
@@ -1103,6 +1109,10 @@ function viewDriver(id) {
         } else {
           document.getElementById('driverViewLicenseExpiry').value = 'N/A';
         }
+        
+        // Auto Assign Status
+        const autoAssignCheckbox = document.getElementById('driverViewAutoAssign');
+        autoAssignCheckbox.checked = driver.auto_assign === true || driver.auto_assign === 1;
         
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
