@@ -661,6 +661,7 @@ function navigateToPage(page) {
     else if (page === 'cars-minibus') loadVehicles('minibus', 'carsGridMinibus');
     else if (page === 'bookings') loadBookings();
     else if (page === 'kpi') loadKPI();
+    else if (page === 'fares') loadFareRules();
     else if (page === 'settings') setupUserInfo();
     else if (page === 'alerts') loadAlerts();
   }
@@ -1618,6 +1619,67 @@ function setLocation(fieldId, location) {
   document.getElementById(fieldId).value = location;
   document.getElementById(fieldId === 'editPickup' ? 'pickupSuggestions' : 'dropoffSuggestions').style.display = 'none';
   setTimeout(() => calculateDistanceAndFare(), 100);
+}
+
+// Load Fare Rules
+async function loadFareRules() {
+  try {
+    const token = localStorage.getItem('token');
+    const tbody = document.getElementById('fareRulesTableBody');
+    if (!tbody) return;
+    
+    const url = getCacheBustUrl(API_BASE + '/fare-rules');
+    const response = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    
+    const data = await response.json();
+    if (!data.data || !data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No fare rules found</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = data.data.map(rule => {
+      const typeLabel = rule.vehicle_type.replace(/_/g, ' ').toUpperCase();
+      return '<tr style="border-bottom: 1px solid var(--border);"><td style="padding: 12px;"><strong>' + typeLabel + '</strong></td><td style="padding: 12px; text-align: right;">AED ' + rule.base_fare + '</td><td style="padding: 12px; text-align: right;">AED ' + rule.per_km_rate + '</td><td style="padding: 12px; text-align: center;"><button class="btn-small" onclick="editFareRule(\'' + rule.vehicle_type + '\', ' + rule.base_fare + ', ' + rule.per_km_rate + ')">Edit</button></td></tr>';
+    }).join('');
+  } catch (e) {
+    const tbody = document.getElementById('fareRulesTableBody');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="color:red; padding:20px; text-align:center;">Error: ' + e.message + '</td></tr>';
+    console.error('Fare rules error:', e);
+  }
+}
+
+function editFareRule(type, baseFare, perKmRate) {
+  const newBase = prompt('Enter new Base Fare (AED):', baseFare);
+  if (newBase === null) return;
+  
+  const newRate = prompt('Enter new Per KM Rate (AED):', perKmRate);
+  if (newRate === null) return;
+  
+  fetch(API_BASE + '/fare-rules/' + type, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    },
+    body: JSON.stringify({
+      base_fare: parseFloat(newBase),
+      per_km_rate: parseFloat(newRate)
+    })
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        alert('Fare rule updated! Changes apply to new bookings.');
+        loadFareRules();
+      } else {
+        alert('Error: ' + (d.error || 'Update failed'));
+      }
+    })
+    .catch(e => alert('Error: ' + e.message));
 }
 
 // Load Alerts

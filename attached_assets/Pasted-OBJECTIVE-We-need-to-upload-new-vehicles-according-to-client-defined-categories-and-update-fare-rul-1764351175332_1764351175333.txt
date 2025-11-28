@@ -1,0 +1,241 @@
+OBJECTIVE:
+We need to upload new vehicles according to client-defined categories and update fare rules to be dynamic and admin-editable — WITHOUT breaking any existing system functionality.
+
+⚠️ CRITICAL SAFETY RULES (STRICT)
+
+❌ Do NOT change existing database schema unless absolutely required
+
+❌ Do NOT remove any working API
+
+❌ Do NOT break auto-assignment logic
+
+❌ Do NOT affect existing bookings
+
+✅ Only EXTEND vehicle data & fare rules management
+
+✅ 1️⃣ VEHICLE CATEGORIES & MODELS TO BE ADDED
+
+Please map and upload vehicles according to these broader categories and models:
+
+🔹 Classic Car
+
+BYD Han
+
+🔹 Executive
+
+Mercedes E Class
+
+Lexus ES 300H
+
+Tesla Model Y
+
+Tesla Model 3
+
+🔹 First Class
+
+Mercedes S Class
+
+Audi A8
+
+BMW 7 Series
+
+🔹 Urban SUV
+
+BYD Song
+
+Toyota Highlander
+
+🔹 Luxury SUV
+
+GMC Yukon
+
+Cadillac Escalade
+
+🔹 Elite Van
+
+Mercedes V Class
+
+🔹 Mini Bus
+
+Mercedes Sprinter
+
+Each uploaded vehicle must include:
+
+type (use the above category name as type)
+
+model
+
+plate_number (demo format allowed)
+
+vendor_id
+
+driver_id (if available)
+
+max_passengers
+
+max_luggage
+
+status = available
+
+active = true
+
+⚠️ Use existing vehicles table only — do NOT create a new table.
+
+✅ 2️⃣ FARE RULES TO BE APPLIED BY CATEGORY
+
+Update fare rules according to vehicle type (category):
+
+🔹 Classic
+
+Base Fare: AED 95
+
+Per KM: AED 1
+
+🔹 Executive
+
+Base Fare: AED 105
+
+Per KM: AED 1
+
+🔹 Urban SUV
+
+Base Fare: AED 108
+
+Per KM: AED 1
+
+🔹 Elite Van (Standard)
+
+Base Fare: AED 165
+
+Per KM: AED 2
+
+🔹 Luxury SUV
+
+Base Fare: AED 450
+
+Per KM: AED 0 (No KM variation – flat fare)
+
+🔹 Elite Van (VIP / Special)
+
+Base Fare: AED 750
+
+Per KM: AED 10
+
+🔹 Mini Bus
+
+Base Fare: AED 1,050
+
+Per KM: AED 12.5
+
+⚠️ These rules must be applied at fare calculation time, not as hard-coded values inside booking logic.
+
+✅ 3️⃣ ADMIN-EDITABLE FARE RULE SYSTEM (VERY IMPORTANT)
+
+Admin must have a Fare Rules Management Screen where:
+
+Admin can:
+
+View all vehicle categories
+
+Update:
+
+Base Fare
+
+Per KM Rate
+
+Save changes at any time
+
+Changes must:
+
+Apply only to new bookings
+
+NOT affect existing completed bookings
+
+Preferred approach:
+
+Either:
+
+Use an existing fare_rules table (if any)
+
+Or:
+
+Create a small safe config table only for fare rules
+
+But:
+
+❌ Do NOT hard-code rates in JS
+
+✅ All fare calculation must read from DB
+
+✅ 4️⃣ FARE CALCULATION LOGIC (DYNAMIC)
+
+When fare is calculated:
+
+fare = base_fare + (distance_km × per_km_rate)
+
+
+Special case:
+
+If per_km_rate = 0 → fare = base_fare only (Luxury SUV case)
+
+Fare must be calculated using:
+
+booking.vehicle_type
+
+distance_km
+
+latest admin-defined fare rules
+
+✅ 5️⃣ BACKWARD COMPATIBILITY (NO SYSTEM BREAK)
+
+Existing vehicles must continue working
+
+Existing bookings must remain unchanged
+
+Auto-assignment must still:
+
+Select vehicle by type
+
+Then select tagged driver
+
+Manual admin override must remain functional
+
+✅ 6️⃣ FINAL VERIFICATION REQUIRED
+
+After implementation, please confirm with screenshots:
+
+✅ Vehicles added under all new categories
+
+✅ Fare Rules Admin Screen visible & editable
+
+✅ Fare recalculates correctly for:
+
+Classic
+
+Executive
+
+Luxury SUV
+
+Mini Bus
+
+✅ Old bookings unaffected
+
+✅ 7️⃣ VERY IMPORTANT
+
+Do not:
+
+Re-seed database
+
+Reset bookings
+
+Change authentication
+
+Modify notification logic
+
+Only:
+
+Add new vehicles
+
+Add dynamic fare rules
+
+Add admin control for fares

@@ -1,4 +1,6 @@
-const RATES = {
+const { query } = require('../config/db');
+
+const LEGACY_RATES = {
   perKm: {
     sedan: 3.5,
     suv: 4.5,
@@ -14,14 +16,43 @@ const RATES = {
 };
 
 /**
- * STRICT fare calculation with surcharges
+ * Get fare rules from database for a vehicle type
+ * Falls back to legacy rates if not found
+ */
+async function getFareRuleForType(vehicleType) {
+  try {
+    const result = await query(
+      'SELECT base_fare, per_km_rate FROM fare_rules WHERE vehicle_type = $1 AND active = true',
+      [vehicleType.toLowerCase()]
+    );
+    
+    if (result.rows && result.rows.length > 0) {
+      return {
+        base_fare: parseFloat(result.rows[0].base_fare),
+        per_km_rate: parseFloat(result.rows[0].per_km_rate)
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching fare rules:', error);
+  }
+  
+  // Fallback to legacy rates
+  const legacyType = vehicleType.toLowerCase();
+  return {
+    base_fare: 0,
+    per_km_rate: LEGACY_RATES.perKm[legacyType] || LEGACY_RATES.perKm.sedan
+  };
+}
+
+/**
+ * DYNAMIC fare calculation using DB rules
  * @param {string} booking_type - point_to_point, airport_transfer, city_tour, hourly_rental
- * @param {string} vehicle_type - sedan, suv, luxury, van
+ * @param {string} vehicle_type - vehicle category from fare_rules table
  * @param {number} distance_km - required for distance-based bookings
  * @param {number} hours - required for time-based bookings
  * @returns {object} {distance_km, vehicle_type, booking_type, fare, currency}
  */
-function calculateFare(booking_type, vehicle_type, distance_km = 0, hours = 0) {
+async function calculateFare(booking_type, vehicle_type, distance_km = 0, hours = 0) {
   // STRICT validation - no fallbacks
   if (!booking_type || !vehicle_type) {
     throw new Error('Missing required fields: booking_type and vehicle_type');
@@ -36,34 +67,34 @@ function calculateFare(booking_type, vehicle_type, distance_km = 0, hours = 0) {
     throw new Error(`Invalid booking_type. Must be one of: ${validTypes.join(', ')}`);
   }
 
-  const validVehicles = Object.keys(RATES.perKm);
-  if (!validVehicles.includes(vehicle_type)) {
-    throw new Error(`Invalid vehicle_type. Must be one of: ${validVehicles.join(', ')}`);
-  }
-
   let fare = 0;
 
   if (booking_type === 'hourly_rental' || booking_type === 'city_tour') {
-    // Time-based: use hourly rate
+    // Time-based: use hourly rate from legacy
     if (!hours || hours <= 0) {
       throw new Error('hours is required and must be > 0 for hourly bookings');
     }
-    fare = hours * (RATES.hourly[vehicle_type] || RATES.hourly.sedan);
+    const hourlyRate = LEGACY_RATES.hourly[vehicle_type.toLowerCase()] || LEGACY_RATES.hourly.sedan;
+    fare = hours * hourlyRate;
   } else {
-    // Distance-based
+    // Distance-based: use dynamic fare rules from DB
     if (!distance_km || distance_km <= 0) {
       throw new Error('distance_km is required and must be > 0 for distance-based bookings');
     }
 
-    const perKmRate = RATES.perKm[vehicle_type] || RATES.perKm.sedan;
-    let baseFare = distance_km * perKmRate;
+    const fareRule = await getFareRuleForType(vehicle_type);
+    const baseFare = fareRule.base_fare || 0;
+    const perKmRate = fareRule.per_km_rate || 0;
+
+    // Calculate: base_fare + (distance * per_km_rate)
+    let calculatedFare = baseFare + (distance_km * perKmRate);
 
     // Apply surcharges
     if (booking_type === 'airport_transfer') {
-      baseFare = baseFare * 1.10; // +10% surcharge
+      calculatedFare = calculatedFare * 1.10; // +10% surcharge
     }
 
-    fare = baseFare;
+    fare = calculatedFare;
   }
 
   // Round to 2 decimals
@@ -80,6 +111,7 @@ function calculateFare(booking_type, vehicle_type, distance_km = 0, hours = 0) {
 }
 
 module.exports = {
-  RATES,
-  calculateFare
+  LEGACY_RATES,
+  calculateFare,
+  getFareRuleForType
 };
