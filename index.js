@@ -49,19 +49,34 @@ app.use('/api/push', pushRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/fare-rules', fareRuleRoutes);
 
-// Login page (public)
+// Admin Login page (public)
 app.get('/dashboard/login.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'login.html'));
 });
 
-// Dashboard main page
+// Admin Dashboard main page
 app.get('/dashboard/index.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'index.html'));
 });
 
-// Dashboard root redirects to login
+// Admin Dashboard root redirects to login
 app.get('/dashboard', (req, res) => {
   res.redirect('/dashboard/login.html');
+});
+
+// Vendor Login page
+app.get('/vendor-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'vendor-login.html'));
+});
+
+// Vendor Dashboard page
+app.get('/vendor-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'vendor-dashboard.html'));
+});
+
+// Vendor Signup page
+app.get('/vendor-signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'vendor-signup.html'));
 });
 
 // Serve static files (CSS, JS, etc)
