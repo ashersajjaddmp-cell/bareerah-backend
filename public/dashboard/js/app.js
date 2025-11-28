@@ -761,7 +761,10 @@ async function loadDrivers(status = null, targetTableId = 'drivers-table-body') 
       return;
     }
     
-    tbody.innerHTML = drivers.map(d => '<tr><td>' + d.id.substring(0, 8) + '</td><td>' + d.name + '</td><td>' + (d.phone || 'N/A') + '</td><td><span style="padding: 4px 8px; border-radius: 4px; background: ' + (d.status === 'online' ? '#10b981' : '#ef4444') + '; color: white; font-size: 12px;">' + (d.status || 'offline') + '</span></td><td>-</td><td>0</td><td><button onclick="viewDriver(\'' + d.id + '\')" class="btn-small">View</button> <button onclick="editDriver(\'' + d.id + '\')" class="btn-small">Edit</button></td></tr>').join('');
+    tbody.innerHTML = drivers.map(d => {
+      const carAssigned = d.assigned_vehicle_model ? d.assigned_vehicle_model + ' (' + (d.assigned_vehicle_plate || 'N/A') + ')' : '-';
+      return '<tr><td>' + d.id.substring(0, 8) + '</td><td>' + d.name + '</td><td>' + (d.phone || 'N/A') + '</td><td><span style="padding: 4px 8px; border-radius: 4px; background: ' + (d.status === 'online' ? '#10b981' : '#ef4444') + '; color: white; font-size: 12px;">' + (d.status || 'offline') + '</span></td><td>' + carAssigned + '</td><td>0</td><td><button onclick="viewDriver(\'' + d.id + '\')" class="btn-small">View</button> <button onclick="editDriver(\'' + d.id + '\')" class="btn-small">Edit</button></td></tr>';
+    }).join('');
   } catch (e) {
     const tbody = document.getElementById(targetTableId);
     if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="color:red;">Error: ' + e.message + '</td></tr>';

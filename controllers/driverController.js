@@ -5,13 +5,22 @@ const driverController = {
     try {
       const { status } = req.query;
       const { query } = require('../config/db');
-      let sql = 'SELECT * FROM drivers';
+      let sql = `
+        SELECT 
+          d.*,
+          v.id as assigned_vehicle_id,
+          v.model as assigned_vehicle_model,
+          v.type as assigned_vehicle_type,
+          v.plate_number as assigned_vehicle_plate
+        FROM drivers d
+        LEFT JOIN vehicles v ON d.id = v.driver_id
+      `;
       const params = [];
       if (status) {
-        sql += ' WHERE status = $1';
+        sql += ' WHERE d.status = $1';
         params.push(status);
       }
-      sql += ' ORDER BY name';
+      sql += ' ORDER BY d.name';
       const result = await query(sql, params);
       res.json({
         success: true,
