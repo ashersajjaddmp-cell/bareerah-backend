@@ -1040,8 +1040,19 @@ function createManualBooking() {
 }
 
 function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) modal.style.display = 'none';
+  // Close specific modal if ID provided, otherwise close all
+  if (modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'none';
+  } else {
+    // Close all modals
+    document.getElementById('driverViewModal').style.display = 'none';
+    document.getElementById('driverEditModal').style.display = 'none';
+    document.getElementById('vehicleEditModal').style.display = 'none';
+    document.getElementById('bookingDetailModal').style.display = 'none';
+    document.getElementById('editBookingModal').style.display = 'none';
+    document.getElementById('addBookingModal').style.display = 'none';
+  }
   document.getElementById('modalOverlay').style.display = 'none';
 }
 
