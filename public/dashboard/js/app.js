@@ -1302,7 +1302,10 @@ function editBooking(id) {
   Promise.all([
     fetch(getCacheBustUrl(API_BASE + '/bookings/' + id), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json()),
     fetch(getCacheBustUrl(API_BASE + '/drivers'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json()),
-    fetch(getCacheBustUrl(API_BASE + '/vehicles'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json())
+    fetch(getCacheBustUrl(API_BASE + '/vehicles'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => {
+      if (!r.ok) return { data: [] };
+      return r.json();
+    }).catch(() => ({ data: [] }))
   ])
   .then(([booking, drivers, vehicles]) => {
     if (booking.data) {
