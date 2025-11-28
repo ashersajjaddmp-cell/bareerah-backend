@@ -1144,10 +1144,16 @@ function createManualBooking() {
   // Get all values
   const bookingType = document.getElementById('bookingType')?.value;
   const vehicleType = document.getElementById('bookingVehicleType')?.value;
+  const vehicleModelSelect = document.getElementById('bookingVehicleModel');
   
   // Validate required fields
   if (!bookingType || !vehicleType) {
     showToast('Please select Booking Type and Vehicle Type', 'error');
+    return;
+  }
+  
+  if (!vehicleModelSelect?.value) {
+    showToast('Please select a Vehicle Model', 'error');
     return;
   }
   
@@ -1163,15 +1169,30 @@ function createManualBooking() {
     luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
     booking_type: bookingType,
     vehicle_type: vehicleType,
-    vehicle_model: document.getElementById('bookingVehicleModel').value || 'Not specified',
+    vehicle_model: vehicleModelSelect.value,
     payment_method: document.getElementById('bookingPayment').value || 'cash',
     booking_source: 'manually_created'
   };
   
-  // Add driver assignment
-  if (window.createAssignmentMode === 'manual') {
+  // Auto-assign a vehicle and driver if in auto mode
+  if (window.createAssignmentMode === 'auto') {
+    const availableVehicles = window.vehiclesList?.filter(v => v.type === vehicleType && v.status === 'available') || [];
+    if (availableVehicles.length > 0) {
+      body.assigned_vehicle_id = availableVehicles[0].id;
+    }
+    const onlineDrivers = window.driversList?.filter(d => d.status === 'online') || [];
+    if (onlineDrivers.length > 0) {
+      body.driver_id = onlineDrivers[0].id;
+    }
+  } else if (window.createAssignmentMode === 'manual') {
+    // Manual driver assignment
     const driverId = document.getElementById('createDriver').value;
     if (driverId) body.driver_id = driverId;
+    // Try to assign a vehicle of the selected type
+    const availableVehicles = window.vehiclesList?.filter(v => v.type === vehicleType && v.status === 'available') || [];
+    if (availableVehicles.length > 0) {
+      body.assigned_vehicle_id = availableVehicles[0].id;
+    }
   }
   
   console.log('Creating booking with:', body);
