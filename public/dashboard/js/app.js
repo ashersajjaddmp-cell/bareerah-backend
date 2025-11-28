@@ -759,13 +759,17 @@ function editDriver(id) {
         document.getElementById('driverEditId').value = d.data.id;
         document.getElementById('driverName').value = d.data.name || '';
         document.getElementById('driverPhone').value = d.data.phone || '';
+        document.getElementById('driverEmail').value = d.data.email || '';
         document.getElementById('driverStatus').value = d.data.status || 'offline';
         modal.style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
       }
     }
   })
-  .catch(e => console.error('Edit driver error:', e));
+  .catch(e => {
+    console.error('Edit driver error:', e);
+    alert('Error loading driver details');
+  });
 }
 
 // Vehicles
@@ -915,14 +919,21 @@ function saveDriverChanges() {
     body: JSON.stringify({
       name: document.getElementById('driverName').value,
       phone: document.getElementById('driverPhone').value,
+      email: document.getElementById('driverEmail').value,
       status: document.getElementById('driverStatus').value
     })
   }).then(r => r.json()).then(d => {
     if (d.success) {
+      alert('Driver updated successfully!');
       closeModal('driverEditModal');
       loadDrivers();
+    } else {
+      alert('Error: ' + (d.error || 'Failed to update driver'));
     }
-  }).catch(e => console.log(e));
+  }).catch(e => {
+    console.error('Save driver error:', e);
+    alert('Error saving driver changes');
+  });
 }
 
 function exportBookings(format) {
@@ -1040,13 +1051,29 @@ function viewDriver(id) {
   fetch(url, {
     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
   })
-  .then(r => r.json())
+  .then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
   .then(d => {
     if (d.data) {
-      alert('Driver: ' + d.data.name + '\nPhone: ' + d.data.phone + '\nStatus: ' + d.data.status);
+      const modal = document.getElementById('driverViewModal');
+      if (modal) {
+        document.getElementById('driverViewId').value = d.data.id || '';
+        document.getElementById('driverViewName').value = d.data.name || '';
+        document.getElementById('driverViewPhone').value = d.data.phone || '';
+        document.getElementById('driverViewStatus').value = (d.data.status || 'offline').toUpperCase();
+        document.getElementById('driverViewEmail').value = d.data.email || '';
+        document.getElementById('driverViewLicense').value = d.data.license_number || '';
+        modal.style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+      }
     }
   })
-  .catch(e => console.error(e));
+  .catch(e => {
+    console.error('View driver error:', e);
+    alert('Error loading driver details');
+  });
 }
 
 // Edit Booking
