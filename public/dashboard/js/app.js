@@ -1,6 +1,7 @@
 // Global State
 let currentRange = 'today';
 const API_BASE = window.location.origin + '/api';
+let fareRules = {}; // Cache for fare rules
 
 // Toast Notification System
 function showToast(message, type = 'success') {
@@ -1588,7 +1589,7 @@ function estimateDistance(pickup, dropoff) {
   return (Math.random() * 25 + 10).toFixed(1);
 }
 
-function calculateDistanceAndFare() {
+async function calculateDistanceAndFare() {
   const pickupInput = document.getElementById('editPickup');
   const dropoffInput = document.getElementById('editDropoff');
   const distanceField = document.getElementById('editDistance');
@@ -1601,17 +1602,37 @@ function calculateDistanceAndFare() {
   const distance = parseFloat(estimateDistance(pickupInput.value, dropoffInput.value));
   if (distanceField) distanceField.value = distance;
   
-  // Calculate fare based on vehicle type and distance
+  // Map old vehicle types to new fare rule categories
   const vehicleType = vehicleTypeSelect?.value || 'sedan';
-  const vehicle = vehiclesList.find(v => v.type === vehicleType);
+  let fareRuleType = 'classic';
+  if (vehicleType === 'executive' || vehicleType === 'suv') fareRuleType = 'executive';
+  if (vehicleType === 'luxury') fareRuleType = 'luxury_suv';
+  if (vehicleType === 'van') fareRuleType = 'elite_van';
+  if (vehicleType === 'bus' || vehicleType === 'minibus') fareRuleType = 'mini_bus';
   
-  let fare = 5; // Base fare
-  if (vehicle) {
-    fare = 5 + (distance * (vehicle.per_km_price || 3.5));
+  // Get fare rule from cache or API
+  let baseFare = 95, perKmRate = 1;
+  if (fareRules[fareRuleType]) {
+    baseFare = parseFloat(fareRules[fareRuleType].base_fare);
+    perKmRate = parseFloat(fareRules[fareRuleType].per_km_rate);
   } else {
-    fare = 5 + (distance * 3.5); // Default rate
+    try {
+      const res = await fetch(API_BASE + '/fare-rules', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }});
+      if (res.ok) {
+        const data = await res.json();
+        if (data.data && data.data.length) {
+          data.data.forEach(rule => { fareRules[rule.vehicle_type] = rule; });
+          if (fareRules[fareRuleType]) {
+            baseFare = parseFloat(fareRules[fareRuleType].base_fare);
+            perKmRate = parseFloat(fareRules[fareRuleType].per_km_rate);
+          }
+        }
+      }
+    } catch (e) {}
   }
   
+  // Calculate: base_fare + (distance * per_km_rate)
+  const fare = baseFare + (distance * perKmRate);
   if (fareField) fareField.value = parseFloat(fare).toFixed(2);
 }
 

@@ -28,8 +28,8 @@ const addBookingController = {
         return res.status(400).json({ success: false, error: 'Missing required fields' });
       }
 
-      // Calculate fare
-      const fareResult = fareCalculator.calculateFare(
+      // Calculate fare (async - reads from database)
+      const fareResult = await fareCalculator.calculateFare(
         booking_type.toLowerCase(),
         vehicle_type.toLowerCase(),
         parseFloat(distance_km),
