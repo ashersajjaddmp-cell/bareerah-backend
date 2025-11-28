@@ -73,7 +73,7 @@ const Vendor = {
         COUNT(DISTINCT v.id) as total_vehicles,
         COUNT(DISTINCT CASE WHEN b.status = 'completed' THEN b.id END) as completed_bookings,
         COALESCE(SUM(CASE WHEN b.status = 'completed' THEN b.fare_aed ELSE 0 END), 0) as total_earnings,
-        COALESCE(SUM(CASE WHEN vp.paid = false THEN vp.amount ELSE 0 END), 0) as pending_payout
+        COALESCE(SUM(vp.vendor_amount), 0) as pending_payout
       FROM vendors vn
       LEFT JOIN vehicles v ON vn.id = v.vendor_id
       LEFT JOIN bookings b ON vn.id = b.vendor_id
