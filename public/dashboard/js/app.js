@@ -1530,19 +1530,20 @@ function loadVehiclesForModels() {
 function updateVehicleModels(vehicleType, targetId = 'editVehicleModel') {
   // Map old vehicle type names to new category names
   const typeMapping = {
-    'sedan': 'classic',
-    'executive': 'executive',
-    'suv': 'urban_suv',
-    'luxury': 'luxury_suv',
-    'van': 'elite_van',
-    'bus': 'mini_bus',
-    'minibus': 'mini_bus'
+    'sedan': ['classic', 'sedan'],
+    'executive': ['executive'],
+    'suv': ['urban_suv', 'suv'],
+    'luxury': ['luxury_suv', 'luxury', 'first_class'],
+    'van': ['elite_van', 'van'],
+    'bus': ['mini_bus', 'bus', 'minibus'],
+    'minibus': ['mini_bus', 'minibus']
   };
   
-  const newType = typeMapping[vehicleType] || vehicleType;
+  // Get all matching types (both old and new names)
+  const typesToMatch = typeMapping[vehicleType] || [vehicleType];
   
-  // Filter by new type name
-  const vehicles = vehiclesList.filter(v => v.type === newType);
+  // Filter by ANY matching type name (old OR new)
+  const vehicles = vehiclesList.filter(v => typesToMatch.includes(v.type));
   const select = document.getElementById(targetId);
   
   if (select) {
