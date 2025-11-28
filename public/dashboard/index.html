@@ -1013,8 +1013,33 @@
     </div>
   </div>
 
+  <!-- Vendor Details Modal -->
+  <div id="vendorModal" class="modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 500px; width: 90%; z-index: 10000; max-height: 80vh; overflow-y: auto;">
+    <h3 style="margin-top: 0;">Vendor Details</h3>
+    <div style="display: grid; gap: 12px; margin: 20px 0;">
+      <div><strong>Company Name:</strong> <span id="vendorName">-</span></div>
+      <div><strong>Email:</strong> <span id="vendorEmail">-</span></div>
+      <div><strong>Phone:</strong> <span id="vendorPhone">-</span></div>
+      <div><strong>Status:</strong> <span id="vendorStatus">-</span></div>
+      <div><strong>Total Vehicles:</strong> <span id="vendorVehicles">-</span></div>
+      <div><strong>Total Earnings:</strong> <span id="vendorEarnings">-</span></div>
+      <div><strong>Completed Bookings:</strong> <span id="vendorBookings">-</span></div>
+      <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin-top: 15px;">
+        <strong>Auto-Assignment Status:</strong>
+        <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+          <span id="vendorAutoAssignText" style="flex: 1;">✅ Enabled</span>
+          <button id="toggleAutoAssignBtn" onclick="toggleVendorAutoAssign()" class="btn" style="padding: 8px 15px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">Toggle</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+      <button onclick="closeVendorModal()" class="btn" style="padding: 10px 20px; background: #ccc; color: black; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+    </div>
+  </div>
+
   <!-- Modal Overlay -->
   <div id="modalOverlay" class="modal-overlay" style="display: none;" onclick="closeModal()"></div>
+  <div id="vendorModalOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;" onclick="closeVendorModal()"></div>
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; pointer-events: none;"></div>

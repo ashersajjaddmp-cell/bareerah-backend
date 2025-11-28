@@ -710,8 +710,82 @@ function filterVendors(status) {
   loadVendors(status || null);
 }
 
-function viewVendor(id) {
-  showToast('Opening vendor details for: ' + id.substring(0, 8), 'info');
+async function viewVendor(id) {
+  try {
+    const token = localStorage.getItem('token');
+    const url = getCacheBustUrl(API_BASE + '/vendors/' + id);
+    
+    const response = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    
+    if (!response.ok) throw new Error('Failed to load vendor details');
+    
+    const data = await response.json();
+    const vendor = data.data || data.vendor || {};
+    
+    // Populate modal fields
+    document.getElementById('vendorName').textContent = vendor.name || vendor.company_name || 'N/A';
+    document.getElementById('vendorEmail').textContent = vendor.email || 'N/A';
+    document.getElementById('vendorPhone').textContent = vendor.phone || 'N/A';
+    document.getElementById('vendorStatus').textContent = (vendor.status || 'pending').toUpperCase();
+    document.getElementById('vendorVehicles').textContent = vendor.total_vehicles || 0;
+    document.getElementById('vendorEarnings').textContent = 'AED ' + (parseFloat(vendor.total_earnings || 0).toFixed(2));
+    document.getElementById('vendorBookings').textContent = vendor.completed_bookings || 0;
+    
+    const autoAssignText = vendor.auto_assign_disabled ? '❌ Disabled' : '✅ Enabled';
+    document.getElementById('vendorAutoAssignText').textContent = autoAssignText;
+    
+    // Store vendor ID for toggle function
+    window.currentVendorId = id;
+    window.currentVendorAutoAssignDisabled = vendor.auto_assign_disabled || false;
+    
+    // Show modal
+    document.getElementById('vendorModal').style.display = 'block';
+    document.getElementById('vendorModalOverlay').style.display = 'block';
+  } catch (e) {
+    showToast('Error loading vendor details: ' + e.message, 'error');
+    console.error('Error:', e);
+  }
+}
+
+function closeVendorModal() {
+  document.getElementById('vendorModal').style.display = 'none';
+  document.getElementById('vendorModalOverlay').style.display = 'none';
+}
+
+async function toggleVendorAutoAssign() {
+  try {
+    if (!window.currentVendorId) throw new Error('No vendor selected');
+    
+    const token = localStorage.getItem('token');
+    const newDisabledStatus = !window.currentVendorAutoAssignDisabled;
+    
+    const response = await fetch(API_BASE + '/vendors/' + window.currentVendorId + '/toggle-auto-assign', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ disabled: newDisabledStatus })
+    });
+    
+    if (!response.ok) throw new Error('Failed to toggle auto-assign');
+    
+    const data = await response.json();
+    window.currentVendorAutoAssignDisabled = newDisabledStatus;
+    
+    const autoAssignText = newDisabledStatus ? '❌ Disabled' : '✅ Enabled';
+    document.getElementById('vendorAutoAssignText').textContent = autoAssignText;
+    
+    showToast('Auto-assign ' + (newDisabledStatus ? 'disabled' : 'enabled') + ' for this vendor', 'success');
+    
+    // Reload vendors table
+    loadVendors();
+  } catch (e) {
+    showToast('Error toggling auto-assign: ' + e.message, 'error');
+    console.error('Error:', e);
+  }
 }
 
 // Dashboard - Load Stats
