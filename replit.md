@@ -19,7 +19,7 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
 - Error Display: User-friendly error messages are displayed directly on the UI for failed API calls.
 
 ## Technical Implementations
-- **Core Logic**: Fare calculation based on distance, time, and vehicle type.
+- **Core Logic**: Dynamic fare calculation based on distance, time, and vehicle type. Fare rules are admin-editable and stored in database.
 - **Booking Assignment**: Automatic driver-vehicle tagging and assignment based on `assigned_vehicle_id` and vehicle's `driver_id`. Manual override for vehicle selection in admin.
 - **Notification System**: Checkboxes for customer (WhatsApp, Email) and driver (WhatsApp, Email) notifications, with selections collected for future integration.
 - **Location Management**: Integrated 400+ UAE locations across all 7 emirates, supporting inter-emirate bookings.
@@ -28,6 +28,8 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
 - **Caching**: Cache-busting implemented for all API calls to prevent stale data.
 - **Error Handling**: Comprehensive error handling with logging and user-friendly messages.
 - **Validation**: Passenger/luggage validation is mandatory for booking creation.
+- **Fare Rules Management**: Database-driven fare rules with admin UI for editing. 7 vehicle categories with configurable base fare and per-km rates.
+- **Vehicle Categories**: Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, and Mini Bus with 14 demo vehicles uploaded.
 
 ## Feature Specifications
 - **Admin Dashboard**:
@@ -35,10 +37,12 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
     - Comprehensive bookings, drivers, and vehicles tabs.
     - KPI & Profits tab with real calculations.
     - Export bookings as CSV.
+    - **NEW: Fare Rules Management Tab** - Admin can view and edit fare rules by vehicle category. Changes apply only to new bookings.
 - **Vendor & Driver Portal**: Dedicated dashboards for vendors and drivers.
-- **Booking Management**: Create, view, edit bookings; calculate fares. Edit access for bookings is status-based (locked for `in_progress` and `completed`).
-- **Vehicle Management**: Capacity logic for vehicles, filtering based on passengers and luggage.
+- **Booking Management**: Create, view, edit bookings; calculate fares dynamically from DB. Edit access for bookings is status-based (locked for `in_progress` and `completed`).
+- **Vehicle Management**: Capacity logic for vehicles, filtering based on passengers and luggage. 14 new vehicles across 7 categories now available.
 - **Statistics**: Dashboard stats persist after refresh, with customizable date ranges.
+- **Drivers Tab**: Shows "Car Assigned" column with vehicle model and plate number for tagged drivers.
 
 ## System Design Choices
 - **Database Schema**: Optimized `bookings`, `vehicles`, `drivers`, and `vendors` tables with relevant fields for efficient data management and queries.
