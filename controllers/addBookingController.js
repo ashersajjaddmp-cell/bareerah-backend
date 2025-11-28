@@ -40,6 +40,18 @@ const addBookingController = {
       // Determine vehicle model - use vehicle_model if provided, otherwise car_model
       const finalVehicleModel = vehicle_model || car_model || 'Not specified';
       
+      // AUTO-ASSIGNMENT: If assigned_vehicle_id is provided, use that vehicle's tagged driver
+      let finalDriverId = driver_id;
+      let finalAssignedVehicleId = assigned_vehicle_id;
+      
+      if (assigned_vehicle_id) {
+        // Get the vehicle's tagged driver
+        const vehicleResult = await query('SELECT driver_id FROM vehicles WHERE id = $1', [assigned_vehicle_id]);
+        if (vehicleResult.rows.length > 0 && vehicleResult.rows[0].driver_id && !driver_id) {
+          finalDriverId = vehicleResult.rows[0].driver_id; // Auto-assign tagged driver if no driver specified
+        }
+      }
+      
       // Create booking (database auto-generates UUID)
       const result = await query(`
         INSERT INTO bookings 
@@ -50,7 +62,7 @@ const addBookingController = {
         RETURNING *
       `, [
         customer_name, customer_phone, customer_email || null, pickup_location,
-        dropoff_location, distance_km, fare, booking_type, vehicle_type, finalVehicleModel, driver_id || null, assigned_vehicle_id || null, payment_method || 'cash',
+        dropoff_location, distance_km, fare, booking_type, vehicle_type, finalVehicleModel, finalDriverId || null, finalAssignedVehicleId || null, payment_method || 'cash',
         status || 'in-process', booking_source || 'manually_created'
       ])
 

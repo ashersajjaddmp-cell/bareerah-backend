@@ -1301,9 +1301,10 @@ function editBooking(id) {
   const token = localStorage.getItem('token');
   Promise.all([
     fetch(getCacheBustUrl(API_BASE + '/bookings/' + id), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json()),
-    fetch(getCacheBustUrl(API_BASE + '/drivers'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json())
+    fetch(getCacheBustUrl(API_BASE + '/drivers'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json()),
+    fetch(getCacheBustUrl(API_BASE + '/vehicles'), { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json())
   ])
-  .then(([booking, drivers]) => {
+  .then(([booking, drivers, vehicles]) => {
     if (booking.data) {
       const b = booking.data;
       document.getElementById('editBookingId').value = id;
@@ -1333,6 +1334,30 @@ function editBooking(id) {
           if (b.driver_id === d.id) opt.selected = true;
           driverSelect.appendChild(opt);
         });
+      }
+      
+      // Load vehicles for assignment override
+      const vehicleSelect = document.getElementById('editAssignedVehicle');
+      vehicleSelect.innerHTML = '<option value="">-- Auto Select --</option>';
+      if (vehicles.data && vehicles.data.length) {
+        vehicles.data.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.id;
+          opt.textContent = (v.model || 'Unknown') + ' (' + (v.type || 'sedan').toUpperCase() + ') - ' + (v.status || 'unknown').toUpperCase();
+          if (b.assigned_vehicle_id === v.id) opt.selected = true;
+          vehicleSelect.appendChild(opt);
+        });
+      }
+      
+      // Disable/enable assignment controls based on booking status
+      const isLocked = b.status === 'in_progress' || b.status === 'completed';
+      driverSelect.disabled = isLocked;
+      vehicleSelect.disabled = isLocked;
+      document.getElementById('manualAssignBtn').disabled = isLocked;
+      document.getElementById('autoAssignBtn').disabled = isLocked;
+      if (isLocked) {
+        document.getElementById('manualAssignBtn').style.opacity = '0.5';
+        document.getElementById('autoAssignBtn').style.opacity = '0.5';
       }
       
       // Set assignment mode
@@ -1398,10 +1423,28 @@ function saveBookingChanges(e) {
     fare_aed: parseFloat(document.getElementById('editFare').value) || 0
   };
   
+  // Vehicle assignment override
+  const assignedVehicleId = document.getElementById('editAssignedVehicle')?.value;
+  if (assignedVehicleId) body.assigned_vehicle_id = assignedVehicleId;
+  
+  // Driver assignment
   if (window.assignmentMode === 'manual') {
     const driverId = document.getElementById('editDriver').value;
     if (driverId) body.driver_id = driverId;
   }
+  
+  // Collect notification selections (for logging/future implementation)
+  const notifications = {
+    customer: {
+      whatsapp: document.getElementById('notifyCustomerWhatsApp')?.checked || false,
+      email: document.getElementById('notifyCustomerEmail')?.checked || false
+    },
+    driver: {
+      whatsapp: document.getElementById('notifyDriverWhatsApp')?.checked || false,
+      email: document.getElementById('notifyDriverEmail')?.checked || false
+    }
+  };
+  body.notifications_to_send = notifications;
   
   fetch(API_BASE + '/bookings/' + id, {
     method: 'PUT',
@@ -1414,7 +1457,7 @@ function saveBookingChanges(e) {
   .then(r => r.json())
   .then(d => {
     if (d.success) {
-      showToast('Booking updated successfully!', 'success');
+      showToast('Booking updated & notifications queued!', 'success');
       closeModal('editBookingModal');
       loadBookings();
     } else {

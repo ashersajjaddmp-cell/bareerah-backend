@@ -662,6 +662,13 @@
             <input type="number" id="editFare" step="0.01" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
           </div>
           <div class="form-group">
+            <label>Assigned Vehicle (Override)</label>
+            <select id="editAssignedVehicle" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+              <option value="">-- Auto Select --</option>
+            </select>
+            <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Only editable for pending & assigned bookings</small>
+          </div>
+          <div class="form-group">
             <label>Driver Assignment</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
               <button type="button" onclick="setAssignmentMode('manual')" id="manualAssignBtn" class="btn" style="background: var(--bg-secondary);">Manual Assign</button>
@@ -671,6 +678,34 @@
               <option value="">-- Select Driver --</option>
             </select>
             <div id="autoAssignStatus" style="padding: 8px; background: #10b981; color: white; border-radius: 6px; display: none; text-align: center;">Will auto-assign on save</div>
+            <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Only editable for pending & assigned bookings</small>
+          </div>
+          <div class="form-group" style="border: 1px solid var(--border); padding: 12px; border-radius: 6px; background: var(--bg-secondary);">
+            <label style="font-weight: bold; margin-bottom: 8px; display: block;">📬 Notifications on Save:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <p style="margin: 0 0 8px 0; font-weight: 600;">Customer</p>
+                <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                  <input type="checkbox" id="notifyCustomerWhatsApp" style="width: 16px; height: 16px;">
+                  <span>WhatsApp</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px;">
+                  <input type="checkbox" id="notifyCustomerEmail" style="width: 16px; height: 16px;">
+                  <span>Email</span>
+                </label>
+              </div>
+              <div>
+                <p style="margin: 0 0 8px 0; font-weight: 600;">Driver</p>
+                <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                  <input type="checkbox" id="notifyDriverWhatsApp" style="width: 16px; height: 16px;">
+                  <span>WhatsApp</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px;">
+                  <input type="checkbox" id="notifyDriverEmail" style="width: 16px; height: 16px;">
+                  <span>Email</span>
+                </label>
+              </div>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
         </form>
@@ -922,7 +957,7 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; pointer-events: none;"></div>
 
-  <script src="js/app.js?v=30"></script>
+  <script src="js/app.js?v=31"></script>
   <script>
     // Force cache busting
     if (window.location.hash === '') {
