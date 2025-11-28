@@ -14,7 +14,15 @@ const bookingController = {
   async getBookingById(req, res, next) {
     try {
       const { id } = req.params;
-      const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
+      const result = await query(`
+        SELECT b.*, 
+               d.name as driver_name,
+               v.model as assigned_vehicle_model
+        FROM bookings b
+        LEFT JOIN drivers d ON b.driver_id = d.id
+        LEFT JOIN vehicles v ON b.assigned_vehicle_id = v.id
+        WHERE b.id = $1
+      `, [id]);
       res.json({ success: true, data: result.rows[0] || null });
     } catch (error) {
       next(error);
