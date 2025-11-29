@@ -1,0 +1,91 @@
+╔════════════════════════════════════════════════════════════════╗
+║         🔗 BAREERAH AI - BOOKING API QUICK REFERENCE          ║
+╚════════════════════════════════════════════════════════════════╝
+
+❌ WRONG ENDPOINT (What Bareerah tried):
+   /api/create_booking
+
+✅ CORRECT ENDPOINT (What to use now):
+   POST /api/bookings/create-manual
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📍 FULL URL:
+   https://5ef5530c-38d9-4731-b470-827087d7bc6f-00-2j327r1fnap1d.sisko.replit.dev/api/bookings/create-manual
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 REQUIRED HEADERS:
+   Authorization: Bearer <JWT_TOKEN>
+   Content-Type: application/json
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 REQUIRED PAYLOAD FIELDS:
+   ✓ customer_name (string)
+   ✓ customer_phone (string, e.g., "+971501234567")
+   ✓ customer_email (string, optional)
+   ✓ booking_type (enum: point_to_point, airport_transfer, city_tour, hourly_rental)
+   ✓ vehicle_type (enum: sedan, suv, luxury, van, bus, minibus)
+   ✓ distance_km (number, for point_to_point/airport_transfer)
+   ✓ hours (number, for hourly_rental/city_tour)
+   ✓ passengers_count (number)
+   ✓ luggage_count (number)
+   ✓ pickup_location (string)
+   ✓ dropoff_location (string)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔑 GET JWT TOKEN FIRST:
+   POST /api/auth/login
+   Payload: {
+     "email": "admin@example.com",
+     "password": "admin123"
+   }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ RESPONSE ON SUCCESS (HTTP 200):
+{
+  "success": true,
+  "booking_id": "BOOK-00123",
+  "fare": 125.50,
+  "currency": "AED",
+  "vehicle": {
+    "model": "Toyota Corolla",
+    "plate_number": "ABC-1234",
+    "driver_name": "Ahmed Hassan"
+  }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 AUTO-RETRY FEATURES:
+   • 3 automatic retry attempts on failure
+   • Exponential backoff: 500ms → 1000ms → 2000ms
+   • Detailed console logging for each attempt
+   • Clear error messages after all retries exhausted
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 OTHER USEFUL ENDPOINTS:
+
+Calculate Fare (No Auth):
+   POST /api/bookings/calculate-fare
+   Payload: { "booking_type", "vehicle_type", "distance_km" }
+
+Get Available Vehicles (No Auth):
+   GET /api/bookings/available-vehicles?passengers_count=3&luggage_count=2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 BOOKING TYPE VS DISTANCE/HOURS:
+   • point_to_point → Use distance_km
+   • airport_transfer → Use distance_km
+   • city_tour → Use hours
+   • hourly_rental → Use hours
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ STATUS: LIVE & OPERATIONAL
+📌 Last Updated: 2025-11-29
