@@ -1811,6 +1811,7 @@ function editBooking(id) {
       document.getElementById('editVehicleModel').value = b.vehicle_model || '';
       document.getElementById('editPayment').value = b.payment_method || 'cash';
       document.getElementById('editFare').value = b.fare_aed || 0;
+      document.getElementById('editNotes').value = b.notes || '';
       
       // Add change listeners
       document.getElementById('editPickup').addEventListener('change', calculateDistanceAndFare);
@@ -1914,7 +1915,8 @@ function saveBookingChanges(e) {
     vehicle_type: document.getElementById('editVehicleType').value,
     vehicle_model: document.getElementById('editVehicleModel').value,
     payment_method: document.getElementById('editPayment').value,
-    fare_aed: parseFloat(document.getElementById('editFare').value) || 0
+    fare_aed: parseFloat(document.getElementById('editFare').value) || 0,
+    notes: document.getElementById('editNotes').value || ''
   };
   
   // Vehicle assignment override

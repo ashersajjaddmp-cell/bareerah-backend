@@ -20,7 +20,8 @@ const Booking = {
       passengers_count,
       luggage_count,
       caller_number,
-      confirmed_contact_number
+      confirmed_contact_number,
+      notes
     } = data;
 
     const result = await query(`
@@ -38,8 +39,9 @@ const Booking = {
         passengers_count,
         luggage_count,
         caller_number,
-        confirmed_contact_number
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', $10, $11, $12, $13)
+        confirmed_contact_number,
+        notes
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', $10, $11, $12, $13, $14)
       RETURNING *
     `, [
       customer_name,
@@ -54,7 +56,8 @@ const Booking = {
       passengers_count || 1,
       luggage_count || 0,
       caller_number || null,
-      confirmed_contact_number || null
+      confirmed_contact_number || null,
+      notes || null
     ]);
     
     return result.rows[0];
@@ -90,6 +93,14 @@ const Booking = {
     const result = await query(
       'UPDATE bookings SET assigned_vehicle_id = $1, vehicle_type = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
       [vehicleId, vehicleType, id]
+    );
+    return result.rows[0];
+  },
+
+  async updateNotes(id, notes) {
+    const result = await query(
+      'UPDATE bookings SET notes = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+      [notes || null, id]
     );
     return result.rows[0];
   }
