@@ -14,6 +14,14 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 
 ## Recent Changes (2025-11-30) ✅
 
+### 📊 Admin Dashboard Charts ✅ LIVE & TESTED
+- **7-Day Booking Trend**: Line chart showing bookings over selected period
+- **Revenue by Vehicle Type**: Doughnut chart showing earnings split by vehicle category
+- **Top Drivers List**: Display of top 5 performers with trip counts and earnings
+- New endpoints: `/api/stats/earnings-breakdown`, `/api/stats/vendor-earnings`, `/api/stats/top-vendors`
+- All charts render with real database data, respond to date filters
+- Dashboard includes KPI cards + interactive charts on main Dashboard page
+
 ### 📊 Vendor Analytics Dashboard ✅ LIVE & TESTED
 - Interactive dashboard with date filters: Today, Yesterday, This Week, This Month
 - Three charts: Bookings (doughnut), Earnings (bar), Distance (line)

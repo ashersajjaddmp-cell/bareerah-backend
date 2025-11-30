@@ -816,8 +816,73 @@ async function loadDashboard() {
     stat('stat-revenue', 'AED ' + (parseFloat(d.total_revenue || 0).toFixed(2)));
     stat('stat-cash', 'AED ' + (parseFloat(d.cash_revenue || 0).toFixed(2)));
     stat('stat-card', 'AED ' + (parseFloat(d.card_revenue || 0).toFixed(2)));
+    
+    // Load Dashboard Charts
+    await loadDashboardCharts(data);
   } catch (e) {
     console.error('Dashboard error:', e.message, e);
+  }
+}
+
+async function loadDashboardCharts(data = {}) {
+  try {
+    const apiData = data.data || {};
+    
+    // 1. 7-Day Booking Trend Chart
+    const bookingsCtx = document.getElementById('bookingsChart');
+    if (bookingsCtx && apiData.trend && apiData.trend.length > 0) {
+      if (window.bookingsChartInstance) window.bookingsChartInstance.destroy();
+      window.bookingsChartInstance = new Chart(bookingsCtx, {
+        type: 'line',
+        data: {
+          labels: apiData.trend.map(t => new Date(t.date).toLocaleDateString('en-AE', { month: 'short', day: 'numeric' })),
+          datasets: [{
+            label: 'Bookings',
+            data: apiData.trend.map(t => t.bookings || 0),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: true } }, scales: { y: { beginAtZero: true } } }
+      });
+    }
+    
+    // 2. Revenue by Vehicle Type Chart
+    const revenueCtx = document.getElementById('revenueChart');
+    if (revenueCtx && apiData.revenueByType && apiData.revenueByType.length > 0) {
+      if (window.revenueChartInstance) window.revenueChartInstance.destroy();
+      const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6'];
+      const typeMap = { 'sedan': 'Sedan', 'suv': 'SUV', 'luxury': 'Luxury', 'van': 'Van', 'bus': 'Bus', 'minibus': 'Mini Bus', 'classic': 'Classic', 'executive': 'Executive', 'first_class': 'First Class', 'urban_suv': 'Urban SUV', 'luxury_suv': 'Luxury SUV', 'elite_van': 'Elite Van', 'mini_bus': 'Mini Bus' };
+      window.revenueChartInstance = new Chart(revenueCtx, {
+        type: 'doughnut',
+        data: {
+          labels: apiData.revenueByType.map(r => typeMap[r.vehicle_type] || r.vehicle_type),
+          datasets: [{
+            data: apiData.revenueByType.map(r => parseFloat(r.revenue || 0)),
+            backgroundColor: colors.slice(0, apiData.revenueByType.length),
+            borderColor: ['#1e40af', '#dc2626', '#047857', '#d97706', '#7c3aed', '#be185d', '#0d9488'].slice(0, apiData.revenueByType.length),
+            borderWidth: 2
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'right' } } }
+      });
+    }
+    
+    // 3. Top Drivers List
+    const driversStats = document.getElementById('driversStats');
+    if (driversStats && apiData.driverStats && apiData.driverStats.length > 0) {
+      driversStats.innerHTML = apiData.driverStats.slice(0, 5).map(d => {
+        return '<div style="padding: 12px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;"><div><strong>' + d.name + '</strong><br><small style="color: var(--text-secondary);">' + d.trips + ' trips</small></div><strong style="color: #10b981;">AED ' + parseFloat(d.earnings || 0).toFixed(2) + '</strong></div>';
+      }).join('');
+    }
+  } catch (e) {
+    console.error('Dashboard charts error:', e.message, e);
   }
 }
 
