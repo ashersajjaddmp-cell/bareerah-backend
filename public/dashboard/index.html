@@ -1066,24 +1066,52 @@
           <label>Phone</label>
           <input type="text" id="bookingCustomerPhone" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
         </div>
-        <div class="form-group" style="position: relative;">
-          <label>Pickup Location</label>
-          <input type="text" id="bookingPickup" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; position: relative; z-index: 5;">
-          <div id="addPickupSuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 250; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none;"></div>
+        <div class="form-group">
+          <label style="font-weight: 600; color: #2563eb;">📍 Booking Type (Select First)</label>
+          <select id="bookingType" onchange="toggleBookingTypeFields()" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+            <option value="">-- Select Booking Type --</option>
+            <option value="point_to_point">Point to Point</option>
+            <option value="airport_transfer">✈️ Airport Transfer</option>
+            <option value="hourly_rental">⏰ Hourly Rental (3-14 hours)</option>
+            <option value="multi_stop">🛣️ Multi-Stop (Multiple Locations)</option>
+            <option value="round_trip">🔄 Round Trip (Return Journey)</option>
+          </select>
         </div>
-        <div class="form-group" style="position: relative;">
-          <label>Dropoff Location</label>
-          <input type="text" id="bookingDropoff" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; position: relative; z-index: 5;">
-          <div id="addDropoffSuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 250; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none;"></div>
+        <div id="locationFieldsWrapper" style="display: none;">
+          <div class="form-group" style="position: relative;">
+            <label>Pickup Location</label>
+            <input type="text" id="bookingPickup" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; position: relative; z-index: 5;">
+            <div id="addPickupSuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 250; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none;"></div>
+          </div>
+          <div class="form-group" style="position: relative;">
+            <label>Dropoff Location</label>
+            <input type="text" id="bookingDropoff" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; position: relative; z-index: 5;">
+            <div id="addDropoffSuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 250; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none;"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label>Distance (km)</label>
+              <input type="number" id="bookingDistance" step="0.1" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;" placeholder="Auto-calculated">
+            </div>
+            <div class="form-group">
+              <label>Fare (AED)</label>
+              <input type="number" id="bookingFare" step="0.01" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;" placeholder="Auto-calculated">
+            </div>
+          </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            <label>Distance (km)</label>
-            <input type="number" id="bookingDistance" step="0.1" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;" placeholder="Auto-calculated">
+        <div id="hourlyRentalFieldsWrapper" style="display: none;">
+          <div class="form-group" style="position: relative;">
+            <label>Meeting Location</label>
+            <input type="text" id="bookingHourlyLocation" placeholder="Where customer will be picked up" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; position: relative; z-index: 5;">
+            <div id="addHourlyLocationSuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 250; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none;"></div>
           </div>
           <div class="form-group">
-            <label>Fare (AED)</label>
-            <input type="number" id="bookingFare" step="0.01" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;" placeholder="Auto-calculated">
+            <label>Rental Hours</label>
+            <input type="number" id="bookingHourlyHours" value="3" step="0.5" min="3" max="14" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;" placeholder="3-14 hours">
+          </div>
+          <div class="form-group">
+            <label>Estimated Fare (AED)</label>
+            <input type="number" id="bookingHourlyFare" step="0.01" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;" placeholder="Auto-calculated" readonly>
           </div>
         </div>
         <div class="form-group">
@@ -1093,17 +1121,6 @@
         <div class="form-group">
           <label>Luggage</label>
           <input type="number" id="bookingLuggage" value="0" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
-        </div>
-        <div class="form-group">
-          <label>Booking Type</label>
-          <select id="bookingType" onchange="toggleBookingTypeFields()" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
-            <option value="point_to_point">Point to Point</option>
-            <option value="airport_transfer">Airport Transfer</option>
-            <option value="hourly_rental">Hourly Rental</option>
-            <option value="city_tour">City Tour</option>
-            <option value="multi_stop">🛣️ Multi-Stop (Multiple Locations)</option>
-            <option value="round_trip">🔄 Round Trip (Return Journey)</option>
-          </select>
         </div>
         <div id="multiStopFields" style="display: none; border: 1px solid #3b82f6; padding: 12px; border-radius: 6px; background: #eff6ff; margin-bottom: 12px;">
           <label style="font-weight: 600; display: block; margin-bottom: 8px;">📍 Additional Stops</label>

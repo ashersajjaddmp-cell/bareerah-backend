@@ -1509,12 +1509,24 @@ async function openAddBookingModal() {
     document.getElementById('bookingFare').value = '';
     document.getElementById('bookingPassengers').value = '1';
     document.getElementById('bookingLuggage').value = '0';
-    document.getElementById('bookingType').value = 'point-to-point';
+    document.getElementById('bookingType').value = '';
+    document.getElementById('bookingHourlyLocation').value = '';
+    document.getElementById('bookingHourlyHours').value = '3';
+    document.getElementById('bookingHourlyFare').value = '';
     document.getElementById('bookingVehicleType').value = 'sedan';
     document.getElementById('bookingVehicleModel').value = '';
     document.getElementById('bookingPayment').value = 'cash';
+    document.getElementById('roundTripHours').value = '3';
+    document.getElementById('roundTripMeetingLocation').value = '';
     modal.style.display = 'block';
     document.getElementById('modalOverlay').style.display = 'block';
+    
+    // Clear stops for multi-stop
+    const stopsContainer = document.getElementById('stopsContainer');
+    if (stopsContainer) stopsContainer.innerHTML = '';
+    
+    // Hide all booking type fields initially
+    toggleBookingTypeFields();
     
     // Load vehicles and drivers
     await loadVehiclesForModels();
@@ -1625,10 +1637,13 @@ function setLocationBooking(fieldId, location) {
     suggestionId = 'addDropoffSuggestions';
   } else if (fieldId === 'roundTripMeetingLocation') {
     suggestionId = 'roundTripMeetingSuggestions';
+  } else if (fieldId === 'bookingHourlyLocation') {
+    suggestionId = 'addHourlyLocationSuggestions';
   }
   if (suggestionId) {
     document.getElementById(suggestionId).style.display = 'none';
   }
+  calculateCreateBookingDistanceAndFare();
 }
 
 function setCreateAssignmentMode(mode) {
@@ -2341,22 +2356,45 @@ function attachLogListeners() {
 // Multi-Stop and Round-Trip Functions
 function toggleBookingTypeFields() {
   const bookingType = document.getElementById('bookingType').value;
+  const locationFieldsWrapper = document.getElementById('locationFieldsWrapper');
+  const hourlyRentalFieldsWrapper = document.getElementById('hourlyRentalFieldsWrapper');
   const multiStopFields = document.getElementById('multiStopFields');
   const roundTripFields = document.getElementById('roundTripFields');
   
-  if (bookingType === 'multi_stop') {
+  // Hide all by default
+  locationFieldsWrapper.style.display = 'none';
+  hourlyRentalFieldsWrapper.style.display = 'none';
+  multiStopFields.style.display = 'none';
+  roundTripFields.style.display = 'none';
+  
+  if (!bookingType) {
+    return;
+  }
+  
+  // Show fields based on booking type
+  if (bookingType === 'hourly_rental') {
+    hourlyRentalFieldsWrapper.style.display = 'block';
+    setupLocationAutocomplete('bookingHourlyLocation', 'addHourlyLocationSuggestions');
+  } else if (bookingType === 'multi_stop') {
+    locationFieldsWrapper.style.display = 'block';
     multiStopFields.style.display = 'block';
-    roundTripFields.style.display = 'none';
     if (document.getElementById('stopsContainer').innerHTML === '') {
       addStopField();
       addStopField();
     }
+    setupLocationAutocomplete('bookingPickup', 'addPickupSuggestions');
+    setupLocationAutocomplete('bookingDropoff', 'addDropoffSuggestions');
   } else if (bookingType === 'round_trip') {
-    multiStopFields.style.display = 'none';
+    locationFieldsWrapper.style.display = 'block';
     roundTripFields.style.display = 'block';
+    setupLocationAutocomplete('bookingPickup', 'addPickupSuggestions');
+    setupLocationAutocomplete('bookingDropoff', 'addDropoffSuggestions');
+    setupLocationAutocomplete('roundTripMeetingLocation', 'roundTripMeetingSuggestions');
   } else {
-    multiStopFields.style.display = 'none';
-    roundTripFields.style.display = 'none';
+    // Point-to-Point, Airport Transfer, City Tour
+    locationFieldsWrapper.style.display = 'block';
+    setupLocationAutocomplete('bookingPickup', 'addPickupSuggestions');
+    setupLocationAutocomplete('bookingDropoff', 'addDropoffSuggestions');
   }
 }
 
