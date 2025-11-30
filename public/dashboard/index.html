@@ -49,6 +49,7 @@
           <a class="nav-item" data-page="cars-add">➕ Add New Vehicle</a>
         </div>
         <a class="nav-item" data-page="fares">💰 Fare Rules</a>
+        <a class="nav-item" data-page="rental-rules">⏰ Hourly Rentals</a>
         <a class="nav-item" data-page="settings">⚙️ Settings</a>
         <a class="nav-item" data-page="alerts">🚨 Alerts</a>
       </aside>
@@ -568,6 +569,29 @@
           </div>
         </div>
 
+        <!-- Hourly Rental Rules Page -->
+        <div id="page-rental-rules" class="page">
+          <h2 class="page-title">Hourly Rental Pricing Rules</h2>
+          <div class="card">
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">ℹ️ Hourly rental bookings: Minimum 3 hours, Maximum 14 hours. Total fare = Hourly Rate × Hours. Changes apply to NEW bookings only.</p>
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--border);">
+                  <th style="padding: 12px; text-align: left; font-weight: 600;">Vehicle Type</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">Hourly Rate (AED)</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">3-Hour Total</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">14-Hour Total</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">Status</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rentalRulesTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 20px;">Loading rental rules...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Settings Page -->
         <div id="page-settings" class="page">
           <h2 class="page-title">Settings</h2>
@@ -797,6 +821,37 @@
       <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end;">
         <button onclick="closeModal('editFareRuleModal')" class="btn" style="background: var(--bg-secondary);">Cancel</button>
         <button onclick="saveFareRuleChanges()" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Rental Rule Modal -->
+  <div id="editRentalRuleModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Hourly Rental Rate</h3>
+        <button class="modal-close" onclick="closeModal('editRentalRuleModal')">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="editRentalRuleForm" style="display: grid; gap: 15px;">
+          <input type="hidden" id="editRentalVehicleType">
+          <div class="form-group">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Vehicle Type</label>
+            <div id="editRentalTypeDisplay" style="padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; font-weight: 500; text-transform: capitalize;"></div>
+          </div>
+          <div class="form-group">
+            <label style="font-weight: 600;">Hourly Rate (AED)</label>
+            <input type="number" id="editRentalRate" step="0.01" min="0" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 1em;" required>
+          </div>
+          <div style="background: var(--bg-secondary); padding: 12px; border-radius: 6px;">
+            <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">3-hour total: <strong id="calc3Hour">AED 0</strong> | 14-hour total: <strong id="calc14Hour">AED 0</strong></p>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 13px; margin: 10px 0;">Changes apply only to new bookings created after this update.</p>
+        </form>
+      </div>
+      <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end;">
+        <button onclick="closeModal('editRentalRuleModal')" class="btn" style="background: var(--bg-secondary);">Cancel</button>
+        <button onclick="saveRentalRuleChanges()" class="btn btn-primary">Save Changes</button>
       </div>
     </div>
   </div>

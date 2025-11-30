@@ -2461,3 +2461,98 @@ window.createManualBooking = async function() {
     return originalCreateManualBooking.call(this);
   }
 };
+
+// ============ HOURLY RENTAL RULES MANAGEMENT ============
+function loadRentalRules() {
+  const token = localStorage.getItem('adminToken');
+  fetch(API_BASE + '/bookings/rental-rules/all', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (!d.success || !d.data) {
+      document.getElementById('rentalRulesTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-secondary);">No rental rules found</td></tr>';
+      return;
+    }
+    let html = '';
+    d.data.forEach(rule => {
+      const total3h = rule.hourly_rate_aed * 3;
+      const total14h = rule.hourly_rate_aed * 14;
+      const status = rule.is_active ? '<span style="color: #10b981; font-weight: 600;">✅ Active</span>' : '<span style="color: #ef4444; font-weight: 600;">❌ Inactive</span>';
+      html += `
+        <tr style="border-bottom: 1px solid var(--border); hover: background-color: var(--bg-secondary);">
+          <td style="padding: 12px; text-align: left; font-weight: 500; text-transform: capitalize;">${rule.vehicle_type}</td>
+          <td style="padding: 12px; text-align: center; font-weight: 600; color: var(--text-primary);">AED ${rule.hourly_rate_aed.toFixed(2)}</td>
+          <td style="padding: 12px; text-align: center; color: var(--text-secondary);">AED ${total3h.toFixed(2)}</td>
+          <td style="padding: 12px; text-align: center; color: var(--text-secondary);">AED ${total14h.toFixed(2)}</td>
+          <td style="padding: 12px; text-align: center;">${status}</td>
+          <td style="padding: 12px; text-align: center;">
+            <button onclick="openRentalRuleModal('${rule.vehicle_type}', ${rule.hourly_rate_aed})" class="btn" style="padding: 6px 12px; font-size: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Edit</button>
+          </td>
+        </tr>
+      `;
+    });
+    document.getElementById('rentalRulesTableBody').innerHTML = html;
+  })
+  .catch(e => {
+    console.error('Error loading rental rules:', e);
+    document.getElementById('rentalRulesTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-secondary);">Error loading rental rules</td></tr>';
+  });
+}
+
+function openRentalRuleModal(vehicleType, currentRate) {
+  document.getElementById('editRentalVehicleType').value = vehicleType;
+  document.getElementById('editRentalTypeDisplay').textContent = vehicleType.replace(/_/g, ' ').toUpperCase();
+  document.getElementById('editRentalRate').value = currentRate;
+  
+  // Calculate 3 and 14 hour totals
+  const calc3h = (currentRate * 3).toFixed(2);
+  const calc14h = (currentRate * 14).toFixed(2);
+  document.getElementById('calc3Hour').textContent = 'AED ' + calc3h;
+  document.getElementById('calc14Hour').textContent = 'AED ' + calc14h;
+  
+  // Update on input change
+  document.getElementById('editRentalRate').onchange = function() {
+    const newRate = parseFloat(this.value) || 0;
+    document.getElementById('calc3Hour').textContent = 'AED ' + (newRate * 3).toFixed(2);
+    document.getElementById('calc14Hour').textContent = 'AED ' + (newRate * 14).toFixed(2);
+  };
+  
+  document.getElementById('editRentalRuleModal').style.display = 'flex';
+}
+
+function saveRentalRuleChanges() {
+  const token = localStorage.getItem('adminToken');
+  const vehicleType = document.getElementById('editRentalVehicleType').value;
+  const hourlyRate = parseFloat(document.getElementById('editRentalRate').value);
+  
+  if (!hourlyRate || hourlyRate <= 0) {
+    showToast('Hourly rate must be greater than 0', 'error');
+    return;
+  }
+  
+  fetch(API_BASE + '/bookings/rental-rules/' + vehicleType, {
+    method: 'PUT',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ hourly_rate_aed: hourlyRate })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) {
+      showToast('✅ Rental rate updated!', 'success');
+      closeModal('editRentalRuleModal');
+      loadRentalRules();
+    } else {
+      showToast('Error: ' + (d.error || 'Failed to update rate'), 'error');
+    }
+  })
+  .catch(e => showToast('Error: ' + e.message, 'error'));
+}
+
+// Load rental rules when page is navigated to
+const rentalRulesNav = document.querySelector('[data-page="rental-rules"]');
+if (rentalRulesNav) {
+  rentalRulesNav.addEventListener('click', function() {
+    setTimeout(loadRentalRules, 100);
+  });
+}

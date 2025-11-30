@@ -73,10 +73,18 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 
 # Recent Updates (November 30, 2025)
 
+## Phase 2: Hourly Rental System (COMPLETE)
+1. **Hourly Rental Backend** - Full API for 3-14 hour rentals
+2. **Rental Rules Management UI** - Dashboard tab to view & edit pricing
+3. **7 Pre-configured Vehicles** - Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, Mini Bus
+4. **Smart Pricing** - Configurable hourly rates for each vehicle type
+5. **Admin Control** - Edit rates, add vehicles, manage rental rules
+
 ## New Features Added
 1. **Round-Trip Bookings** - Pickup → Destination → Return after X hours (3 stops tracked)
 2. **Multi-Stop Bookings** - Multiple intermediate stops in one booking with wait times
-3. **Professional Email Notifications** - Beautiful HTML emails sent to admin with:
+3. **Hourly Rental Bookings** - NEW - Vehicle rental for 3-14 hours with hourly pricing
+4. **Professional Email Notifications** - Beautiful HTML emails sent to admin with:
    - Complete journey visualization
    - Vehicle model + color details
    - Passenger & luggage info
@@ -87,12 +95,24 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 ## New API Endpoints
 - `POST /api/bookings/create-round-trip` - Round-trip bookings
 - `POST /api/bookings/create-multi-stop` - Multi-stop bookings
+- `POST /api/bookings/create-hourly-rental` - Hourly rental bookings
+- `GET /api/bookings/rental-rules/all` - View all rental rates
+- `PUT /api/bookings/rental-rules/:vehicleType` - Edit pricing
+- `POST /api/bookings/rental-rules/calculate-fare` - Calculate rental fare
 
 ## Database Changes
 - `booking_stops` table created to track all stops with duration
-- New booking fields: `vehicle_model`, `vehicle_color`, `customer_email`, `meeting_location`, `return_after_hours`
+- `rental_rules` table created - 7 vehicle types with hourly pricing
+- New booking fields: `vehicle_model`, `vehicle_color`, `customer_email`, `meeting_location`, `return_after_hours`, `rental_hours`, `hourly_rate_aed`
+
+## UI/Dashboard Changes
+- New "⏰ Hourly Rentals" tab in admin dashboard
+- Rental rules management table with live calculations
+- Edit modal for updating hourly rates
+- Professional pricing display (3-hour and 14-hour totals)
 
 ## Documentation
-- **BAREERAH_NEW_FEATURES_GUIDE.md** - Complete guide for Bareerah on new features with examples
+- **BAREERAH_HOURLY_RENTAL_GUIDE.md** - Complete integration guide for Bareerah
+- **BAREERAH_NEW_FEATURES_GUIDE.md** - Existing feature documentation
 - All features tested and production-ready
 - Email notifications live (testing mode: sent to aizaz.dmp@gmail.com)
