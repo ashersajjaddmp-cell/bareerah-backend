@@ -183,7 +183,8 @@ const bookingService = {
         passengers_count: passengers,
         luggage_count: luggage,
         caller_number: data.caller_number || null,
-        confirmed_contact_number: data.confirmed_contact_number || null
+        confirmed_contact_number: data.confirmed_contact_number || null,
+        notes: data.notes || null
       });
 
       // Trigger notifications (non-blocking)

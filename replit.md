@@ -14,13 +14,14 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 
 ## Recent Changes (2025-11-30) ✅
 
-### 📝 Booking Notes Feature ✅ LIVE
-- **New field**: `notes` column added to bookings table (TEXT, nullable)
-- **Admin/Operator**: Can view and edit notes in booking detail/edit modal
-- **UI**: Notes textarea with placeholder "Add any special requests, observations, or notes from Bareerah..."
-- **Backend**: Notes saved via PUT /bookings/:id endpoint
-- **Bareerah**: Can include `notes` in booking payload when creating bookings
-- **Use case**: Driver instructions, customer special requests, observations from Bareerah AI
+### 📝 Booking Notes Feature ✅ LIVE & TESTED
+- **Database**: `notes` column added to bookings table (TEXT, nullable)
+- **Backend**: Notes fully integrated in `Booking.create()` and `bookingService.createBooking()`
+- **API**: Notes saved via POST /bookings/create-booking and PUT /bookings/:id endpoints
+- **Frontend**: Notes textarea in Edit Booking modal with placeholder text
+- **Bareerah Integration**: Include `notes` field in booking payload → auto-saved
+- **Test Results**: ✅ Demo bookings created with notes, verified in database
+- **Use case**: Driver instructions, customer special requests, Bareerah AI observations
 
 ## Previous Changes (2025-11-30) ✅
 
