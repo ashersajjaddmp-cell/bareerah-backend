@@ -24,8 +24,8 @@ const bookingController = {
         LEFT JOIN drivers d ON b.driver_id = d.id
         ${whereClause}
         ORDER BY b.created_at DESC 
-        LIMIT $${paramLimit} OFFSET $${paramOffset}
-      `, [...params, parseInt(limit) || 30, parseInt(offset) || 0]);
+        OFFSET $${paramOffset} LIMIT $${paramLimit}
+      `, [...params, parseInt(offset) || 0, parseInt(limit) || 30]);
       
       const countResult = await query(`
         SELECT COUNT(*) as total FROM bookings b ${whereClause}
