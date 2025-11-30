@@ -51,20 +51,22 @@ const driverController = {
     try {
       const { id } = req.params;
       const auditLogger = require('../utils/auditLogger');
-      const oldDriver = await Driver.getById(id);
+      const oldDriver = await Driver.findById(id);
       const user = req.user || { username: 'unknown', role: 'admin' };
       
       const driver = await Driver.updateDriver(id, req.body);
       
       const changes = {};
-      for (let key in req.body) {
-        if (oldDriver && oldDriver[key] !== req.body[key]) {
-          changes[key] = { old: oldDriver[key], new: req.body[key] };
+      if (oldDriver) {
+        for (let key in req.body) {
+          if (oldDriver[key] !== req.body[key]) {
+            changes[key] = { old: oldDriver[key], new: req.body[key] };
+          }
         }
       }
       
       if (Object.keys(changes).length > 0) {
-        await auditLogger.logChange('driver', id, 'UPDATE', changes, user.username, user.username, user.role);
+        await auditLogger.logChange('driver', id, 'UPDATE', changes, user.username, user.username, user.role).catch(e => console.error('Audit error:', e));
       }
       
       res.json({

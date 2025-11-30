@@ -2118,6 +2118,7 @@ async function loadLogs(filter = {}) {
     
     if (!data.data || !data.data.length) {
       tbody.innerHTML = '<tr><td colspan="7">No logs found</td></tr>';
+      attachLogListeners();
       return;
     }
     
@@ -2127,6 +2128,8 @@ async function loadLogs(filter = {}) {
       const changes = log.changes ? JSON.stringify(JSON.parse(log.changes)).substring(0, 40) + '...' : 'N/A';
       return '<tr><td style="font-size:12px;">' + timeStr + '</td><td>' + log.action + '</td><td>' + log.entity_type + '</td><td style="font-size:11px;">' + log.entity_id.substring(0, 8) + '</td><td><strong>' + (log.updated_by_name || 'System') + '</strong></td><td>' + (log.user_role || 'admin') + '</td><td style="font-size:11px;">' + changes + '</td></tr>';
     }).join('');
+    
+    attachLogListeners();
   } catch (e) {
     const tbody = document.getElementById('logs-table-body');
     if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="color:red;">Error: ' + e.message + '</td></tr>';
@@ -2138,4 +2141,15 @@ function filterLogs() {
     entity_type: document.getElementById('log-entity-filter')?.value || '',
     action: document.getElementById('log-action-filter')?.value || ''
   });
+}
+
+function attachLogListeners() {
+  const logEntityFilter = document.getElementById('log-entity-filter');
+  const logActionFilter = document.getElementById('log-action-filter');
+  
+  if (logEntityFilter) logEntityFilter.removeEventListener('change', filterLogs);
+  if (logActionFilter) logActionFilter.removeEventListener('change', filterLogs);
+  
+  if (logEntityFilter) logEntityFilter.addEventListener('change', filterLogs);
+  if (logActionFilter) logActionFilter.addEventListener('change', filterLogs);
 }
