@@ -579,7 +579,11 @@ function setupLocationAutocomplete(inputId, suggestionsId) {
 function setLocationAuto(inputId, location, suggestionsId) {
   document.getElementById(inputId).value = location;
   document.getElementById(suggestionsId).style.display = 'none';
-  if (inputId.includes('edit') || inputId.includes('booking')) {
+  if (inputId.includes('bookingPickup') || inputId.includes('bookingDropoff')) {
+    setTimeout(() => calculateCreateBookingDistanceAndFare?.(), 100);
+  } else if (inputId.includes('bookingHourlyLocation')) {
+    // No special fare calculation needed for hourly location
+  } else if (inputId.includes('edit')) {
     setTimeout(() => calculateDistanceAndFare?.(), 100);
   }
 }
@@ -1626,6 +1630,35 @@ function initAddMapAutocomplete() {
   setupLocationAutocomplete('bookingPickup', 'addPickupSuggestions');
   setupLocationAutocomplete('bookingDropoff', 'addDropoffSuggestions');
   setupLocationAutocomplete('roundTripMeetingLocation', 'roundTripMeetingSuggestions');
+  
+  // Hourly rental fare calculation
+  const hoursInput = document.getElementById('bookingHourlyHours');
+  const hoursVehicleType = document.getElementById('bookingVehicleType');
+  if (hoursInput) {
+    const calculateHourlyFare = async () => {
+      const hours = parseFloat(hoursInput.value) || 3;
+      const vehicleType = hoursVehicleType?.value || 'sedan';
+      const typeMapping = { 'sedan': 'classic', 'executive': 'executive', 'suv': 'urban_suv', 'luxury': 'luxury_suv', 'van': 'elite_van', 'bus': 'mini_bus', 'minibus': 'mini_bus' };
+      const fareRuleType = typeMapping[vehicleType] || 'classic';
+      
+      if (!window.rentalRules || !window.rentalRules.length) {
+        await fetch(getCacheBustUrl(API_BASE + '/bookings/rental-rules/all'), { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
+          .then(r => r.json())
+          .then(d => { window.rentalRules = d.data || []; })
+          .catch(e => console.error('Error loading rental rules:', e));
+      }
+      
+      const rule = window.rentalRules?.find(r => r.vehicle_type === fareRuleType);
+      if (rule) {
+        const hourlyRate = parseFloat(rule.hourly_rate_aed) || 95;
+        const fare = (hourlyRate * hours).toFixed(2);
+        document.getElementById('bookingHourlyFare').value = fare;
+      }
+    };
+    hoursInput.addEventListener('change', calculateHourlyFare);
+    hoursInput.addEventListener('input', calculateHourlyFare);
+    hoursVehicleType.addEventListener('change', calculateHourlyFare);
+  }
 }
 
 function setLocationBooking(fieldId, location) {
@@ -2402,19 +2435,28 @@ function addStopField() {
   const container = document.getElementById('stopsContainer');
   const stopNum = (container.children.length || 0) + 1;
   const stopDiv = document.createElement('div');
-  stopDiv.style.cssText = 'margin-bottom: 12px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;';
+  const uniqueId = 'stop-' + stopNum + '-' + Date.now();
+  const suggestionsId = 'stopSuggestions-' + uniqueId;
+  
+  stopDiv.style.cssText = 'margin-bottom: 12px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e5e7eb; position: relative;';
   stopDiv.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
       <label style="font-weight: 600; font-size: 13px;">Stop ${stopNum}</label>
       <button type="button" onclick="removeStopField(this)" class="btn" style="background: #ef4444; color: white; padding: 2px 8px; font-size: 12px;">Remove</button>
     </div>
-    <input type="text" placeholder="Location" class="stop-location" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 6px; font-size: 12px;">
+    <div style="position: relative;">
+      <input type="text" id="${uniqueId}" placeholder="Location" class="stop-location" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 6px; font-size: 12px; position: relative; z-index: 5;">
+      <div id="${suggestionsId}" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-primary); border: 1px solid var(--border); border-top: none; border-radius: 0 0 4px 4px; max-height: 120px; overflow-y: auto; z-index: 250; display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+    </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
       <input type="number" placeholder="Distance (km)" class="stop-distance" step="0.1" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 12px;">
       <input type="number" placeholder="Wait mins" class="stop-duration" value="0" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 12px;">
     </div>
   `;
   container.appendChild(stopDiv);
+  
+  // Setup autocomplete for this stop
+  setupLocationAutocomplete(uniqueId, suggestionsId);
 }
 
 function removeStopField(btn) {
