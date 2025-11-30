@@ -15,9 +15,9 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
 ## Recent Changes (2025-11-30)
 
 ### 🎯 SLAB-BASED FARE LOGIC IMPLEMENTED (2025-11-30) ✅ LIVE
-**Client-Approved Formula:** If distance ≤ included_km → base fare only | Else → base fare + (distance × per_km_rate)
+**Client-Approved Formula:** If distance ≤ included_km → base fare only | Else → base fare + ((distance - included_km) × per_km_rate)
 - Added `included_km` column to fare_rules table
-- Implemented full slab-based calculation in fareCalculator.js
+- Fixed fareCalculator.js with CORRECT slab calculation: base + ((distance - included) × per_km_rate)
 - Updated all 7 vehicle categories with correct rules:
   - Classic: 95 base + 20 KM included + 1/km
   - Executive: 105 base + 20 KM + 1/km
@@ -26,7 +26,12 @@ The application is built on a complete MVC (Model-View-Controller) architecture 
   - Luxury SUV: 170 base + 20 KM + 1.8/km
   - First Class: 450 base + 40 KM + 1.75/km
   - Mini Bus: 825 base + 50 KM + 7.5/km
-- VERIFIED: Classic 21km = 116 AED ✅ | Classic 15km = 95 AED ✅ | Mini Bus 51km = 1207.5 AED ✅
+- VERIFIED ALL CALCULATIONS:
+  - Classic 15km = 95 AED ✅ (within 20km)
+  - Classic 21km = 96 AED ✅ (95 + (21-20)×1 = 96)
+  - Executive 21km = 106 AED ✅ (105 + (21-20)×1 = 106)
+  - Mini Bus 51km = 832.5 AED ✅ (825 + (51-50)×7.5 = 832.5)
+- Diverse test bookings created with 7 vehicles at different distances
 - Admin dashboard updated to display included_km column
 - Fare rules API endpoints working (GET /api/fare-rules, PUT /api/fare-rules/:type)
 - No breaking changes - all existing bookings modules untouched

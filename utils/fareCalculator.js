@@ -91,12 +91,12 @@ async function calculateFare(booking_type, vehicle_type, distance_km = 0, hours 
 
     // CLIENT-APPROVED SLAB LOGIC:
     // If distance <= included_km: fare = base_fare
-    // Else: fare = base_fare + (distance × per_km_rate)
+    // Else: fare = base_fare + ((distance - included_km) × per_km_rate)
     let calculatedFare;
     if (distance_km <= includedKm) {
       calculatedFare = baseFare;
     } else {
-      calculatedFare = baseFare + (distance_km * perKmRate);
+      calculatedFare = baseFare + ((distance_km - includedKm) * perKmRate);
     }
 
     // Apply surcharges
