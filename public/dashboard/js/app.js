@@ -2125,7 +2125,15 @@ async function loadLogs(filter = {}) {
     tbody.innerHTML = data.data.map(log => {
       const ts = new Date(log.created_at);
       const timeStr = ts.toLocaleDateString() + ' ' + ts.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-      const changes = log.changes ? JSON.stringify(JSON.parse(log.changes)).substring(0, 40) + '...' : 'N/A';
+      let changes = 'N/A';
+      if (log.changes) {
+        try {
+          const parsed = typeof log.changes === 'string' ? JSON.parse(log.changes) : log.changes;
+          changes = JSON.stringify(parsed).substring(0, 50) + '...';
+        } catch (e) {
+          changes = (typeof log.changes === 'string' ? log.changes : JSON.stringify(log.changes)).substring(0, 50) + '...';
+        }
+      }
       return '<tr><td style="font-size:12px;">' + timeStr + '</td><td>' + log.action + '</td><td>' + log.entity_type + '</td><td style="font-size:11px;">' + log.entity_id.substring(0, 8) + '</td><td><strong>' + (log.updated_by_name || 'System') + '</strong></td><td>' + (log.user_role || 'admin') + '</td><td style="font-size:11px;">' + changes + '</td></tr>';
     }).join('');
     
