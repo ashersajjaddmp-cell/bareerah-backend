@@ -2254,6 +2254,18 @@ async function loadFareRules() {
     const tbody = document.getElementById('fareRulesTableBody');
     if (!tbody) return;
     
+    // Vehicle model mappings for each category
+    const modelMap = {
+      'classic': 'Sedans: Toyota Camry, BMW 5 Series, BYD Han',
+      'elite_van': 'Premium Vans: Mercedes V Class, Luxury Vans',
+      'executive': 'Executive: Lexus ES 300H, Tesla Model 3/Y',
+      'first_class': 'First Class: BMW 7 Series, Mercedes S Class, Audi A8',
+      'luxury': 'Luxury: Range Rover, Lexus, BMW 7 Series, Mercedes E-Class',
+      'luxury_suv': 'Luxury SUVs: Cadillac Escalade, GMC Yukon',
+      'mini_bus': 'Mini Bus: Mercedes Sprinter (8-10 passengers)',
+      'urban_suv': 'Urban SUVs: Toyota Highlander, BYD Song'
+    };
+    
     const url = getCacheBustUrl(API_BASE + '/fare-rules');
     const response = await fetch(url, {
       headers: { 'Authorization': 'Bearer ' + token }
@@ -2263,17 +2275,18 @@ async function loadFareRules() {
     
     const data = await response.json();
     if (!data.data || !data.data.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No fare rules found</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No fare rules found</td></tr>';
       return;
     }
     
     tbody.innerHTML = data.data.map(rule => {
       const typeLabel = rule.vehicle_type.replace(/_/g, ' ').toUpperCase();
-      return '<tr style="border-bottom: 1px solid var(--border);"><td style="padding: 12px;"><strong>' + typeLabel + '</strong></td><td style="padding: 12px; text-align: right;">AED ' + rule.base_fare + '</td><td style="padding: 12px; text-align: right;">AED ' + rule.per_km_rate + '</td><td style="padding: 12px; text-align: center;"><button class="btn-small" onclick="editFareRule(\'' + rule.vehicle_type + '\', ' + rule.base_fare + ', ' + rule.per_km_rate + ')">Edit</button></td></tr>';
+      const models = modelMap[rule.vehicle_type] || 'Multiple vehicle types';
+      return '<tr style="border-bottom: 1px solid var(--border);"><td style="padding: 12px;"><strong>' + typeLabel + '</strong></td><td style="padding: 12px; font-size: 0.9em; color: var(--text-secondary);">' + models + '</td><td style="padding: 12px; text-align: right;">AED ' + rule.base_fare + '</td><td style="padding: 12px; text-align: right;">AED ' + rule.included_km + '</td><td style="padding: 12px; text-align: right;">AED ' + rule.per_km_rate + '</td><td style="padding: 12px; text-align: center;"><button class="btn-small" onclick="editFareRule(\'' + rule.vehicle_type + '\', ' + rule.base_fare + ', ' + rule.per_km_rate + ')">Edit</button></td></tr>';
     }).join('');
   } catch (e) {
     const tbody = document.getElementById('fareRulesTableBody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="color:red; padding:20px; text-align:center;">Error: ' + e.message + '</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="color:red; padding:20px; text-align:center;">Error: ' + e.message + '</td></tr>';
     console.error('Fare rules error:', e);
   }
 }
