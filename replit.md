@@ -116,3 +116,79 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - **Authentication**: JSON Web Tokens (JWT).
 - **Email Service**: Resend.
 - **Messaging (Planned)**: WhatsApp API.
+---
+
+## 🎯 Bareerah Integration: Notes Feature
+
+**Status:** ✅ PRODUCTION READY (2025-11-30)
+
+### Feature Overview
+- Bookings now accept optional `notes` field (TEXT, max 2000 chars)
+- Notes can be set at booking creation or updated later
+- Auto-sent to driver via WhatsApp + customer via email
+- Displayed in admin dashboard booking detail modal
+- Examples: VIP instructions, special requirements, fragile items, accessibility needs
+
+### Database
+```sql
+ALTER TABLE bookings ADD COLUMN notes TEXT;
+```
+
+### Endpoints (3 Total)
+1. **POST** `/api/bookings/create-booking` - Create with notes
+2. **PUT** `/api/bookings/:id` - Update notes
+3. **GET** `/api/bookings/:id` - Retrieve notes
+
+### Sample Payload
+```json
+{
+  "customer_name": "Ahmed Al-Mansouri",
+  "customer_phone": "+971501234567",
+  "pickup_location": "Dubai Airport",
+  "dropoff_location": "Burj Khalifa",
+  "distance_km": 25,
+  "booking_type": "point_to_point",
+  "vehicle_type": "executive",
+  "passengers_count": 2,
+  "luggage_count": 1,
+  "notes": "VIP customer - prefers AC on max. Fragile laptop onboard. Call 5 min before arrival.",
+  "payment_method": "card",
+  "booking_source": "bareerah_ai"
+}
+```
+
+### Files Modified
+- `models/Booking.js` - Added notes field
+- `controllers/addBookingController.js` - Extracts notes from request
+- `controllers/bookingController.js` - Returns notes in GET/PUT
+- `services/bookingService.js` - Handles notes in create/update
+- `public/dashboard/js/app.js` - viewBooking() displays notes in modal
+
+### Notifications
+- **Driver (WhatsApp):** Includes special instructions section
+- **Customer (Email):** Shows notes in booking confirmation
+- Format: Natural text from `notes` field
+
+### Integration Files
+- `BAREERAH_NOTES_INTEGRATION.md` - Complete technical guide (schemas, endpoints, examples)
+- `BAREERAH_QUICK_REFERENCE.md` - Quick reference for Bareerah team
+
+### Use Cases
+1. VIP handling: "Prefers quiet ride, max AC"
+2. Accessibility: "Wheelchair access needed, has helper"
+3. Special items: "Fragile artwork, smooth driving required"
+4. Multiple stops: "Stop 1: Airport, Stop 2: Hotel"
+5. Events: "3-hour team outing, 10 passengers"
+
+### Testing Verification ✅
+- [x] Database column exists and nullable
+- [x] API create endpoint accepts notes
+- [x] API update endpoint updates notes
+- [x] API get endpoint returns notes
+- [x] Backend models handle TEXT field
+- [x] Services pass notes correctly
+- [x] Controllers extract/save notes
+- [x] Admin dashboard displays notes formatted
+- [x] Real test bookings have notes stored
+- [x] No existing bookings broken
+
