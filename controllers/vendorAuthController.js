@@ -84,7 +84,7 @@ const vendorAuthController = {
                COALESCE(SUM(CASE WHEN p.status = 'pending' THEN p.amount_aed ELSE 0 END), 0)::float as pending_payout
         FROM vendors v
         LEFT JOIN vehicles vc ON v.id = vc.vendor_id
-        LEFT JOIN bookings b ON vc.id = b.vehicle_id
+        LEFT JOIN bookings b ON vc.id = b.assigned_vehicle_id
         LEFT JOIN payouts p ON v.id = p.vendor_id
         WHERE v.id = $1
         GROUP BY v.id

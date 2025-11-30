@@ -41,12 +41,12 @@ const emailTemplates = {
 
           <div style="background: #f5f5f7; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #1d1d1f;">Payment</h3>
-            <p><strong>Total Fare:</strong> AED ${booking.fare_aed.toFixed(2)}</p>
+            <p><strong>Total Fare:</strong> AED ${(typeof booking.fare_aed === 'string' ? parseFloat(booking.fare_aed) : booking.fare_aed).toFixed(2)}</p>
             <p><strong>Payment Method:</strong> ${paymentStatus}</p>
           </div>
 
           <div style="background: #34C759; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-            <p style="margin: 0; font-size: 18px; font-weight: bold;">AED ${booking.fare_aed.toFixed(2)}</p>
+            <p style="margin: 0; font-size: 18px; font-weight: bold;">AED ${(typeof booking.fare_aed === 'string' ? parseFloat(booking.fare_aed) : booking.fare_aed).toFixed(2)}</p>
           </div>
 
           <p style="color: #86868b; font-size: 12px; margin-top: 30px;">
@@ -75,7 +75,7 @@ const emailTemplates = {
 ${vehicle ? `📋 *Plate:* ${vehicle.plate_number}` : ''}
 ${booking.driver_name ? `👤 *Driver:* ${booking.driver_name}` : ''}
 
-💰 *Fare:* AED ${booking.fare_aed.toFixed(2)}
+💰 *Fare:* AED ${(typeof booking.fare_aed === 'string' ? parseFloat(booking.fare_aed) : booking.fare_aed).toFixed(2)}
 ${paymentStatus}
 
 Thank you for choosing Bareerah! 🙏
@@ -84,8 +84,9 @@ Thank you for choosing Bareerah! 🙏
 
   // Email to admin
   adminNotification: (booking, vehicle) => {
-    const vendorCommission = booking.fare_aed * 0.80;
-    const companyProfit = booking.fare_aed * 0.20;
+    const fareAmount = typeof booking.fare_aed === 'string' ? parseFloat(booking.fare_aed) : booking.fare_aed;
+    const vendorCommission = fareAmount * 0.80;
+    const companyProfit = fareAmount * 0.20;
 
     return {
       subject: `New Booking - Ref #${booking.id.substring(0, 8).toUpperCase()}`,
@@ -120,7 +121,7 @@ Thank you for choosing Bareerah! 🙏
 
           <div style="background: #f5f5f7; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Revenue Breakdown</h3>
-            <p><strong>Total Fare:</strong> AED ${booking.fare_aed.toFixed(2)}</p>
+            <p><strong>Total Fare:</strong> AED ${fareAmount.toFixed(2)}</p>
             <p><strong>Vendor Commission (80%):</strong> AED ${vendorCommission.toFixed(2)}</p>
             <p style="color: #34C759;"><strong>Company Profit (20%):</strong> AED ${companyProfit.toFixed(2)}</p>
           </div>
