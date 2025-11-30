@@ -115,6 +115,8 @@ app.get('/', (req, res) => {
   res.redirect('/dashboard/login.html');
 });
 
+const driverStatsRoutes = require('./routes/driverStatsRoutes');
+app.use('/api/driver-stats', driverStatsRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, '0.0.0.0', () => {

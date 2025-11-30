@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Driver Dashboard - Bareerah</title>
   <link rel="stylesheet" href="dashboard/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -18,49 +20,150 @@
 
     <div class="main-content">
       <aside class="sidebar">
-        <a class="nav-item active" data-page="overview">📊 Overview</a>
+        <a class="nav-item active" data-page="overview">📊 Dashboard</a>
+        <a class="nav-item" data-page="bookings">📅 Bookings</a>
         <a class="nav-item" data-page="vehicle">🚗 My Vehicle</a>
         <a class="nav-item" data-page="earnings">💰 Earnings</a>
         <a class="nav-item" data-page="profile">⚙️ Profile</a>
       </aside>
 
       <div class="content">
-        <!-- Overview Page -->
+        <!-- Dashboard Page -->
         <div id="page-overview" class="page active">
           <h2>📊 Dashboard</h2>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #34C759;">
-              <div style="font-size: 0.9em; opacity: 0.7;">Completed Rides</div>
-              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="completedRides">0</div>
+          
+          <!-- Filter Controls -->
+          <div class="filter-bar" style="margin-bottom: 20px;">
+            <div class="filter-group">
+              <button class="filter-btn active" onclick="setDateRange('today'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">Today</button>
+              <button class="filter-btn" onclick="setDateRange('yesterday'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">Yesterday</button>
+              <button class="filter-btn" onclick="setDateRange('week'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">This Week</button>
+              <button class="filter-btn" onclick="setDateRange('month'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">This Month</button>
+              <button class="filter-btn" onclick="toggleCustomRange()">Custom Range</button>
             </div>
-            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #007AFF;">
-              <div style="font-size: 0.9em; opacity: 0.7;">Average Rating</div>
-              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="avgRating">0 ⭐</div>
-            </div>
-            <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; border-left: 4px solid #FF9500;">
-              <div style="font-size: 0.9em; opacity: 0.7;">License Status</div>
-              <div style="font-size: 2em; font-weight: bold; margin-top: 10px;" id="licenseStatus">Valid ✅</div>
+            <div class="date-picker" style="display: none;" id="customDatePicker">
+              <input type="date" id="startDate">
+              <span>to</span>
+              <input type="date" id="endDate">
+              <button class="btn btn-small btn-primary" onclick="applyCustomRange()">Apply</button>
             </div>
           </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card glass">
+              <div class="stat-header">
+                <div class="stat-label">Total Bookings</div>
+                <span class="stat-icon">📊</span>
+              </div>
+              <div class="stat-value" id="stat-bookings">0</div>
+              <div class="stat-subtitle">in selected period</div>
+            </div>
+            <div class="stat-card glass">
+              <div class="stat-header">
+                <div class="stat-label">Completed</div>
+                <span class="stat-icon">✅</span>
+              </div>
+              <div class="stat-value" id="stat-completed">0</div>
+              <div class="stat-subtitle">successful rides</div>
+            </div>
+            <div class="stat-card glass">
+              <div class="stat-header">
+                <div class="stat-label">Total Earnings</div>
+                <span class="stat-icon">💰</span>
+              </div>
+              <div class="stat-value" id="stat-earnings">AED 0</div>
+              <div class="stat-subtitle">in selected period</div>
+            </div>
+            <div class="stat-card glass">
+              <div class="stat-header">
+                <div class="stat-label">Avg Rating</div>
+                <span class="stat-icon">⭐</span>
+              </div>
+              <div class="stat-value" id="stat-rating">0</div>
+              <div class="stat-subtitle">from riders</div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="charts-container" style="margin-top: 30px;">
+            <div class="chart-card">
+              <h3>7-Day Booking Trend</h3>
+              <canvas id="bookingsChart"></canvas>
+            </div>
+            <div class="chart-card">
+              <h3>Earnings Breakdown</h3>
+              <canvas id="earningsChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bookings Page -->
+        <div id="page-bookings" class="page" style="display: none;">
+          <h2>📅 My Bookings</h2>
+          <table class="table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+              <tr style="background: var(--glass-bg);">
+                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-color);">Date</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-color);">Passenger</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-color);">Route</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-color);">Fare (AED)</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-color);">Status</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-table-body">
+              <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading...</td></tr>
+            </tbody>
+          </table>
         </div>
 
         <!-- Vehicle Page -->
         <div id="page-vehicle" class="page" style="display: none;">
           <h2>🚗 My Vehicle</h2>
-          <button class="btn btn-primary" onclick="openAddVehicleModal()" style="margin-bottom: 20px;" id="addVehicleBtn">➕ Add Vehicle</button>
-          <div id="vehicleDetails" style="background: var(--glass-bg); padding: 30px; border-radius: 12px;"></div>
+          <div id="vehicleDetails" style="background: var(--glass-bg); padding: 30px; border-radius: 12px; margin-top: 20px;"></div>
         </div>
 
         <!-- Earnings Page -->
         <div id="page-earnings" class="page" style="display: none;">
-          <h2>💰 My Earnings</h2>
-          <div id="earningsDetails" style="background: var(--glass-bg); padding: 30px; border-radius: 12px;"></div>
+          <h2>💰 Earnings & Payouts</h2>
+          
+          <div class="stats-grid" style="margin-bottom: 30px;">
+            <div class="stat-card glass">
+              <div class="stat-label">Total Earnings</div>
+              <div class="stat-value" id="earn-total">AED 0</div>
+            </div>
+            <div class="stat-card glass">
+              <div class="stat-label">Last Payout</div>
+              <div class="stat-value" id="earn-last-payout">AED 0</div>
+              <div class="stat-subtitle" id="earn-last-date">No payout yet</div>
+            </div>
+            <div class="stat-card glass">
+              <div class="stat-label">Pending Payout</div>
+              <div class="stat-value" id="earn-pending">AED 0</div>
+            </div>
+          </div>
+
+          <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; margin-top: 20px;">
+            <h3 style="margin-bottom: 20px;">Payout History</h3>
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: rgba(0,0,0,0.05);">
+                  <th style="padding: 12px; text-align: left;">Date</th>
+                  <th style="padding: 12px; text-align: left;">Amount (AED)</th>
+                  <th style="padding: 12px; text-align: left;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="payouts-table-body">
+                <tr><td colspan="3" style="text-align: center; padding: 20px;">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Profile Page -->
         <div id="page-profile" class="page" style="display: none;">
           <h2>⚙️ My Profile</h2>
-          <div style="background: var(--glass-bg); padding: 30px; border-radius: 12px; max-width: 600px;">
+          <div style="background: var(--glass-bg); padding: 30px; border-radius: 12px; max-width: 600px; margin-top: 20px;">
             <form id="profileForm" style="display: grid; gap: 20px;">
               <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 600;">👤 Name</label>
@@ -71,8 +174,16 @@
                 <input type="email" id="profileEmail" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
               </div>
               <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">📞 Phone</label>
+                <input type="text" id="profilePhone" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
+              </div>
+              <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 600;">📋 License Number</label>
                 <input type="text" id="profileLicense" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">📊 Status</label>
+                <input type="text" id="profileStatus" disabled style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.1);">
               </div>
             </form>
           </div>
@@ -83,6 +194,9 @@
 
   <script>
     const API_BASE = window.location.origin + '/api';
+    let currentDateRange = 'today';
+    let bookingsChart = null;
+    let earningsChart = null;
     
     function checkDriverAuth() {
       const token = localStorage.getItem('driver_token');
@@ -94,7 +208,124 @@
       localStorage.removeItem('driver');
       window.location.href = '/driver-login.html';
     }
+
+    function setDateRange(range) {
+      currentDateRange = range;
+      loadDashboardStats();
+      loadBookings();
+    }
+
+    function toggleCustomRange() {
+      const picker = document.getElementById('customDatePicker');
+      picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function applyCustomRange() {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      if (start && end) {
+        currentDateRange = `custom_${start}_${end}`;
+        loadDashboardStats();
+        loadBookings();
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
     
+    async function loadDashboardStats() {
+      const token = localStorage.getItem('driver_token');
+      try {
+        const response = await fetch(`${API_BASE}/driver-stats/summary?range=${currentDateRange}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success) {
+          const data = result.data;
+          document.getElementById('stat-bookings').textContent = data.total_bookings || 0;
+          document.getElementById('stat-completed').textContent = data.completed_bookings || 0;
+          document.getElementById('stat-earnings').textContent = 'AED ' + parseFloat(data.total_earnings || 0).toFixed(2);
+          document.getElementById('stat-rating').textContent = (parseFloat(data.avg_rating || 0)).toFixed(1) + ' ⭐';
+          loadCharts();
+        }
+      } catch (error) {
+        console.error('Stats error:', error);
+      }
+    }
+
+    async function loadCharts() {
+      const token = localStorage.getItem('driver_token');
+      try {
+        const response = await fetch(`${API_BASE}/driver-stats/trends?range=${currentDateRange}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success) {
+          const data = result.data;
+          drawBookingsChart(data.bookings_by_day || []);
+          drawEarningsChart(data.earnings_by_status || {});
+        }
+      } catch (error) {
+        console.error('Trends error:', error);
+      }
+    }
+
+    function drawBookingsChart(data) {
+      const ctx = document.getElementById('bookingsChart');
+      if (!ctx) return;
+      
+      if (bookingsChart) bookingsChart.destroy();
+      
+      bookingsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.date) || [],
+          datasets: [{
+            label: 'Bookings',
+            data: data.map(d => d.count) || [],
+            borderColor: '#007AFF',
+            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: true } }
+        }
+      });
+    }
+
+    function drawEarningsChart(data) {
+      const ctx = document.getElementById('earningsChart');
+      if (!ctx) return;
+      
+      if (earningsChart) earningsChart.destroy();
+      
+      earningsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Completed', 'Cancelled', 'Pending'],
+          datasets: [{
+            data: [
+              parseFloat(data.completed) || 0,
+              parseFloat(data.cancelled) || 0,
+              parseFloat(data.pending) || 0
+            ],
+            backgroundColor: ['#34C759', '#FF3B30', '#FF9500']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true
+        }
+      });
+    }
+
     async function loadDriverProfile() {
       const token = localStorage.getItem('driver_token');
       try {
@@ -103,14 +334,107 @@
         });
         const result = await response.json();
         if (result.success) {
-          document.getElementById('completedRides').textContent = result.driver.completed_rides || 0;
-          document.getElementById('avgRating').textContent = (result.driver.avg_rating || 0).toFixed(1) + ' ⭐';
-          document.getElementById('profileName').value = result.driver.name;
-          document.getElementById('profileEmail').value = result.driver.email;
-          document.getElementById('profileLicense').value = result.driver.license_number || 'N/A';
+          const driver = result.data;
+          document.getElementById('profileName').value = driver.name || '';
+          document.getElementById('profileEmail').value = driver.email || '';
+          document.getElementById('profilePhone').value = driver.phone || '';
+          document.getElementById('profileLicense').value = driver.license_number || '';
+          document.getElementById('profileStatus').value = driver.driver_registration_status || 'pending';
         }
       } catch (error) {
-        console.error('Failed to load profile:', error);
+        console.error('Profile error:', error);
+      }
+    }
+
+    async function loadBookings() {
+      const token = localStorage.getItem('driver_token');
+      try {
+        const response = await fetch(`${API_BASE}/driver-stats/bookings?range=${currentDateRange}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success) {
+          const tbody = document.getElementById('bookings-table-body');
+          const bookings = result.data || [];
+          if (bookings.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No bookings found</td></tr>';
+            return;
+          }
+          tbody.innerHTML = bookings.map(b => `
+            <tr>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">${new Date(b.created_at).toLocaleDateString()}</td>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">${b.customer_name || 'N/A'}</td>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">${b.pickup_location || 'N/A'} → ${b.dropoff_location || 'N/A'}</td>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">AED ${parseFloat(b.fare_aed || 0).toFixed(2)}</td>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);"><span style="padding: 4px 8px; border-radius: 4px; background: ${b.status === 'completed' ? '#34C759' : b.status === 'cancelled' ? '#FF3B30' : '#FF9500'}; color: white; font-size: 12px;">${b.status}</span></td>
+            </tr>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Bookings error:', error);
+      }
+    }
+
+    async function loadVehicle() {
+      const token = localStorage.getItem('driver_token');
+      try {
+        const response = await fetch(`${API_BASE}/driver-stats/vehicle`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success && result.data) {
+          const vehicle = result.data;
+          document.getElementById('vehicleDetails').innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+              <div><strong>🚗 Model:</strong> ${vehicle.vehicle_model || 'N/A'}</div>
+              <div><strong>📋 Plate:</strong> ${vehicle.license_plate || 'N/A'}</div>
+              <div><strong>🎨 Color:</strong> ${vehicle.vehicle_color || 'N/A'}</div>
+              <div><strong>📊 Type:</strong> ${vehicle.vehicle_type || 'N/A'}</div>
+              <div><strong>👥 Passengers:</strong> ${vehicle.passenger_capacity || 0}</div>
+              <div><strong>🧳 Luggage:</strong> ${vehicle.luggage_capacity || 0}</div>
+              <div><strong>📅 Year:</strong> ${vehicle.year || 'N/A'}</div>
+              <div><strong>✅ Status:</strong> ${vehicle.status || 'active'}</div>
+            </div>
+          `;
+        } else {
+          document.getElementById('vehicleDetails').innerHTML = '<p>No vehicle assigned yet</p>';
+        }
+      } catch (error) {
+        console.error('Vehicle error:', error);
+        document.getElementById('vehicleDetails').innerHTML = '<p>Error loading vehicle</p>';
+      }
+    }
+
+    async function loadEarnings() {
+      const token = localStorage.getItem('driver_token');
+      try {
+        const response = await fetch(`${API_BASE}/driver-stats/earnings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (result.success) {
+          const data = result.data;
+          document.getElementById('earn-total').textContent = 'AED ' + parseFloat(data.total_earnings || 0).toFixed(2);
+          document.getElementById('earn-pending').textContent = 'AED ' + parseFloat(data.pending_earnings || 0).toFixed(2);
+          document.getElementById('earn-last-payout').textContent = 'AED ' + parseFloat(data.last_payout_amount || 0).toFixed(2);
+          document.getElementById('earn-last-date').textContent = data.last_payout_date ? new Date(data.last_payout_date).toLocaleDateString() : 'No payout yet';
+          
+          const tbody = document.getElementById('payouts-table-body');
+          const payouts = data.payouts || [];
+          if (payouts.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">No payouts yet</td></tr>';
+            return;
+          }
+          tbody.innerHTML = payouts.map(p => `
+            <tr>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">${new Date(p.created_at).toLocaleDateString()}</td>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">AED ${parseFloat(p.amount_aed || 0).toFixed(2)}</td>
+              <td style="padding: 12px; border-bottom: 1px solid var(--border-color);"><span style="padding: 4px 8px; border-radius: 4px; background: ${p.status === 'completed' ? '#34C759' : '#FF9500'}; color: white; font-size: 12px;">${p.status}</span></td>
+            </tr>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Earnings error:', error);
       }
     }
     
@@ -120,12 +444,28 @@
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         this.classList.add('active');
         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-        document.getElementById(`page-${this.dataset.page}`).style.display = 'block';
+        const page = this.getAttribute('data-page');
+        document.getElementById(`page-${page}`).style.display = 'block';
+        
+        if (page === 'overview') loadDashboardStats();
+        else if (page === 'bookings') loadBookings();
+        else if (page === 'vehicle') loadVehicle();
+        else if (page === 'earnings') loadEarnings();
+        else if (page === 'profile') loadDriverProfile();
       });
     });
+
+    // Theme
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', toggleTheme);
+      const isDark = localStorage.getItem('theme') === 'dark';
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    }
     
     checkDriverAuth();
     loadDriverProfile();
+    loadDashboardStats();
   </script>
 </body>
 </html>

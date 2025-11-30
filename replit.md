@@ -116,3 +116,25 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - **BAREERAH_NEW_FEATURES_GUIDE.md** - Existing feature documentation
 - All features tested and production-ready
 - Email notifications live (testing mode: sent to aizaz.dmp@gmail.com)
+## Driver Dashboard (NEW - November 30, 2025)
+- **Full Analytics Dashboard**: 7-day booking trends, earnings breakdown charts
+- **Date Filtering**: Today, Yesterday, This Week, This Month, Custom Date Range
+- **Stats Cards**: Total bookings, completed rides, total earnings, avg rating
+- **Bookings Tab**: View all rides with customer, location, fare, status
+- **Vehicle Tab**: Display assigned vehicle with full details (model, color, plate, capacity)
+- **Earnings Tab**: Total earnings, pending payout, last payout amount/date, payout history
+- **Payouts Management**: View complete payout history with dates and status
+- **Professional UI**: Dark mode, responsive design, Chart.js graphs matching admin dashboard
+- **Demo Data**: 10 demo bookings, 1 vehicle (Toyota Camry), 2 payouts pre-loaded for testing
+
+### Backend Endpoints (New)
+- `GET /api/driver-stats/summary` - Dashboard stats by date range
+- `GET /api/driver-stats/bookings` - Driver's bookings with filtering
+- `GET /api/driver-stats/trends` - Chart data (7-day bookings, earnings breakdown)
+- `GET /api/driver-stats/earnings` - Earnings and payout information
+- `GET /api/driver-stats/vehicle` - Assigned vehicle details
+
+### Login Credentials (Driver)
+- URL: `/driver-login.html`
+- Email: `driver@example.com`
+- Password: `driver123`
