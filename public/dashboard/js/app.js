@@ -1306,11 +1306,12 @@ async function loadBookings() {
       const statusDisplay = b.status || 'pending';
       const paymentDisplay = (b.payment_method || 'cash').toUpperCase();
       const sourceLabel = (b.booking_source === 'bareerah' || b.booking_source === 'bareerah_ai' || b.booking_source === 'voice_agent') ? '📱 Bareerah AI' : '👤 Manual';
+      const bookingTypeIcon = b.booking_type === 'multi_stop' ? '🛣️ Multi-Stop' : (b.booking_type === 'round_trip' ? '🔄 Round-Trip' : (b.booking_type || 'Point-to-Point'));
       const createdTime = new Date(b.created_at);
       const updatedTime = new Date(b.updated_at);
       const createdStr = createdTime.toLocaleDateString() + ' ' + createdTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
       const updatedStr = updatedTime.toLocaleDateString() + ' ' + updatedTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-      return '<tr><td>' + b.id.substring(0, 8) + '</td><td>' + b.customer_name + '</td><td>' + b.customer_phone + '</td><td>' + b.pickup_location + '</td><td>' + b.dropoff_location + '</td><td>' + b.distance_km + '</td><td>' + sourceLabel + '</td><td>AED ' + (b.fare_aed || b.total_fare || 0) + '</td><td>' + driverDisplay + '</td><td>' + paymentDisplay + '</td><td>' + statusDisplay + '</td><td style="font-size: 12px;">' + createdStr + '</td><td style="font-size: 12px;">' + updatedStr + '</td><td><button onclick="viewBooking(\'' + b.id + '\')" class="btn-small">View</button> <button onclick="editBooking(\'' + b.id + '\')" class="btn-small">Edit</button></td></tr>';
+      return '<tr><td>' + b.id.substring(0, 8) + '</td><td>' + b.customer_name + '</td><td>' + b.customer_phone + '</td><td>' + b.pickup_location + '</td><td>' + b.dropoff_location + '</td><td>' + bookingTypeIcon + '</td><td>' + b.distance_km + '</td><td>' + sourceLabel + '</td><td>AED ' + (b.fare_aed || b.total_fare || 0) + '</td><td>' + driverDisplay + '</td><td>' + paymentDisplay + '</td><td>' + statusDisplay + '</td><td style="font-size: 12px;">' + createdStr + '</td><td style="font-size: 12px;">' + updatedStr + '</td><td><button onclick="viewBooking(\'' + b.id + '\')" class="btn-small">View</button> <button onclick="editBooking(\'' + b.id + '\')" class="btn-small">Edit</button></td></tr>';
     }).join('');
   } catch (e) {
     const tbody = document.getElementById('bookings-table-body');
@@ -1345,6 +1346,7 @@ function viewBooking(id) {
           const updatedStr = updatedTime.toLocaleDateString() + ' ' + updatedTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
           const vehicleColorDisplay = b.vehicle_color ? b.vehicle_color : 'N/A';
           const notesDisplay = b.notes ? b.notes : '(No notes)';
+          const stopsDisplay = (b.stops && b.stops.length > 0) ? "<div style="background: #eff6ff; padding: 8px; border-radius: 4px; border-left: 3px solid #3b82f6;"><strong>📍 Journey Stops:</strong><br>" + b.stops.map((s, idx) => "<div style="margin-top: 6px; font-size: 13px;"><strong>Stop " + (idx + 1) + ":</strong> " + s.location + (s.duration_minutes > 0 ? " (Wait: " + s.duration_minutes + " mins)" : "") + "</div>").join("") + "</div>" : "";
           
           content.innerHTML = '<div style="display: grid; gap: 12px; font-size: 14px;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking ID:</strong><br>' + b.id.substring(0, 8) + '</div><div><strong>Status:</strong><br><span style="padding: 2px 6px; border-radius: 3px; background: ' + (b.status === 'completed' ? '#10b981' : b.status === 'in-process' ? '#3b82f6' : b.status === 'pending' ? '#f59e0b' : '#ef4444') + '; color: white; font-size: 12px;">' + (b.status || 'pending').toUpperCase() + '</span></div></div><div><strong>Source:</strong><br>' + sourceDisplay + '</div><div><strong>Customer:</strong><br>' + b.customer_name + ' (' + b.customer_phone + ')</div><div><strong>Pickup:</strong><br>' + b.pickup_location + '</div><div><strong>Dropoff:</strong><br>' + b.dropoff_location + '</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Distance:</strong><br>' + b.distance_km + ' km</div><div><strong>Fare:</strong><br>AED ' + (b.fare_aed || b.total_fare || 0) + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Booking Type:</strong><br>' + bookingTypeDisplay + '</div><div><strong>Payment:</strong><br>' + (b.payment_method || 'N/A').toUpperCase() + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Vehicle Type:</strong><br>' + (b.vehicle_type || 'N/A').toUpperCase() + '</div><div><strong>Vehicle Model:</strong><br>' + vehicleModelDisplay + '</div><div><strong>🎨 Vehicle Color:</strong><br>' + vehicleColorDisplay + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Assigned Vehicle:</strong><br>' + assignedVehicleDisplay + '</div><div><strong>Driver:</strong><br>' + driverInfo + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Passengers:</strong><br>' + (b.passengers_count || 1) + '</div><div><strong>Luggage:</strong><br>' + (b.luggage_count || 0) + '</div></div><div><strong>📝 Notes:</strong><br><div style="background: #f9f9f9; padding: 8px; border-radius: 4px; margin-top: 6px; font-style: italic;">' + notesDisplay + '</div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Created:</strong><br><span style="font-size: 12px; color: var(--text-secondary);">' + createdStr + '</span></div><div><strong>Last Updated:</strong><br><span style="font-size: 12px; color: var(--text-secondary);">' + updatedStr + '</span></div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><div><strong>Date:</strong><br>' + new Date(b.created_at).toLocaleDateString() + '</div><div><strong>Time:</strong><br>' + new Date(b.created_at).toLocaleTimeString() + '</div></div></div>';
           const modal = document.getElementById('bookingDetailModal');
@@ -2313,3 +2315,137 @@ function attachLogListeners() {
   if (logEntityFilter) logEntityFilter.addEventListener('change', filterLogs);
   if (logActionFilter) logActionFilter.addEventListener('change', filterLogs);
 }
+
+// Multi-Stop and Round-Trip Functions
+function toggleBookingTypeFields() {
+  const bookingType = document.getElementById('bookingType').value;
+  const multiStopFields = document.getElementById('multiStopFields');
+  const roundTripFields = document.getElementById('roundTripFields');
+  
+  if (bookingType === 'multi_stop') {
+    multiStopFields.style.display = 'block';
+    roundTripFields.style.display = 'none';
+    if (document.getElementById('stopsContainer').innerHTML === '') {
+      addStopField();
+      addStopField();
+    }
+  } else if (bookingType === 'round_trip') {
+    multiStopFields.style.display = 'none';
+    roundTripFields.style.display = 'block';
+  } else {
+    multiStopFields.style.display = 'none';
+    roundTripFields.style.display = 'none';
+  }
+}
+
+function addStopField() {
+  const container = document.getElementById('stopsContainer');
+  const stopNum = (container.children.length || 0) + 1;
+  const stopDiv = document.createElement('div');
+  stopDiv.style.cssText = 'margin-bottom: 12px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;';
+  stopDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <label style="font-weight: 600; font-size: 13px;">Stop ${stopNum}</label>
+      <button type="button" onclick="removeStopField(this)" class="btn" style="background: #ef4444; color: white; padding: 2px 8px; font-size: 12px;">Remove</button>
+    </div>
+    <input type="text" placeholder="Location" class="stop-location" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 6px; font-size: 12px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+      <input type="number" placeholder="Distance (km)" class="stop-distance" step="0.1" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 12px;">
+      <input type="number" placeholder="Wait mins" class="stop-duration" value="0" style="width: 100%; padding: 6px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 12px;">
+    </div>
+  `;
+  container.appendChild(stopDiv);
+}
+
+function removeStopField(btn) {
+  btn.closest('div').parentElement.remove();
+}
+
+// Override createManualBooking to handle multi-stop/round-trip
+const originalCreateManualBooking = window.createManualBooking;
+window.createManualBooking = async function() {
+  const bookingType = document.getElementById('bookingType').value;
+  
+  if (bookingType === 'multi_stop') {
+    const stops = [];
+    const stopFields = document.querySelectorAll('#stopsContainer > div');
+    stopFields.forEach((field, idx) => {
+      const location = field.querySelector('.stop-location').value;
+      const distance = parseFloat(field.querySelector('.stop-distance').value) || 0;
+      const duration = parseFloat(field.querySelector('.stop-duration').value) || 0;
+      if (location) {
+        stops.push({ location, distance_from_previous: distance, duration_minutes: duration, stop_type: 'stop' });
+      }
+    });
+    
+    if (stops.length < 2) {
+      showToast('Multi-stop requires at least 2 stops with locations', 'error');
+      return;
+    }
+
+    const reqBody = {
+      customer_name: document.getElementById('bookingCustomerName').value,
+      customer_phone: document.getElementById('bookingCustomerPhone').value,
+      customer_email: document.getElementById('bookingCustomerEmail').value,
+      booking_type: 'multi_stop',
+      vehicle_type: document.getElementById('bookingVehicleType').value,
+      vehicle_model: document.getElementById('bookingVehicleModel').value,
+      payment_method: document.getElementById('bookingPayment').value,
+      passengers_count: parseInt(document.getElementById('bookingPassengers').value) || 1,
+      luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
+      stops: stops,
+      booking_source: 'manual'
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(API_BASE + '/bookings/create-booking', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(reqBody)
+      });
+      if (res.ok) {
+        showToast('🛣️ Multi-stop booking created!', 'success');
+        closeModal('addBookingModal');
+        loadBookings();
+      }
+    } catch (e) {
+      showToast('Error: ' + e.message, 'error');
+    }
+  } else if (bookingType === 'round_trip') {
+    const reqBody = {
+      customer_name: document.getElementById('bookingCustomerName').value,
+      customer_phone: document.getElementById('bookingCustomerPhone').value,
+      customer_email: document.getElementById('bookingCustomerEmail').value,
+      booking_type: 'round_trip',
+      vehicle_type: document.getElementById('bookingVehicleType').value,
+      vehicle_model: document.getElementById('bookingVehicleModel').value,
+      payment_method: document.getElementById('bookingPayment').value,
+      passengers_count: parseInt(document.getElementById('bookingPassengers').value) || 1,
+      luggage_count: parseInt(document.getElementById('bookingLuggage').value) || 0,
+      pickup_location: document.getElementById('bookingPickup').value,
+      meeting_location: document.getElementById('roundTripMeetingLocation').value,
+      return_after_hours: parseFloat(document.getElementById('roundTripHours').value) || 3,
+      distance_km: parseFloat(document.getElementById('bookingDistance').value) || 25,
+      booking_source: 'manual'
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(API_BASE + '/bookings/create-booking', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(reqBody)
+      });
+      if (res.ok) {
+        showToast('🔄 Round-trip booking created!', 'success');
+        closeModal('addBookingModal');
+        loadBookings();
+      }
+    } catch (e) {
+      showToast('Error: ' + e.message, 'error');
+    }
+  } else {
+    return originalCreateManualBooking.call(this);
+  }
+};

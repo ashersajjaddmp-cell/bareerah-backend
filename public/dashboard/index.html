@@ -664,6 +664,8 @@
               <option value="airport_transfer">Airport Transfer</option>
               <option value="city_tour">City Tour</option>
               <option value="hourly_rental">Hourly Rental</option>
+              <option value="multi_stop">🛣️ Multi-Stop</option>
+              <option value="round_trip">🔄 Round Trip</option>
             </select>
           </div>
           <div class="form-group" style="position: relative;">
@@ -1039,12 +1041,30 @@
         </div>
         <div class="form-group">
           <label>Booking Type</label>
-          <select id="bookingType" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+          <select id="bookingType" onchange="toggleBookingTypeFields()" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
             <option value="point_to_point">Point to Point</option>
             <option value="airport_transfer">Airport Transfer</option>
             <option value="hourly_rental">Hourly Rental</option>
             <option value="city_tour">City Tour</option>
+            <option value="multi_stop">🛣️ Multi-Stop (Multiple Locations)</option>
+            <option value="round_trip">🔄 Round Trip (Return Journey)</option>
           </select>
+        </div>
+        <div id="multiStopFields" style="display: none; border: 1px solid #3b82f6; padding: 12px; border-radius: 6px; background: #eff6ff; margin-bottom: 12px;">
+          <label style="font-weight: 600; display: block; margin-bottom: 8px;">📍 Additional Stops</label>
+          <div id="stopsContainer"></div>
+          <button type="button" onclick="addStopField()" class="btn" style="width: 100%; background: #3b82f6; color: white; margin-top: 8px;">+ Add Stop</button>
+        </div>
+        <div id="roundTripFields" style="display: none; border: 1px solid #8b5cf6; padding: 12px; border-radius: 6px; background: #faf5ff; margin-bottom: 12px;">
+          <label style="font-weight: 600; display: block; margin-bottom: 8px;">🌍 Return Location & Hours</label>
+          <div class="form-group">
+            <label>Meeting Location</label>
+            <input type="text" id="roundTripMeetingLocation" placeholder="Where customer goes" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+          </div>
+          <div class="form-group">
+            <label>Return After (Hours)</label>
+            <input type="number" id="roundTripHours" value="3" step="0.5" min="1" placeholder="e.g., 3 hours" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+          </div>
         </div>
         <div class="form-group">
           <label>Vehicle Type</label>

@@ -14,22 +14,32 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 
 ## Recent Changes (2025-11-30) ✅
 
-### 🛣️ Multi-Stop & Round-Trip Bookings ✅ LIVE & TESTED
-- **Database**: `booking_stops` table created for multi-leg journey tracking
-- **Multi-Stop Booking** (`POST /api/bookings/create-multi-stop`):
-  - Supports 2+ stops: Pickup → Stop 1 → Stop 2 → ... → Dropoff
-  - Fare calculated: Base + (total_distance × per_km) + (waiting_time / 60 × hourly_rate)
-  - Auto-inserts stops into `booking_stops` table with stop_number, location, duration_minutes
-  - Response includes stops array with full details
-  - Use case: Multi-location deliveries, customer itineraries, tour routes
-- **Round-Trip Booking** (`POST /api/bookings/create-round-trip`):
-  - Format: Pickup → Meeting Location → Return after X hours → Original Pickup
-  - Fare: 2× base fare + (2× distance × per_km) + (return_hours × hourly_rate)
-  - Auto-creates 3-stop journey (pickup→intermediate→dropoff)
-  - Use case: Airport returns, hotel check-outs, hourly customer waiting
-- **Fare Rates Applied**: Same 7-vehicle system (Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, Mini Bus)
-- **Integration Ready**: Both endpoints accept `booking_source: bareerah_ai` for Bareerah AI bookings
-- **Test Results**: ✅ Endpoints responding, multi-stop table structure verified, fare calculations tested
+### 🛣️ Multi-Stop & Round-Trip Bookings ✅ LIVE & FULLY INTEGRATED UI
+- **Backend API Endpoints** (API-only):
+  - `POST /api/bookings/create-multi-stop` - API bookings with multiple stops
+  - `POST /api/bookings/create-round-trip` - API round-trip bookings
+  - Both support `booking_source: bareerah_ai` for Bareerah AI integration
+
+- **Admin UI - Manual Booking Creation**:
+  - Dropdown in "Create Booking" modal: "🛣️ Multi-Stop" and "🔄 Round Trip" options
+  - **Multi-Stop**: Admin adds 2+ stops with locations, distances (km), and wait times (mins)
+  - **Round-Trip**: Admin enters meeting location and return hours (e.g., 3 hours)
+  - Fare auto-calculated based on booking type
+  - UI shows blue/purple colored sections for easy identification
+
+- **Bookings List Display**:
+  - Booking type column shows icons: "🛣️ Multi-Stop" or "🔄 Round-Trip"
+  - Distinguishes special bookings from standard point-to-point
+  - Admin can quickly identify complex journey types
+
+- **Booking Details Modal**:
+  - Shows all stops with location and wait time when viewing multi-stop/round-trip bookings
+  - Blue highlighted section "📍 Journey Stops:" displays each stop sequentially
+  - Shows stop number, location, and wait duration for reference
+
+- **Database**: `booking_stops` table stores stop sequence for all multi-leg journeys
+- **Fare Rates**: Same 7-vehicle system (Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, Mini Bus)
+- **Test Results**: ✅ Admin form working, bookings list shows type icons, details modal displays stops
 
 ### 📝 Booking Notes Feature ✅ LIVE & TESTED
 - **Database**: `notes` column added to bookings table (TEXT, nullable)

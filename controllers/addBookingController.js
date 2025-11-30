@@ -27,8 +27,23 @@ const addBookingController = {
       } = req.body;
 
       // Validate required fields
-      if (!customer_name || !customer_phone || !pickup_location || !dropoff_location || !distance_km || !booking_type || !vehicle_type) {
+      if (!customer_name || !customer_phone || !pickup_location || !dropoff_location || !booking_type || !vehicle_type) {
         return res.status(400).json({ success: false, error: 'Missing required fields' });
+      }
+
+      // For multi_stop and round_trip, handle special logic
+      let finalDistance = distance_km || 0;
+      if (booking_type.toLowerCase() === 'multi_stop') {
+        const stops = req.body.stops || [];
+        if (!stops || stops.length < 2) {
+          return res.status(400).json({ success: false, error: 'Multi-stop requires at least 2 stops' });
+        }
+        finalDistance = stops.reduce((sum, s) => sum + (s.distance_from_previous || 0), 0);
+      } else if (booking_type.toLowerCase() === 'round_trip') {
+        if (!req.body.meeting_location || !req.body.return_after_hours) {
+          return res.status(400).json({ success: false, error: 'Round-trip requires meeting location and return hours' });
+        }
+        finalDistance = (distance_km || 25) * 2;
       }
 
       // Validate passenger and luggage counts
@@ -65,10 +80,15 @@ const addBookingController = {
       const fareResult = await fareCalculator.calculateFare(
         booking_type.toLowerCase(),
         vehicle_type.toLowerCase(),
-        parseFloat(distance_km),
+        parseFloat(finalDistance),
         0
       );
-      const fare = fareResult.fare;
+      let fare = fareResult.fare;
+
+      // Apply multi-stop/round-trip fare multipliers if needed
+      if (booking_type.toLowerCase() === 'round_trip') {
+        fare = fare * 2; // Double the fare for round trip
+      }
 
       // Determine vehicle model - use vehicle_model if provided, otherwise car_model
       const finalVehicleModel = vehicle_model || car_model || 'Not specified';
@@ -151,22 +171,39 @@ const addBookingController = {
         RETURNING *
       `, [
         customer_name, customer_phone, customer_email || null, pickup_location,
-        dropoff_location, distance_km, fare, booking_type, vehicle_type, finalVehicleModelForBooking, finalVehicleColor || null, finalDriverId || null, finalAssignedVehicleId || null, payment_method || 'cash',
+        dropoff_location, finalDistance, fare, booking_type, vehicle_type, finalVehicleModelForBooking, finalVehicleColor || null, finalDriverId || null, finalAssignedVehicleId || null, payment_method || 'cash',
         status || 'in-process', finalBookingSource, passengers_count, luggage_count, notes || null
       ])
 
-      logger.info(`Manual booking created: ${result.rows[0].id}`);
+      const booking = result.rows[0];
+
+      // Handle stops for multi_stop and round_trip
+      if (booking_type.toLowerCase() === 'multi_stop' && req.body.stops) {
+        for (let i = 0; i < req.body.stops.length; i++) {
+          const stop = req.body.stops[i];
+          await query(
+            'INSERT INTO booking_stops (booking_id, stop_number, location, stop_type, duration_minutes) VALUES ($1, $2, $3, $4, $5)',
+            [booking.id, i + 1, stop.location, stop.stop_type || 'stop', stop.duration_minutes || 0]
+          );
+        }
+      } else if (booking_type.toLowerCase() === 'round_trip') {
+        await query('INSERT INTO booking_stops (booking_id, stop_number, location, stop_type, duration_minutes) VALUES ($1, $2, $3, $4, $5)', [booking.id, 1, pickup_location, 'pickup', 0]);
+        await query('INSERT INTO booking_stops (booking_id, stop_number, location, stop_type, duration_minutes) VALUES ($1, $2, $3, $4, $5)', [booking.id, 2, req.body.meeting_location, 'intermediate', (req.body.return_after_hours || 3) * 60]);
+        await query('INSERT INTO booking_stops (booking_id, stop_number, location, stop_type, duration_minutes) VALUES ($1, $2, $3, $4, $5)', [booking.id, 3, pickup_location, 'dropoff', 0]);
+      }
+
+      logger.info(`Manual booking created: ${booking.id}`);
       
       // Send confirmation email if email provided
       if (customer_email) {
         const emailService = require('../utils/emailService');
-        emailService.sendCustomerNotification(result.rows[0], null);
+        emailService.sendCustomerNotification(booking, null);
       }
 
       res.status(201).json({
         success: true,
         message: 'Booking created successfully',
-        booking: result.rows[0]
+        booking: booking
       });
     } catch (error) {
       next(error);
