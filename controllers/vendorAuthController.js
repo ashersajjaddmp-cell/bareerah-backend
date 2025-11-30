@@ -120,6 +120,116 @@ const vendorAuthController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async getVendorStats(req, res, next) {
+    try {
+      const vendorId = req.user.id;
+      const { period } = req.query; // today, yesterday, week, month
+      
+      let dateFilter = '';
+      if (period === 'today') {
+        dateFilter = `DATE(b.created_at) = CURRENT_DATE`;
+      } else if (period === 'yesterday') {
+        dateFilter = `DATE(b.created_at) = CURRENT_DATE - INTERVAL '1 day'`;
+      } else if (period === 'week') {
+        dateFilter = `b.created_at >= CURRENT_DATE - INTERVAL '7 days'`;
+      } else if (period === 'month') {
+        dateFilter = `b.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
+      } else {
+        dateFilter = `1=1`; // all time
+      }
+
+      const result = await query(`
+        SELECT 
+          COUNT(DISTINCT b.id)::int as total_bookings,
+          COALESCE(SUM(b.fare_aed * 0.8), 0)::float as earnings,
+          COALESCE(SUM(b.distance_km), 0)::float as total_distance,
+          COALESCE(AVG(b.fare_aed * 0.8), 0)::float as avg_earning_per_booking
+        FROM vendors v
+        LEFT JOIN vehicles vc ON v.id = vc.vendor_id
+        LEFT JOIN bookings b ON vc.id = b.assigned_vehicle_id AND ${dateFilter}
+        WHERE v.id = $1
+        GROUP BY v.id
+      `, [vendorId]);
+
+      res.json({ success: true, stats: result.rows[0] || { total_bookings: 0, earnings: 0, total_distance: 0 } });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getTopDrivers(req, res, next) {
+    try {
+      const vendorId = req.user.id;
+      const { period } = req.query;
+      
+      let dateFilter = '';
+      if (period === 'today') {
+        dateFilter = `AND DATE(b.created_at) = CURRENT_DATE`;
+      } else if (period === 'yesterday') {
+        dateFilter = `AND DATE(b.created_at) = CURRENT_DATE - INTERVAL '1 day'`;
+      } else if (period === 'week') {
+        dateFilter = `AND b.created_at >= CURRENT_DATE - INTERVAL '7 days'`;
+      } else if (period === 'month') {
+        dateFilter = `AND b.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
+      }
+
+      const result = await query(`
+        SELECT 
+          d.id, d.name,
+          COUNT(b.id)::int as bookings,
+          COALESCE(SUM(b.fare_aed * 0.8), 0)::float as earnings,
+          COALESCE(SUM(b.distance_km), 0)::float as distance
+        FROM drivers d
+        JOIN vehicles v ON d.id = v.driver_id
+        JOIN bookings b ON v.id = b.assigned_vehicle_id
+        WHERE v.vendor_id = $1 ${dateFilter}
+        GROUP BY d.id, d.name
+        ORDER BY bookings DESC
+        LIMIT 5
+      `, [vendorId]);
+
+      res.json({ success: true, drivers: result.rows });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getTopModels(req, res, next) {
+    try {
+      const vendorId = req.user.id;
+      const { period } = req.query;
+      
+      let dateFilter = '';
+      if (period === 'today') {
+        dateFilter = `AND DATE(b.created_at) = CURRENT_DATE`;
+      } else if (period === 'yesterday') {
+        dateFilter = `AND DATE(b.created_at) = CURRENT_DATE - INTERVAL '1 day'`;
+      } else if (period === 'week') {
+        dateFilter = `AND b.created_at >= CURRENT_DATE - INTERVAL '7 days'`;
+      } else if (period === 'month') {
+        dateFilter = `AND b.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
+      }
+
+      const result = await query(`
+        SELECT 
+          v.model, v.color, v.plate_number,
+          COUNT(b.id)::int as bookings,
+          COALESCE(SUM(b.fare_aed * 0.8), 0)::float as earnings,
+          COALESCE(SUM(b.distance_km), 0)::float as distance
+        FROM vehicles v
+        LEFT JOIN bookings b ON v.id = b.assigned_vehicle_id ${dateFilter}
+        WHERE v.vendor_id = $1
+        GROUP BY v.id, v.model, v.color, v.plate_number
+        ORDER BY bookings DESC
+        LIMIT 5
+      `, [vendorId]);
+
+      res.json({ success: true, models: result.rows });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 

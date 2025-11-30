@@ -12,6 +12,26 @@ Preferred communication style: Simple, everyday language. All features delivered
 
 The application is built on an MVC (Model-View-Controller) architecture using Express.js (v5.1.0) and runs on port 5000. It uses JWT-based authentication with Role-Based Access Control (RBAC) for admin, operator, vendor, and driver roles.
 
+## Recent Changes (2025-11-30) ✅
+
+### 📊 Vendor Analytics Dashboard
+- Interactive dashboard with date filters: Today, Yesterday, This Week, This Month
+- Three charts: Bookings (doughnut), Earnings (bar), Distance (line)
+- Toggle each metric independently
+- Top 5 Drivers & Top 5 Car Models sections (dynamic by period)
+- Profile page displays Total Earnings (All Time)
+- New endpoints: `/vendor-auth/stats`, `/vendor-auth/top-drivers`, `/vendor-auth/top-models`
+
+### 🎨 Vehicle Color System
+- Mandatory 7-color dropdown: Black, White, Silver, Gray, Red, Blue, Gold
+- Color included in email & WhatsApp notifications
+- Format: "Mercedes Sprinter (White) - Plate: AB123"
+
+### ✅ Slab-Based Fare Calculation
+- Formula: Base fare + ((distance - included_km) × per_km_rate) when distance > threshold
+- 7 vehicle types with different thresholds (20km, 40km, 50km)
+- Auto-assignment for all bookings (manual + Bareerah)
+
 ## UI/UX Decisions
 - **Portals**: Admin Dashboard, Vendor Portal, Driver Portal, and Operator Portal provide role-specific functionalities.
 - **Design**: Professional 2-column layouts, clear labels, solid white dropdowns, responsive design with dark mode toggle.
