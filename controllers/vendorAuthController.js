@@ -135,7 +135,7 @@ const vendorAuthController = {
       } else if (period === 'week') {
         dateFilter = `b.created_at >= CURRENT_DATE - INTERVAL '7 days'`;
       } else if (period === 'month') {
-        dateFilter = `b.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
+        dateFilter = `DATE_TRUNC('month', b.created_at) = DATE_TRUNC('month', CURRENT_DATE)`;
       } else {
         dateFilter = `1=1`; // all time
       }
@@ -172,7 +172,7 @@ const vendorAuthController = {
       } else if (period === 'week') {
         dateFilter = `AND b.created_at >= CURRENT_DATE - INTERVAL '7 days'`;
       } else if (period === 'month') {
-        dateFilter = `AND b.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
+        dateFilter = `AND DATE_TRUNC('month', b.created_at) = DATE_TRUNC('month', CURRENT_DATE)`;
       }
 
       const result = await query(`
@@ -209,7 +209,7 @@ const vendorAuthController = {
       } else if (period === 'week') {
         dateFilter = `AND b.created_at >= CURRENT_DATE - INTERVAL '7 days'`;
       } else if (period === 'month') {
-        dateFilter = `AND b.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
+        dateFilter = `AND DATE_TRUNC('month', b.created_at) = DATE_TRUNC('month', CURRENT_DATE)`;
       }
 
       const result = await query(`
