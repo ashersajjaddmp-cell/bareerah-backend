@@ -5,10 +5,12 @@ const addBookingController = require('../controllers/addBookingController');
 const vehicleController = require('../controllers/vehicleController');
 const rentalRulesController = require('../controllers/rentalRulesController');
 const wordpressBookingController = require('../controllers/wordpressBookingController');
+const formController = require('../controllers/formController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { rbacMiddleware, operatorRestrictions } = require('../middleware/rbacMiddleware');
 
 // Public WordPress endpoints (no auth required)
+router.get('/wordpress-form', formController.getBookingForm);
 router.post('/wordpress-booking', wordpressBookingController.createWordPressBooking);
 router.post('/wordpress-calculate-fare', wordpressBookingController.calculateWordPressFare);
 
