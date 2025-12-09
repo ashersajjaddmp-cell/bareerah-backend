@@ -1054,7 +1054,7 @@ const formController = {
   },
 
   /**
-   * Screen 3: Schedule & Guest Info Page
+   * Screen 3: Schedule & Guest Info Page - ZentroRide Style
    */
   async getGuestInfo(req, res, next) {
     try {
@@ -1063,7 +1063,6 @@ const formController = {
       const host = req.get('host') || 'localhost:5000';
       const apiBase = `${protocol}://${host}`;
 
-      // Find selected vehicle
       const selectedVehicle = VEHICLES.find(v => v.id === vehicle) || VEHICLES[0];
       const vehiclesJSON = JSON.stringify(VEHICLES);
 
@@ -1078,423 +1077,139 @@ const formController = {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: #f5f5f5;
-      min-height: 100vh;
-      color: #333;
-    }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    /* Header */
-    .page-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .page-title {
-      font-size: 24px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 20px;
-    }
-    
-    /* Progress Steps */
-    .progress-steps {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-bottom: 30px;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #999;
-      font-size: 12px;
-    }
+    body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; min-height: 100vh; color: #333; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .page-header { text-align: center; margin-bottom: 30px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #333; margin-bottom: 20px; }
+    .progress-steps { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
+    .step { display: flex; align-items: center; gap: 10px; color: #999; font-size: 12px; }
     .step.completed { color: #4caf50; }
     .step.active { color: #333; }
-    .step-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #e0e0e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-    }
+    .step-icon { width: 28px; height: 28px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
     .step.completed .step-icon { background: #4caf50; color: #fff; }
     .step.active .step-icon { background: #1a1a1a; color: #fff; }
     .step-line { width: 50px; height: 2px; background: #e0e0e0; }
     .step-line.completed { background: #4caf50; }
-
-    /* Main Layout */
-    .main-layout {
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 25px;
-    }
-
-    /* Form Section */
-    .form-section {
-      background: #fff;
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #333;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
-    }
-
-    /* Form Grid */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group.full-width {
-      grid-column: span 2;
-    }
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      color: #666;
-      margin-bottom: 8px;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: 'Montserrat', sans-serif;
-      transition: all 0.3s ease;
-    }
-    .form-group input:focus, .form-group select:focus {
-      outline: none;
-      border-color: #333;
-    }
-    .form-group input::placeholder {
-      color: #aaa;
-    }
-    .phone-input {
-      display: flex;
-      gap: 10px;
-    }
-    .phone-input select {
-      width: 100px;
-      flex-shrink: 0;
-    }
-    .form-note {
-      font-size: 11px;
-      color: #999;
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .form-note i { color: #4caf50; }
-
-    /* Extras Section */
-    .extras-section {
-      margin-top: 25px;
-    }
-    .extra-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .extra-item:last-child { border-bottom: none; }
-    .extra-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .extra-checkbox {
-      width: 20px;
-      height: 20px;
-      border: 2px solid #ddd;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-    .extra-checkbox.checked {
-      background: #4caf50;
-      border-color: #4caf50;
-      color: #fff;
-    }
-    .extra-name {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .extra-note {
-      font-size: 11px;
-      color: #999;
-      margin-top: 3px;
-    }
-    .extra-price {
-      font-size: 14px;
-      font-weight: 600;
-      color: #4caf50;
-    }
-
-    /* Child Seat Options */
-    .seat-options {
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .seat-title {
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 10px;
-      color: #666;
-    }
-    .seat-counts {
-      display: flex;
-      gap: 15px;
-    }
-    .seat-count {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .count-btn {
-      width: 28px;
-      height: 28px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-    .count-btn:hover { background: #f5f5f5; }
-    .count-value {
-      width: 30px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* Child Seat Info */
-    .info-box {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 15px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .info-box i {
-      color: #4caf50;
-      margin-top: 2px;
-    }
-    .info-box p {
-      font-size: 12px;
-      color: #666;
-      line-height: 1.5;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .sidebar-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .sidebar-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #333;
-    }
+    .main-layout { display: grid; grid-template-columns: 1fr 350px; gap: 25px; }
+    .form-section { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: #333; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group.full-width { grid-column: span 2; }
+    .form-group label { display: block; font-size: 11px; font-weight: 500; color: #888; margin-bottom: 6px; text-transform: uppercase; }
+    .form-group input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 0; font-size: 14px; font-family: 'Montserrat', sans-serif; background: #fff; }
+    .form-group input:focus { outline: none; border-color: #333; }
+    .form-group input::placeholder { color: #bbb; }
     
-    /* Trip Details */
-    .trip-section {
-      margin-bottom: 20px;
-    }
-    .trip-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #999;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    .trip-point {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .trip-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4caf50;
-      margin-top: 5px;
-      flex-shrink: 0;
-    }
-    .trip-dot.end { background: #f44336; }
-    .trip-text {
-      font-size: 12px;
-      color: #333;
-      line-height: 1.4;
-    }
-    .trip-datetime {
-      display: flex;
-      gap: 15px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #eee;
-    }
-    .trip-datetime div {
-      font-size: 11px;
-    }
-    .trip-datetime label {
-      color: #999;
-      display: block;
-      margin-bottom: 3px;
-    }
-    .trip-datetime span {
-      color: #333;
-      font-weight: 500;
-    }
-
-    /* Vehicle Card */
-    .vehicle-summary {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 15px;
-    }
-    .vehicle-summary-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    .vehicle-summary-img {
-      width: 100%;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-    .vehicle-summary-specs {
-      display: flex;
-      gap: 15px;
-      font-size: 11px;
-      color: #666;
-    }
-    .vehicle-summary-specs span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
+    /* ZentroRide Phone Input with Flags */
+    .phone-wrapper { position: relative; }
+    .phone-input-group { display: flex; border: 1px solid #e0e0e0; }
+    .country-select-btn { display: flex; align-items: center; gap: 8px; padding: 12px 15px; background: #fff; border: none; border-right: 1px solid #e0e0e0; cursor: pointer; min-width: 140px; font-family: 'Montserrat', sans-serif; font-size: 13px; }
+    .country-select-btn img { width: 24px; height: 16px; object-fit: cover; border-radius: 2px; }
+    .country-select-btn .code { color: #333; font-weight: 500; }
+    .country-select-btn i { margin-left: auto; color: #999; font-size: 10px; }
+    .phone-input-group input { flex: 1; border: none; padding: 12px 15px; font-size: 14px; }
+    .phone-input-group input:focus { outline: none; }
+    
+    /* Country Dropdown */
+    .country-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; max-height: 250px; overflow-y: auto; display: none; }
+    .country-dropdown.open { display: block; }
+    .country-option { display: flex; align-items: center; gap: 10px; padding: 10px 15px; cursor: pointer; font-size: 13px; }
+    .country-option:hover { background: #f5f5f5; }
+    .country-option img { width: 24px; height: 16px; object-fit: cover; border-radius: 2px; }
+    .country-option .name { flex: 1; color: #333; }
+    .country-option .dial { color: #666; }
+    
+    .form-note { font-size: 11px; color: #999; margin-top: 15px; display: flex; align-items: center; gap: 5px; }
+    .form-note i { color: #4caf50; }
+    
+    /* Extras Section */
+    .extras-section { margin-top: 25px; }
+    .extra-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #eee; }
+    .extra-left { display: flex; align-items: flex-start; gap: 12px; }
+    .extra-checkbox { width: 18px; height: 18px; border: 2px solid #ddd; border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+    .extra-checkbox.checked { background: #333; border-color: #333; color: #fff; }
+    .extra-checkbox i { font-size: 10px; display: none; }
+    .extra-checkbox.checked i { display: block; }
+    .extra-name { font-size: 14px; font-weight: 500; color: #333; }
+    .extra-desc { font-size: 11px; color: #999; margin-top: 3px; }
+    .extra-price { font-size: 14px; font-weight: 600; color: #333; }
+    
+    /* Stop Location Field */
+    .stop-field { margin-top: 15px; padding: 15px; background: #fafafa; border: 1px solid #e0e0e0; display: none; }
+    .stop-field.visible { display: block; }
+    .stop-field-label { font-size: 12px; font-weight: 500; color: #333; margin-bottom: 8px; }
+    .stop-field input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; font-size: 14px; font-family: 'Montserrat', sans-serif; }
+    .stop-field input::placeholder { color: #bbb; }
+    .stop-note { font-size: 11px; color: #888; margin-top: 8px; }
+    
+    /* Child Seat Section */
+    .child-seat-section { padding: 15px 0; display: none; }
+    .child-seat-section.visible { display: block; }
+    .seat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .seat-label { font-size: 13px; color: #666; }
+    .seat-label span { font-size: 11px; color: #999; }
+    
+    /* ZentroRide Yellow Quantity Buttons */
+    .qty-control { display: flex; align-items: center; gap: 0; }
+    .qty-btn { width: 32px; height: 32px; border: 1px solid #ffc107; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; color: #333; transition: all 0.2s; }
+    .qty-btn:hover { background: #ffc107; }
+    .qty-btn.minus { border-radius: 4px 0 0 4px; }
+    .qty-btn.plus { border-radius: 0 4px 4px 0; background: #ffc107; }
+    .qty-value { width: 40px; height: 32px; border-top: 1px solid #ffc107; border-bottom: 1px solid #ffc107; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; background: #fff; }
+    
+    .info-box { background: #f8f9fa; border-radius: 4px; padding: 12px 15px; margin-top: 15px; display: none; font-size: 12px; color: #666; line-height: 1.5; }
+    .info-box.visible { display: flex; align-items: flex-start; gap: 10px; }
+    .info-box i { color: #999; margin-top: 2px; }
+    
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 15px; }
+    .sidebar-card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .sidebar-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #333; }
+    .trip-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .trip-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+    .trip-dot.green { background: #4caf50; }
+    .trip-dot.red { background: #f44336; }
+    .trip-text { font-size: 12px; color: #333; line-height: 1.4; }
+    .trip-datetime { display: flex; gap: 20px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
+    .trip-datetime div { font-size: 11px; }
+    .trip-datetime label { color: #999; display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+    .trip-datetime span { color: #333; font-weight: 500; }
+    
+    /* Vehicle Summary Card - Yellow Header */
+    .vehicle-card-summary { border: 2px solid #ffc107; border-radius: 8px; overflow: hidden; }
+    .vehicle-card-header { background: #ffc107; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+    .vehicle-card-header .name { font-size: 14px; font-weight: 600; color: #333; }
+    .vehicle-card-header .badge { font-size: 10px; color: #666; display: flex; align-items: center; gap: 4px; }
+    .vehicle-card-body { padding: 15px; background: #fff; }
+    .vehicle-specs { display: flex; gap: 15px; margin-bottom: 10px; font-size: 11px; color: #666; }
+    .vehicle-specs span { display: flex; align-items: center; gap: 4px; }
+    .vehicle-img { width: 100%; height: 70px; object-fit: contain; margin: 10px 0; }
+    
     /* Extras Summary */
-    .extras-summary {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-    .extras-summary-title {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .extras-summary-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
+    .extras-summary { border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px; }
+    .extras-summary-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #333; }
+    .extras-line { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; }
+    .extras-line .label { color: #666; }
+    .extras-line .calc { color: #999; font-size: 11px; }
+    .extras-line .arrow { color: #ffc107; margin: 0 8px; }
+    .extras-line .price { font-weight: 600; color: #333; }
+    
     /* Total Price */
-    .total-section {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 2px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .total-label {
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .total-price {
-      font-size: 20px;
-      font-weight: 700;
-      color: #333;
-    }
-    .total-price small {
-      font-size: 12px;
-      font-weight: 400;
-      color: #999;
-    }
-
+    .total-line { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-top: 2px solid #eee; margin-top: 10px; }
+    .total-label { font-size: 14px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 5px; }
+    .total-label .arrow { color: #ffc107; }
+    .total-amount { text-align: right; }
+    .total-amount .currency { font-size: 11px; color: #999; }
+    .total-amount .price { font-size: 22px; font-weight: 700; color: #333; }
+    
     /* Buttons */
-    .buttons-row {
-      display: flex;
-      gap: 15px;
-      margin-top: 25px;
-    }
-    .btn-back {
-      flex: 1;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Montserrat', sans-serif;
-    }
+    .buttons-row { display: flex; gap: 15px; margin-top: 25px; }
+    .btn-back { flex: 1; padding: 14px; border: 1px solid #ddd; border-radius: 0; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; }
     .btn-back:hover { background: #f5f5f5; }
-    .btn-next {
-      flex: 2;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background: #1a8b6e;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Montserrat', sans-serif;
-    }
+    .btn-next { flex: 2; padding: 14px; border: none; border-radius: 0; background: #1a8b6e; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; }
     .btn-next:hover { background: #157a5e; }
-
-    /* Responsive */
+    
     @media (max-width: 800px) {
       .main-layout { grid-template-columns: 1fr; }
       .form-grid { grid-template-columns: 1fr; }
@@ -1505,230 +1220,176 @@ const formController = {
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <div class="page-header">
-      <h1 class="page-title">Book a ${type === 'round_trip' ? 'Chauffeur Transfer' : 'One Way Transfer'}</h1>
-      
-      <!-- Progress Steps -->
+      <h1 class="page-title">Book a ${type === 'round_trip' ? 'City Tour' : 'Private Transfer'}</h1>
       <div class="progress-steps">
-        <div class="step completed">
-          <div class="step-icon"><i class="fas fa-check"></i></div>
-          <span>Vehicle Details</span>
-        </div>
+        <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><span>Vehicle Details</span></div>
         <div class="step-line completed"></div>
-        <div class="step active">
-          <div class="step-icon">2</div>
-          <span>Schedule & Guest Info</span>
-        </div>
+        <div class="step active"><div class="step-icon"><i class="fas fa-check"></i></div><span>Schedule & Guest Info</span></div>
         <div class="step-line"></div>
-        <div class="step">
-          <div class="step-icon">3</div>
-          <span>Billing Details</span>
-        </div>
+        <div class="step"><div class="step-icon"><i class="fas fa-file-invoice"></i></div><span>Billing Details</span></div>
       </div>
     </div>
 
-    <!-- Main Layout -->
     <div class="main-layout">
-      <!-- Form Section -->
       <div class="form-section">
         <h2 class="section-title">Passenger Details</h2>
-        
         <div class="form-grid">
           <div class="form-group">
-            <label>Full Name *</label>
+            <label>Full Name</label>
             <input type="text" id="fullName" placeholder="Full Name" required>
           </div>
           <div class="form-group">
-            <label>Email Address *</label>
+            <label>Email</label>
             <input type="email" id="email" placeholder="Email Address" required>
           </div>
           <div class="form-group">
-            <label>Contact Number *</label>
-            <div class="phone-input">
-              <select id="countryCode">
-                <option value="+971">+971</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-                <option value="+91">+91</option>
-                <option value="+92">+92</option>
-                <option value="+966">+966</option>
-              </select>
-              <input type="tel" id="contactNumber" placeholder="e.g. 50 123 4567">
+            <label>Contact Number</label>
+            <div class="phone-wrapper">
+              <div class="phone-input-group">
+                <button type="button" class="country-select-btn" id="contactCountryBtn" onclick="toggleDropdown('contact')">
+                  <img src="https://flagcdn.com/w40/ae.png" id="contactFlag">
+                  <span class="code" id="contactCode">+971</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <input type="tel" id="contactNumber" placeholder="e.g. 50 123 4567">
+              </div>
+              <div class="country-dropdown" id="contactDropdown"></div>
             </div>
           </div>
           <div class="form-group">
             <label>WhatsApp Number</label>
-            <div class="phone-input">
-              <select id="whatsappCode">
-                <option value="+971">+971</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-                <option value="+91">+91</option>
-                <option value="+92">+92</option>
-                <option value="+966">+966</option>
-              </select>
-              <input type="tel" id="whatsappNumber" placeholder="e.g. 50 123 4567">
+            <div class="phone-wrapper">
+              <div class="phone-input-group">
+                <button type="button" class="country-select-btn" id="whatsappCountryBtn" onclick="toggleDropdown('whatsapp')">
+                  <img src="https://flagcdn.com/w40/ae.png" id="whatsappFlag">
+                  <span class="code" id="whatsappCode">+971</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <input type="tel" id="whatsappNumber" placeholder="e.g. 50 123 4567">
+              </div>
+              <div class="country-dropdown" id="whatsappDropdown"></div>
             </div>
           </div>
         </div>
-        
-        <div class="form-note">
-          <i class="fas fa-info-circle"></i>
-          We need this email and contact number for urgent communication on the transfer day
-        </div>
+        <div class="form-note"><i class="fas fa-info-circle"></i> We need this email and contact number for urgent communication on the transfer day</div>
 
         <!-- Extras Section -->
         <div class="extras-section">
           <h2 class="section-title">Extra's</h2>
           
-          <div class="extra-item">
+          <div class="extra-row">
             <div class="extra-left">
-              <div class="extra-checkbox" id="stopCheckbox" onclick="toggleExtra('stop')">
-                <i class="fas fa-check" style="display:none;font-size:12px;"></i>
-              </div>
-              <div>
-                <div class="extra-name">Stop on the way</div>
-              </div>
+              <div class="extra-checkbox" id="stopCheckbox" onclick="toggleExtra('stop')"><i class="fas fa-check"></i></div>
+              <div><div class="extra-name">Stop on the way</div></div>
             </div>
             <div class="extra-price">AED 38.12</div>
           </div>
+          
+          <div class="stop-field" id="stopField">
+            <div class="stop-field-label">The place you need to stop in</div>
+            <input type="text" id="stopLocation" placeholder="Enter stop location">
+            <div class="stop-note">To stop can be made within 10km from the main route. The maximum time is 30 minutes.</div>
+          </div>
 
-          <div class="extra-item">
+          <div class="extra-row">
             <div class="extra-left">
-              <div class="extra-checkbox" id="childSeatCheckbox" onclick="toggleExtra('childSeat')">
-                <i class="fas fa-check" style="display:none;font-size:12px;"></i>
-              </div>
+              <div class="extra-checkbox" id="childSeatCheckbox" onclick="toggleExtra('childSeat')"><i class="fas fa-check"></i></div>
               <div>
                 <div class="extra-name">Child Seat</div>
-                <div class="extra-note">This is required if children are travelling with you</div>
+                <div class="extra-desc">This is required if children are travelling with you</div>
               </div>
             </div>
             <div class="extra-price">AED 27.22</div>
           </div>
 
-          <!-- Seat Options -->
-          <div class="seat-options" id="seatOptions" style="display:none;">
-            <div class="seat-title">Seat 0-36 kg</div>
-            <div class="seat-counts">
-              <div class="seat-count">
-                <button class="count-btn" onclick="updateCount('seat36', -1)">-</button>
-                <span class="count-value" id="seat36-count">0</span>
-                <button class="count-btn" onclick="updateCount('seat36', 1)">+</button>
+          <div class="child-seat-section" id="childSeatSection">
+            <div class="seat-row">
+              <div class="seat-label">Seat <span>0-18 kg</span></div>
+              <div class="qty-control">
+                <button class="qty-btn minus" onclick="updateCount('seat', -1)">-</button>
+                <div class="qty-value" id="seat-count">0</div>
+                <button class="qty-btn plus" onclick="updateCount('seat', 1)">+</button>
               </div>
             </div>
-          </div>
-
-          <div class="seat-options" id="boosterOptions" style="display:none;">
-            <div class="seat-title">Booster 15-36 kg</div>
-            <div class="seat-counts">
-              <div class="seat-count">
-                <button class="count-btn" onclick="updateCount('booster', -1)">-</button>
-                <span class="count-value" id="booster-count">0</span>
-                <button class="count-btn" onclick="updateCount('booster', 1)">+</button>
+            <div class="seat-row">
+              <div class="seat-label">Booster <span>15-36 kg</span></div>
+              <div class="qty-control">
+                <button class="qty-btn minus" onclick="updateCount('booster', -1)">-</button>
+                <div class="qty-value" id="booster-count">0</div>
+                <button class="qty-btn plus" onclick="updateCount('booster', 1)">+</button>
               </div>
             </div>
-          </div>
-
-          <div class="seat-options" id="infantOptions" style="display:none;">
-            <div class="seat-title">Infant seat 0-9 kg</div>
-            <div class="seat-counts">
-              <div class="seat-count">
-                <button class="count-btn" onclick="updateCount('infant', -1)">-</button>
-                <span class="count-value" id="infant-count">0</span>
-                <button class="count-btn" onclick="updateCount('infant', 1)">+</button>
+            <div class="seat-row">
+              <div class="seat-label">Infant seat <span>Up to 9 kg</span></div>
+              <div class="qty-control">
+                <button class="qty-btn minus" onclick="updateCount('infant', -1)">-</button>
+                <div class="qty-value" id="infant-count">0</div>
+                <button class="qty-btn plus" onclick="updateCount('infant', 1)">+</button>
               </div>
             </div>
-          </div>
-
-          <div class="info-box" id="childSeatInfo" style="display:none;">
-            <i class="fas fa-info-circle"></i>
-            <p>You may bring your own child seat. In this seat, you don't need to add a child seat rent to your booking.</p>
+            <div class="info-box" id="childSeatInfo">
+              <i class="fas fa-info-circle"></i>
+              <p>You may bring your own child seat. In this case, you don't need to add a child seat rent to your booking.</p>
+            </div>
           </div>
         </div>
 
-        <!-- Buttons -->
         <div class="buttons-row">
           <button class="btn-back" onclick="goBack()">BACK</button>
           <button class="btn-next" onclick="goNext()">NEXT</button>
         </div>
       </div>
 
-      <!-- Sidebar -->
       <div class="sidebar">
-        <!-- One Way Trip -->
-        <div class="sidebar-card">
-          <div class="sidebar-title">One Way Trip</div>
-          <div class="trip-section">
-            <div class="trip-point">
-              <div class="trip-dot"></div>
-              <div class="trip-text">${pickup || 'Pickup Location'}</div>
-            </div>
-            <div class="trip-point">
-              <div class="trip-dot end"></div>
-              <div class="trip-text">${dropoff || 'Dropoff Location'}</div>
-            </div>
-            <div class="trip-datetime">
-              <div>
-                <label>Pickup Date</label>
-                <span>${date || 'Not set'}</span>
-              </div>
-              <div>
-                <label>Pickup Time</label>
-                <span>${time || 'Not set'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         ${type === 'round_trip' ? `
-        <!-- Return Trip -->
         <div class="sidebar-card">
           <div class="sidebar-title">Return Ride Trip</div>
-          <div class="trip-section">
-            <div class="trip-point">
-              <div class="trip-dot"></div>
-              <div class="trip-text">${dropoff || 'Return From'}</div>
-            </div>
-            <div class="trip-point">
-              <div class="trip-dot end"></div>
-              <div class="trip-text">${pickup || 'Return To'}</div>
-            </div>
-            <div class="trip-datetime">
-              <div>
-                <label>Pickup Date</label>
-                <span>${returnDate || 'Not set'}</span>
-              </div>
-              <div>
-                <label>Pickup Time</label>
-                <span>${returnTime || 'Not set'}</span>
-              </div>
-            </div>
+          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${dropoff || 'Return From'}</div></div>
+          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${pickup || 'Return To'}</div></div>
+          <div class="trip-datetime">
+            <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${returnDate || date}</span></div>
+            <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${returnTime || time}</span></div>
           </div>
         </div>
-        ` : ''}
-
-        <!-- Vehicle Summary -->
+        ` : `
         <div class="sidebar-card">
-          <div class="vehicle-summary">
-            <div class="vehicle-summary-name">${selectedVehicle.name}</div>
-            <img src="${selectedVehicle.image}" alt="${selectedVehicle.name}" class="vehicle-summary-img">
-            <div class="vehicle-summary-specs">
-              <span><i class="fas fa-suitcase"></i> ${selectedVehicle.suitcases} Suitcases</span>
-              <span><i class="fas fa-users"></i> Up to ${selectedVehicle.passengers} Passengers</span>
+          <div class="sidebar-title">One Way Trip</div>
+          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${pickup || 'Pickup Location'}</div></div>
+          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${dropoff || 'Dropoff Location'}</div></div>
+          <div class="trip-datetime">
+            <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${date || 'Not set'}</span></div>
+            <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${time || 'Not set'}</span></div>
+          </div>
+        </div>
+        `}
+
+        <div class="sidebar-card">
+          <div class="vehicle-card-summary">
+            <div class="vehicle-card-header">
+              <span class="name">${selectedVehicle.name}</span>
+              <span class="badge"><i class="far fa-clock"></i> Free Waiting Time</span>
+            </div>
+            <div class="vehicle-card-body">
+              <div class="vehicle-specs">
+                <span><i class="fas fa-suitcase"></i> Up to ${selectedVehicle.suitcases} Suitcases</span>
+                <span><i class="fas fa-users"></i> Up to ${selectedVehicle.passengers} Passengers</span>
+              </div>
+              <img src="${selectedVehicle.image}" alt="${selectedVehicle.name}" class="vehicle-img">
             </div>
           </div>
 
-          <div class="extras-summary" id="extrasSummary">
+          <div class="extras-summary">
             <div class="extras-summary-title">Extra's</div>
-            <div id="extrasListSummary">
-              <!-- Will be populated by JS -->
-            </div>
+            <div id="extrasListSummary"></div>
           </div>
 
-          <div class="total-section">
-            <div class="total-label">Total Price</div>
-            <div class="total-price"><small>AED</small> <span id="totalPrice">${price || '0'}</span></div>
+          <div class="total-line">
+            <div class="total-label"><span class="arrow"><i class="fas fa-arrow-right"></i></span> Total Price</div>
+            <div class="total-amount">
+              <span class="currency">AED</span>
+              <span class="price" id="totalPrice">${price || '0'}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1739,7 +1400,6 @@ const formController = {
     const API_BASE = '${apiBase}';
     const VEHICLES = ${vehiclesJSON};
     
-    // Booking data from previous screens
     const bookingData = {
       type: '${type}',
       pickup: '${pickup || ''}',
@@ -1753,46 +1413,89 @@ const formController = {
       basePrice: ${price || 0}
     };
 
-    // Extra prices
-    const EXTRAS = {
-      stop: { price: 38.12, selected: false },
-      childSeat: { price: 27.22, selected: false }
-    };
+    const COUNTRIES = [
+      { code: '+971', name: 'United Arab Emirates', flag: 'ae' },
+      { code: '+1', name: 'United States', flag: 'us' },
+      { code: '+44', name: 'United Kingdom', flag: 'gb' },
+      { code: '+91', name: 'India', flag: 'in' },
+      { code: '+92', name: 'Pakistan', flag: 'pk' },
+      { code: '+966', name: 'Saudi Arabia', flag: 'sa' },
+      { code: '+93', name: 'Afghanistan', flag: 'af' },
+      { code: '+355', name: 'Albania', flag: 'al' },
+      { code: '+49', name: 'Germany', flag: 'de' },
+      { code: '+33', name: 'France', flag: 'fr' },
+      { code: '+39', name: 'Italy', flag: 'it' },
+      { code: '+34', name: 'Spain', flag: 'es' },
+      { code: '+86', name: 'China', flag: 'cn' },
+      { code: '+81', name: 'Japan', flag: 'jp' },
+      { code: '+82', name: 'South Korea', flag: 'kr' },
+      { code: '+7', name: 'Russia', flag: 'ru' },
+      { code: '+61', name: 'Australia', flag: 'au' },
+      { code: '+55', name: 'Brazil', flag: 'br' },
+      { code: '+52', name: 'Mexico', flag: 'mx' },
+      { code: '+27', name: 'South Africa', flag: 'za' }
+    ];
 
-    // Seat counts
-    const seatCounts = { seat36: 0, booster: 0, infant: 0 };
+    const EXTRAS = { stop: { price: 38.12, selected: false }, childSeat: { price: 27.22, selected: false } };
+    const seatCounts = { seat: 0, booster: 0, infant: 0 };
+    const selectedCountry = { contact: COUNTRIES[0], whatsapp: COUNTRIES[0] };
+
+    function initDropdowns() {
+      ['contact', 'whatsapp'].forEach(type => {
+        const dropdown = document.getElementById(type + 'Dropdown');
+        dropdown.innerHTML = COUNTRIES.map(c => 
+          \`<div class="country-option" onclick="selectCountry('\${type}', '\${c.code}')">
+            <img src="https://flagcdn.com/w40/\${c.flag}.png">
+            <span class="name">\${c.name}</span>
+            <span class="dial">\${c.code}</span>
+          </div>\`
+        ).join('');
+      });
+    }
+
+    function toggleDropdown(type) {
+      const dropdown = document.getElementById(type + 'Dropdown');
+      document.querySelectorAll('.country-dropdown').forEach(d => {
+        if (d.id !== type + 'Dropdown') d.classList.remove('open');
+      });
+      dropdown.classList.toggle('open');
+    }
+
+    function selectCountry(type, code) {
+      const country = COUNTRIES.find(c => c.code === code);
+      if (country) {
+        selectedCountry[type] = country;
+        document.getElementById(type + 'Flag').src = 'https://flagcdn.com/w40/' + country.flag + '.png';
+        document.getElementById(type + 'Code').textContent = country.code;
+        document.getElementById(type + 'Dropdown').classList.remove('open');
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.phone-wrapper')) {
+        document.querySelectorAll('.country-dropdown').forEach(d => d.classList.remove('open'));
+      }
+    });
 
     function toggleExtra(extraId) {
       EXTRAS[extraId].selected = !EXTRAS[extraId].selected;
       const checkbox = document.getElementById(extraId + 'Checkbox');
-      const checkIcon = checkbox.querySelector('i');
+      checkbox.classList.toggle('checked');
       
-      if (EXTRAS[extraId].selected) {
-        checkbox.classList.add('checked');
-        checkIcon.style.display = 'block';
-        if (extraId === 'childSeat') {
-          document.getElementById('seatOptions').style.display = 'block';
-          document.getElementById('boosterOptions').style.display = 'block';
-          document.getElementById('infantOptions').style.display = 'block';
-          document.getElementById('childSeatInfo').style.display = 'flex';
-        }
-      } else {
-        checkbox.classList.remove('checked');
-        checkIcon.style.display = 'none';
-        if (extraId === 'childSeat') {
-          document.getElementById('seatOptions').style.display = 'none';
-          document.getElementById('boosterOptions').style.display = 'none';
-          document.getElementById('infantOptions').style.display = 'none';
-          document.getElementById('childSeatInfo').style.display = 'none';
-        }
+      if (extraId === 'stop') {
+        document.getElementById('stopField').classList.toggle('visible', EXTRAS.stop.selected);
       }
-      
+      if (extraId === 'childSeat') {
+        document.getElementById('childSeatSection').classList.toggle('visible', EXTRAS.childSeat.selected);
+        document.getElementById('childSeatInfo').classList.toggle('visible', EXTRAS.childSeat.selected);
+      }
       updateTotal();
     }
 
     function updateCount(seatType, delta) {
       seatCounts[seatType] = Math.max(0, seatCounts[seatType] + delta);
       document.getElementById(seatType + '-count').textContent = seatCounts[seatType];
+      updateTotal();
     }
 
     function updateTotal() {
@@ -1801,27 +1504,38 @@ const formController = {
       
       if (EXTRAS.stop.selected) {
         total += EXTRAS.stop.price;
-        extrasHtml += '<div class="extras-summary-item"><span>Stop on the way</span><span>AED 38.12</span></div>';
-      }
-      if (EXTRAS.childSeat.selected) {
-        total += EXTRAS.childSeat.price;
-        extrasHtml += '<div class="extras-summary-item"><span>Child Seat</span><span>AED 27.22</span></div>';
+        extrasHtml += '<div class="extras-line"><span class="label">Add Stop</span><span class="arrow"><i class="fas fa-arrow-right"></i></span><span class="price">AED 38.12</span></div>';
       }
       
-      document.getElementById('extrasListSummary').innerHTML = extrasHtml || '<div class="extras-summary-item"><span>No extras selected</span></div>';
+      const totalSeats = seatCounts.seat + seatCounts.booster + seatCounts.infant;
+      if (EXTRAS.childSeat.selected && totalSeats > 0) {
+        if (seatCounts.seat > 0) {
+          const seatTotal = 27.22 * seatCounts.seat;
+          total += seatTotal;
+          extrasHtml += \`<div class="extras-line"><span class="label">Seat</span><span class="calc">AED 27.22 x \${seatCounts.seat}</span><span class="arrow"><i class="fas fa-arrow-right"></i></span><span class="price">AED \${seatTotal.toFixed(2)}</span></div>\`;
+        }
+        if (seatCounts.booster > 0) {
+          const boosterTotal = 27.22 * seatCounts.booster;
+          total += boosterTotal;
+          extrasHtml += \`<div class="extras-line"><span class="label">Booster</span><span class="calc">AED 27.22 x \${seatCounts.booster}</span><span class="arrow"><i class="fas fa-arrow-right"></i></span><span class="price">AED \${boosterTotal.toFixed(2)}</span></div>\`;
+        }
+        if (seatCounts.infant > 0) {
+          const infantTotal = 27.22 * seatCounts.infant;
+          total += infantTotal;
+          extrasHtml += \`<div class="extras-line"><span class="label">Infant seat</span><span class="calc">AED 27.22 x \${seatCounts.infant}</span><span class="arrow"><i class="fas fa-arrow-right"></i></span><span class="price">AED \${infantTotal.toFixed(2)}</span></div>\`;
+        }
+      }
+      
+      document.getElementById('extrasListSummary').innerHTML = extrasHtml || '<div class="extras-line"><span class="label">No extras selected</span></div>';
       document.getElementById('totalPrice').textContent = total.toFixed(2);
     }
 
-    function goBack() {
-      window.history.back();
-    }
+    function goBack() { window.history.back(); }
 
     function goNext() {
       const fullName = document.getElementById('fullName').value;
       const email = document.getElementById('email').value;
-      const countryCode = document.getElementById('countryCode').value;
       const contactNumber = document.getElementById('contactNumber').value;
-      const whatsappCode = document.getElementById('whatsappCode').value;
       const whatsappNumber = document.getElementById('whatsappNumber').value;
 
       if (!fullName || !email || !contactNumber) {
@@ -1829,28 +1543,30 @@ const formController = {
         return;
       }
 
-      // Calculate total
       let total = bookingData.basePrice;
       if (EXTRAS.stop.selected) total += EXTRAS.stop.price;
-      if (EXTRAS.childSeat.selected) total += EXTRAS.childSeat.price;
+      const totalSeats = seatCounts.seat + seatCounts.booster + seatCounts.infant;
+      if (EXTRAS.childSeat.selected) total += 27.22 * totalSeats;
 
       const params = new URLSearchParams({
         ...bookingData,
         fullName,
         email,
-        phone: countryCode + contactNumber,
-        whatsapp: whatsappCode + whatsappNumber,
+        phone: selectedCountry.contact.code + contactNumber,
+        whatsapp: selectedCountry.whatsapp.code + whatsappNumber,
         stopOnWay: EXTRAS.stop.selected,
-        childSeat: EXTRAS.childSeat.selected,
+        stopLocation: document.getElementById('stopLocation').value,
+        childSeats: totalSeats,
+        seatCount: seatCounts.seat,
+        boosterCount: seatCounts.booster,
+        infantCount: seatCounts.infant,
         totalPrice: total.toFixed(2)
       });
 
-      // For now alert - Screen 4 (Billing) will handle this
-      alert('Screen 4 (Billing Details) coming soon!\\n\\nName: ' + fullName + '\\nEmail: ' + email + '\\nTotal: AED ' + total.toFixed(2));
-      // window.location.href = API_BASE + '/api/bookings/billing?' + params.toString();
+      window.location.href = API_BASE + '/api/bookings/billing?' + params.toString();
     }
 
-    // Initialize
+    initDropdowns();
     updateTotal();
   </script>
 </body>
@@ -1862,6 +1578,260 @@ const formController = {
     } catch (error) {
       console.error('Guest info error:', error);
       res.status(500).json({ success: false, error: 'Failed to load guest info', message: error.message });
+    }
+  },
+
+  /**
+   * Screen 4: Billing Details Page
+   */
+  async getBillingDetails(req, res, next) {
+    try {
+      const { type, pickup, dropoff, date, time, returnDate, returnTime, vehicle, price, 
+              fullName, email, phone, whatsapp, stopOnWay, stopLocation, childSeats,
+              seatCount, boosterCount, infantCount, totalPrice } = req.query;
+      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
+      const host = req.get('host') || 'localhost:5000';
+      const apiBase = `${protocol}://${host}`;
+
+      const selectedVehicle = VEHICLES.find(v => v.id === vehicle) || VEHICLES[0];
+      const basePrice = parseFloat(price) || 0;
+      const stopCost = stopOnWay === 'true' ? 38.12 : 0;
+      const seatCost = 27.22 * (parseInt(seatCount) || 0);
+      const boosterCost = 27.22 * (parseInt(boosterCount) || 0);
+      const infantCost = 27.22 * (parseInt(infantCount) || 0);
+      const subtotal = basePrice + stopCost + seatCost + boosterCost + infantCost;
+      const vat = 0;
+      const total = subtotal + vat;
+
+      const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing Details - Luxury Limo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; min-height: 100vh; color: #333; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .page-header { text-align: center; margin-bottom: 30px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #333; margin-bottom: 20px; }
+    .progress-steps { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
+    .step { display: flex; align-items: center; gap: 10px; color: #999; font-size: 12px; }
+    .step.completed { color: #4caf50; }
+    .step.active { color: #333; }
+    .step-icon { width: 28px; height: 28px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+    .step.completed .step-icon { background: #4caf50; color: #fff; }
+    .step.active .step-icon { background: #1a1a1a; color: #fff; }
+    .step-line { width: 50px; height: 2px; background: #e0e0e0; }
+    .step-line.completed { background: #4caf50; }
+    .main-layout { display: grid; grid-template-columns: 1fr 350px; gap: 25px; }
+    .form-section { background: #fff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: #333; }
+    
+    /* Price Breakdown */
+    .breakdown-header { display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px; }
+    .breakdown-header img { width: 100px; height: 60px; object-fit: contain; }
+    .breakdown-header .info { flex: 1; }
+    .breakdown-header .name { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+    .breakdown-header .specs { display: flex; gap: 15px; font-size: 11px; color: #666; }
+    .breakdown-header .specs span { display: flex; align-items: center; gap: 4px; }
+    
+    .breakdown-lines { border-top: 1px solid #eee; padding-top: 15px; }
+    .breakdown-line { display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px; }
+    .breakdown-line.total { border-top: 2px solid #eee; margin-top: 10px; padding-top: 15px; font-weight: 600; font-size: 14px; }
+    .breakdown-line .label { color: #333; }
+    .breakdown-line .value { font-weight: 500; }
+    .breakdown-line.total .value { font-size: 18px; color: #1a8b6e; }
+    .breakdown-line .arrow { color: #ffc107; margin-right: 8px; }
+    
+    /* Payment Methods */
+    .payment-section { margin-top: 25px; }
+    .payment-option { display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s; }
+    .payment-option.selected { border-color: #1a8b6e; background: #f8fdfb; }
+    .payment-radio { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .payment-option.selected .payment-radio { border-color: #1a8b6e; }
+    .payment-option.selected .payment-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #1a8b6e; }
+    .payment-icon { width: 24px; color: #666; }
+    .payment-info { flex: 1; }
+    .payment-name { font-size: 14px; font-weight: 500; }
+    .payment-desc { font-size: 11px; color: #999; }
+    .payment-cards { display: flex; gap: 5px; }
+    .payment-cards img { height: 20px; }
+    
+    .terms { display: flex; align-items: flex-start; gap: 10px; margin-top: 20px; font-size: 12px; color: #666; }
+    .terms input { margin-top: 3px; }
+    .terms a { color: #1a8b6e; }
+    
+    .buttons-row { display: flex; gap: 15px; margin-top: 25px; }
+    .btn-back { flex: 1; padding: 14px; border: 1px solid #ddd; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; }
+    .btn-next { flex: 2; padding: 14px; border: none; background: #1a8b6e; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; }
+    .btn-next:hover { background: #157a5e; }
+    
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 15px; }
+    .sidebar-card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .sidebar-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #333; }
+    .trip-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .trip-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; }
+    .trip-dot.green { background: #4caf50; }
+    .trip-dot.red { background: #f44336; }
+    .trip-text { font-size: 12px; color: #333; line-height: 1.4; }
+    .trip-datetime { display: flex; gap: 20px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; font-size: 11px; }
+    .trip-datetime label { color: #999; display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+    .trip-datetime span { color: #333; font-weight: 500; }
+    
+    .passenger-info { font-size: 12px; }
+    .passenger-info .row { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .passenger-info label { color: #999; font-size: 11px; margin-bottom: 3px; }
+    .passenger-info span { color: #333; font-weight: 500; }
+    
+    @media (max-width: 800px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Book a ${type === 'round_trip' ? 'City Tour' : 'Private Transfer'}</h1>
+      <div class="progress-steps">
+        <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><span>Vehicle Details</span></div>
+        <div class="step-line completed"></div>
+        <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><span>Schedule & Guest Info</span></div>
+        <div class="step-line completed"></div>
+        <div class="step active"><div class="step-icon"><i class="fas fa-file-invoice"></i></div><span>Billing Details</span></div>
+      </div>
+    </div>
+
+    <div class="main-layout">
+      <div class="form-section">
+        <h2 class="section-title">Price Breakdown</h2>
+        
+        <div class="breakdown-header">
+          <img src="${selectedVehicle.image}" alt="${selectedVehicle.name}">
+          <div class="info">
+            <div class="name">${selectedVehicle.name}</div>
+            <div class="specs">
+              <span><i class="fas fa-users"></i> Up to ${selectedVehicle.passengers} Passengers</span>
+              <span><i class="fas fa-suitcase"></i> Up to ${selectedVehicle.suitcases} Luggages</span>
+              <span><i class="far fa-clock"></i> Free Waiting Time</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="breakdown-lines">
+          <div class="breakdown-line"><span class="label">One Way Trip</span><span class="value">AED ${(basePrice / (type === 'round_trip' ? 2 : 1)).toFixed(2)}</span></div>
+          ${type === 'round_trip' ? '<div class="breakdown-line"><span class="label">Return Route</span><span class="value">AED ' + (basePrice / 2).toFixed(2) + '</span></div>' : ''}
+          ${stopOnWay === 'true' ? '<div class="breakdown-line"><span class="label">Add Stop</span><span class="value">AED 38.12</span></div>' : ''}
+          ${parseInt(seatCount) > 0 ? '<div class="breakdown-line"><span class="label">Regular Child Seat (' + seatCount + ')</span><span class="value">AED ' + seatCost.toFixed(2) + '</span></div>' : ''}
+          ${parseInt(boosterCount) > 0 ? '<div class="breakdown-line"><span class="label">Booster Child Seat (' + boosterCount + ')</span><span class="value">AED ' + boosterCost.toFixed(2) + '</span></div>' : ''}
+          ${parseInt(infantCount) > 0 ? '<div class="breakdown-line"><span class="label">Infant Child Seat (' + infantCount + ')</span><span class="value">AED ' + infantCost.toFixed(2) + '</span></div>' : ''}
+          <div class="breakdown-line"><span class="label">Subtotal</span><span class="value">AED ${subtotal.toFixed(2)}</span></div>
+          <div class="breakdown-line"><span class="label">VAT (0.00%)</span><span class="value">AED ${vat.toFixed(2)}</span></div>
+          <div class="breakdown-line total"><span class="label"><span class="arrow"><i class="fas fa-arrow-right"></i></span> Total Amount</span><span class="value">AED ${total.toFixed(2)}</span></div>
+        </div>
+
+        <div class="payment-section">
+          <h2 class="section-title">Payment Method</h2>
+          <div class="payment-option selected" onclick="selectPayment('cash')">
+            <div class="payment-radio"></div>
+            <i class="fas fa-dollar-sign payment-icon"></i>
+            <div class="payment-info">
+              <div class="payment-name">Pay by Cash/Bank Transfer (No Fee)</div>
+            </div>
+          </div>
+          <div class="payment-option" onclick="selectPayment('card')">
+            <div class="payment-radio"></div>
+            <i class="far fa-credit-card payment-icon"></i>
+            <div class="payment-info">
+              <div class="payment-name">Pay by Card (+4% Fee)</div>
+            </div>
+            <div class="payment-cards">
+              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/visa.svg" alt="Visa" style="height:16px;">
+              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/mastercard.svg" alt="Mastercard" style="height:16px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="terms">
+          <input type="checkbox" id="termsCheck">
+          <label for="termsCheck">By proceeding, I agree to Zentroride <a href="#">terms and conditions</a> and <a href="#">privacy policy</a>.</label>
+        </div>
+
+        <div class="buttons-row">
+          <button class="btn-back" onclick="goBack()">BACK</button>
+          <button class="btn-next" onclick="submitBooking()">NEXT</button>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">One Way Trip</div>
+          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${pickup}</div></div>
+          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${dropoff}</div></div>
+          <div class="trip-datetime">
+            <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${date}</span></div>
+            <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${time}</span></div>
+          </div>
+        </div>
+
+        ${type === 'round_trip' ? `
+        <div class="sidebar-card">
+          <div class="sidebar-title">Return Ride Trip</div>
+          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${dropoff}</div></div>
+          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${pickup}</div></div>
+          <div class="trip-datetime">
+            <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${returnDate || date}</span></div>
+            <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${returnTime || time}</span></div>
+          </div>
+        </div>
+        ` : ''}
+
+        <div class="sidebar-card">
+          <div class="sidebar-title">Passenger Details</div>
+          <div class="passenger-info">
+            <div class="row"><label>Full Name</label><span>${fullName}</span></div>
+            <div class="row"><label>Email</label><span>${email}</span></div>
+            <div class="row"><label>Contact Number</label><span>${phone}</span></div>
+            <div class="row"><label>WhatsApp Number</label><span>${whatsapp || phone}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedPayment = 'cash';
+    
+    function selectPayment(method) {
+      selectedPayment = method;
+      document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+    }
+    
+    function goBack() { window.history.back(); }
+    
+    function submitBooking() {
+      if (!document.getElementById('termsCheck').checked) {
+        alert('Please accept the terms and conditions');
+        return;
+      }
+      alert('Booking submitted successfully!\\n\\nPayment Method: ' + (selectedPayment === 'cash' ? 'Cash/Bank Transfer' : 'Card') + '\\nTotal: AED ${total.toFixed(2)}');
+    }
+  </script>
+</body>
+</html>`;
+
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.send(html);
+    } catch (error) {
+      console.error('Billing details error:', error);
+      res.status(500).json({ success: false, error: 'Failed to load billing details', message: error.message });
     }
   }
 };

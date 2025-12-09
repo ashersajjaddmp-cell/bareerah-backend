@@ -13,6 +13,7 @@ const { rbacMiddleware, operatorRestrictions } = require('../middleware/rbacMidd
 router.get('/wordpress-form', formController.getBookingForm);
 router.get('/vehicle-details', formController.getVehicleDetails);
 router.get('/guest-info', formController.getGuestInfo);
+router.get('/billing', formController.getBillingDetails);
 router.post('/wordpress-booking', wordpressBookingController.createWordPressBooking);
 router.post('/wordpress-calculate-fare', wordpressBookingController.calculateWordPressFare);
 
