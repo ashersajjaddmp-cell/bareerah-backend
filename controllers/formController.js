@@ -100,10 +100,13 @@ const formController = {
       `);
       const vehicles = vehiclesResult.rows;
 
-      // Build location options
+      // Build location options (as datalist for autocomplete)
       const locationOptions = UAE_LOCATIONS
-        .map(loc => `<option value="${loc}">${loc}</option>`)
+        .map(loc => `<option value="${loc}"/>`)
         .join('');
+
+      // Create locations datalist ID
+      const locationsDatalistId = 'locations-list';
 
       // Build vehicle options
       const vehicleOptions = vehicles
@@ -210,6 +213,20 @@ const formController = {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Autocomplete dropdown styling */
+    datalist {
+      position: absolute;
+      display: none;
+    }
+
+    input[list] {
+      position: relative;
+    }
+
+    input[list]::-webkit-calendar-picker-indicator {
+      display: none;
     }
 
     select {
@@ -423,21 +440,19 @@ const formController = {
         </div>
       </div>
 
-      <!-- Locations -->
+      <!-- Locations with Autocomplete -->
+      <datalist id="${locationsDatalistId}">
+        ${locationOptions}
+      </datalist>
+
       <div class="form-row">
         <div class="form-group">
           <label for="pickup">Pickup Location *</label>
-          <select id="pickup" name="pickup" required>
-            <option value="">Select pickup location...</option>
-            ${locationOptions}
-          </select>
+          <input type="text" id="pickup" name="pickup" placeholder="Type location..." list="${locationsDatalistId}" required>
         </div>
         <div class="form-group">
           <label for="dropoff">Dropoff Location *</label>
-          <select id="dropoff" name="dropoff" required>
-            <option value="">Select dropoff location...</option>
-            ${locationOptions}
-          </select>
+          <input type="text" id="dropoff" name="dropoff" placeholder="Type location..." list="${locationsDatalistId}" required>
         </div>
       </div>
 
@@ -541,37 +556,54 @@ const formController = {
       calculateFare();
     }
 
+    // Debounce timer for fare calculation
+    let fareTimeout;
+
     // Calculate fare when inputs change
     function calculateFare() {
       const vehicle = document.getElementById('vehicle').value;
       const distance = parseFloat(document.getElementById('distance').value) || 0;
+
+      // Clear previous timeout
+      clearTimeout(fareTimeout);
 
       if (!vehicle || distance < 1) {
         document.getElementById('fareAmount').textContent = '0.00';
         return;
       }
 
-      fetch(API_BASE + '/api/bookings/wordpress-calculate-fare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          vehicle_type: vehicle,
-          booking_type: 'point_to_point',
-          distance_km: distance
+      // Debounce the API call
+      fareTimeout = setTimeout(() => {
+        fetch(API_BASE + '/api/bookings/wordpress-calculate-fare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vehicle_type: vehicle,
+            booking_type: 'point_to_point',
+            distance_km: distance
+          })
         })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById('fareAmount').textContent = parseFloat(data.data.final_fare).toFixed(2);
-        }
-      })
-      .catch(err => console.error('Fare calculation error:', err));
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            const fare = parseFloat(data.data.final_fare);
+            document.getElementById('fareAmount').textContent = fare.toFixed(2);
+          } else {
+            console.warn('Fare calculation warning:', data.error);
+            document.getElementById('fareAmount').textContent = '---';
+          }
+        })
+        .catch(err => {
+          console.error('Fare calculation error:', err);
+          document.getElementById('fareAmount').textContent = '---';
+        });
+      }, 500); // Wait 500ms after user stops typing
     }
 
     // Event listeners
     document.getElementById('vehicle').addEventListener('change', calculateFare);
-    document.getElementById('distance').addEventListener('change', calculateFare);
+    document.getElementById('distance').addEventListener('input', calculateFare);
+    document.getElementById('distance').addEventListener('blur', calculateFare);
 
     // Form submission
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {

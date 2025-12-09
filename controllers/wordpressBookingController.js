@@ -57,7 +57,7 @@ const wordpressBookingController = {
       let finalDistance = distance_km || 15; // Default 15km
 
       // Calculate fare
-      const fare = calculateFare(booking_type, vehicle_type, finalDistance, 0);
+      const fare = await calculateFare(booking_type, vehicle_type, finalDistance, 0);
 
       // Create booking
       const bookingResult = await query(`
@@ -173,7 +173,7 @@ const wordpressBookingController = {
         });
       }
 
-      const fare = calculateFare(booking_type, vehicle_type, distance_km, 0);
+      const fare = await calculateFare(booking_type, vehicle_type, distance_km, 0);
 
       res.json({
         success: true,
@@ -181,9 +181,9 @@ const wordpressBookingController = {
           vehicle_type,
           booking_type,
           distance_km,
-          base_fare: fare.base_fare,
-          discount_percentage: fare.discount_percentage || 0,
-          final_fare: fare.fare_after_discount,
+          base_fare: parseFloat(fare.base_fare || fare.fare || 0).toFixed(2),
+          discount_percentage: 0,
+          final_fare: parseFloat(fare.fare || 0).toFixed(2),
           currency: 'AED'
         }
       });
