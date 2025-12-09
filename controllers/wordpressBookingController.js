@@ -1,5 +1,6 @@
 const { query } = require('../config/db');
 const { calculateFare } = require('../utils/fareCalculator');
+const emailService = require('../utils/emailService');
 
 const wordpressBookingController = {
   /**
@@ -160,6 +161,33 @@ const wordpressBookingController = {
         }
       } catch (e) {
         console.log('⚠️  Auto-assignment failed:', e.message);
+        // Continue anyway - booking is still created
+      }
+
+      // Send email notification to admins
+      try {
+        const bookingData = {
+          id: bookingId,
+          customer_name,
+          customer_email,
+          customer_phone,
+          pickup_location,
+          dropoff_location,
+          vehicle_type,
+          booking_type,
+          passengers_count,
+          luggage_count,
+          fare_aed: finalFare,
+          payment_method,
+          notes: finalNotes,
+          booking_source: 'wordpress',
+          created_at: createdAt
+        };
+        
+        await emailService.sendWordPressBookingNotification(bookingData, assignedVehicle);
+        console.log('📧 Email notification sent for WordPress booking:', bookingId);
+      } catch (emailError) {
+        console.log('⚠️  Email notification failed:', emailError.message);
         // Continue anyway - booking is still created
       }
 

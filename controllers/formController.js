@@ -1971,9 +1971,6 @@ const formController = {
     .info-box i { color: #4caf50; margin-right: 8px; }
     .info-box-title { font-size: 12px; font-weight: 600; color: #333; margin-bottom: 5px; }
     .track-note { font-size: 12px; color: #666; margin-bottom: 15px; }
-    .btn-user-panel { display: inline-flex; align-items: center; gap: 8px; padding: 12px 30px; background: #1a8b6e; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: 'Montserrat', sans-serif; }
-    .btn-user-panel:hover { background: #157a5e; }
-    .btn-user-panel i { font-size: 12px; }
     .help-section { background: #1a8b6e; border-radius: 12px; padding: 25px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
     .help-left h3 { color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 5px; }
     .help-left p { color: rgba(255,255,255,0.8); font-size: 13px; }
@@ -2030,11 +2027,9 @@ const formController = {
               <div class="info-box-title"><i class="fas fa-info-circle"></i> You will receive the driver's details before your trip</div>
             </div>
             <div class="info-box">
-              <div class="info-box-title"><i class="fas fa-list-alt"></i> Use the button below to manage and track your bookings.</div>
+              <div class="info-box-title"><i class="fas fa-envelope"></i> A confirmation email has been sent to the admin team.</div>
             </div>
           </div>
-          <p class="track-note">Go to the user panel to track your booking</p>
-          <a href="${apiBase}/dashboard" class="btn-user-panel">View User Panel <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="help-section">
           <div class="help-left">
