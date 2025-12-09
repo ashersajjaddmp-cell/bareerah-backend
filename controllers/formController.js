@@ -1054,7 +1054,7 @@ const formController = {
   },
 
   /**
-   * Screen 3: Schedule & Guest Info Page - ZentroRide Style
+   * Screen 3: Schedule & Guest Info Page - Starsky Line Limousine Style
    */
   async getGuestInfo(req, res, next) {
     try {
@@ -1101,7 +1101,7 @@ const formController = {
     .form-group input:focus { outline: none; border-color: #333; }
     .form-group input::placeholder { color: #bbb; }
     
-    /* ZentroRide Phone Input with Flags */
+    /* Starsky Line Limousine Phone Input with Flags */
     .phone-wrapper { position: relative; }
     .phone-input-group { display: flex; border: 1px solid #e0e0e0; }
     .country-select-btn { display: flex; align-items: center; gap: 8px; padding: 12px 15px; background: #fff; border: none; border-right: 1px solid #e0e0e0; cursor: pointer; min-width: 140px; font-family: 'Montserrat', sans-serif; font-size: 13px; }
@@ -1150,7 +1150,7 @@ const formController = {
     .seat-label { font-size: 13px; color: #666; }
     .seat-label span { font-size: 11px; color: #999; }
     
-    /* ZentroRide Yellow Quantity Buttons */
+    /* Starsky Line Limousine Yellow Quantity Buttons */
     .qty-control { display: flex; align-items: center; gap: 0; }
     .qty-btn { width: 32px; height: 32px; border: 1px solid #ffc107; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; color: #333; transition: all 0.2s; }
     .qty-btn:hover { background: #ffc107; }
@@ -1759,7 +1759,7 @@ const formController = {
 
         <div class="terms">
           <input type="checkbox" id="termsCheck">
-          <label for="termsCheck">By proceeding, I agree to Zentroride <a href="#">terms and conditions</a> and <a href="#">privacy policy</a>.</label>
+          <label for="termsCheck">By proceeding, I agree to Starsky Line Limousine <a href="#">terms and conditions</a> and <a href="#">privacy policy</a>.</label>
         </div>
 
         <div class="buttons-row">
