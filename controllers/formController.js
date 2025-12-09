@@ -127,35 +127,19 @@ const UAE_LOCATIONS = [
 
 const formController = {
   /**
-   * Serve complete WordPress booking form
+   * Serve complete WordPress booking form - Luxury Design
    */
   async getBookingForm(req, res, next) {
     try {
-      // Get the origin from request (handles both dev and production)
-      const protocol = req.protocol || 'https';
+      // Get the origin from request
+      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
       const host = req.get('host') || 'localhost:5000';
       const apiBase = `${protocol}://${host}`;
-
-      // Get vehicle types from fare_rules
-      const vehiclesResult = await query(`
-        SELECT DISTINCT vehicle_type, base_fare, per_km_rate
-        FROM fare_rules
-        WHERE active = true
-        ORDER BY base_fare ASC
-      `);
-      const vehicles = vehiclesResult.rows;
 
       // Build location JSON for JavaScript autocomplete
       const locationsJSON = JSON.stringify(UAE_LOCATIONS);
 
-      // Build vehicle options
-      const vehicleOptions = vehicles
-        .map(v => `<option value="${v.vehicle_type}">
-          ${v.vehicle_type.replace(/_/g, ' ').toUpperCase()} - Base AED ${parseFloat(v.base_fare).toFixed(2)}
-        </option>`)
-        .join('');
-
-      // Build HTML form
+      // Build HTML form - Luxury Glass Design
       const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -163,6 +147,7 @@ const formController = {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Luxury Limo Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -171,109 +156,109 @@ const formController = {
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Montserrat', sans-serif;
       min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=1920') center/cover no-repeat fixed;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 20px;
     }
 
-    .container {
-      background: white;
+    .glass-container {
+      background: rgba(30, 40, 50, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 600px;
+      padding: 40px 50px;
+      max-width: 700px;
       width: 100%;
-      padding: 40px;
-      animation: slideIn 0.5s ease-out;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-bottom: 40px;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .header h1 {
-      color: #333;
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    .header p {
-      color: #666;
-      font-size: 14px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      color: #333;
+    .tab {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 16px;
       font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="number"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px 15px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding-bottom: 8px;
+      border-bottom: 2px solid transparent;
       transition: all 0.3s ease;
     }
 
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    input[type="tel"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    .tab:hover {
+      color: rgba(255, 255, 255, 0.9);
     }
 
-    /* Autocomplete dropdown styling */
+    .tab.active {
+      color: #fff;
+      border-bottom: 2px solid #fff;
+    }
+
+    /* Form Fields */
     .form-group {
+      margin-bottom: 25px;
       position: relative;
     }
 
+    .form-group label {
+      display: block;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      padding: 10px 0;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-group input:focus {
+      border-bottom-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Autocomplete Suggestions */
     .autocomplete-suggestions {
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
-      background: white;
-      border: 2px solid #e0e0e0;
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-      max-height: 250px;
+      background: rgba(20, 30, 40, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      max-height: 200px;
       overflow-y: auto;
       display: none;
       z-index: 1000;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 5px;
     }
 
     .autocomplete-suggestions.active {
@@ -282,11 +267,11 @@ const formController = {
 
     .autocomplete-suggestions div {
       padding: 12px 15px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
       cursor: pointer;
       transition: all 0.2s ease;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 14px;
-      color: #333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .autocomplete-suggestions div:last-child {
@@ -294,455 +279,311 @@ const formController = {
     }
 
     .autocomplete-suggestions div:hover {
-      background: #f5f5f5;
-      color: #667eea;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
       padding-left: 20px;
     }
 
-    .autocomplete-suggestions div.highlighted {
-      background: #667eea;
-      color: white;
-    }
-
-    select {
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 20px;
-      padding-right: 40px;
-      cursor: pointer;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .form-row.full {
-      grid-template-columns: 1fr;
-    }
-
-    .fare-display {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      margin: 20px 0;
-      font-size: 16px;
-    }
-
-    .fare-display .label {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-bottom: 5px;
-    }
-
-    .fare-display .amount {
-      font-size: 32px;
-      font-weight: bold;
-    }
-
-    .counter-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .counter {
+    /* Date Time Field */
+    .datetime-field {
       display: flex;
-      align-items: center;
+      gap: 15px;
+    }
+
+    .datetime-field input {
+      flex: 1;
+    }
+
+    /* Buttons Row */
+    .buttons-row {
+      display: flex;
       justify-content: space-between;
-      background: #f5f5f5;
-      padding: 10px;
-      border-radius: 8px;
+      align-items: center;
+      margin-top: 35px;
+      padding-top: 20px;
     }
 
-    .counter button {
-      width: 35px;
-      height: 35px;
+    .btn-link {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: none;
       border: none;
-      background: #667eea;
-      color: white;
-      border-radius: 6px;
       cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-link:hover {
+      color: #fff;
+    }
+
+    .btn-primary {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: none;
+      border: none;
+      border-bottom: 2px solid #fff;
+      padding-bottom: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.8;
+    }
+
+    /* Footer */
+    .footer-text {
+      text-align: center;
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .footer-text span {
+      font-weight: 700;
       font-size: 18px;
-      font-weight: bold;
+    }
+
+    /* Return Section (Hidden by default) */
+    .return-section {
+      display: none;
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .return-section.active {
+      display: block;
+    }
+
+    /* Hourly Section (Hidden by default) */
+    .hourly-section {
+      display: none;
+    }
+
+    .hourly-section.active {
+      display: block;
+    }
+
+    .transfer-section {
+      display: block;
+    }
+
+    .transfer-section.hidden {
+      display: none;
+    }
+
+    /* Hours Selector */
+    .hours-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .hour-option {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      cursor: pointer;
       transition: all 0.3s ease;
     }
 
-    .counter button:hover {
-      background: #764ba2;
-      transform: scale(1.05);
+    .hour-option:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
     }
 
-    .counter input {
-      width: 50px;
-      text-align: center;
-      border: none;
-      background: transparent;
-      font-size: 18px;
-      font-weight: bold;
+    .hour-option.selected {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: #fff;
+      color: #fff;
     }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 10px;
-    }
-
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .success-message {
-      display: none;
-      background: #4caf50;
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      animation: slideIn 0.3s ease-out;
-    }
-
-    .error-message {
-      display: none;
-      background: #f44336;
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      animation: slideIn 0.3s ease-out;
-    }
-
-    .loading {
-      display: none;
-      text-align: center;
-      color: #667eea;
-      font-weight: 600;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #667eea;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .note {
-      font-size: 12px;
-      color: #999;
-      margin-top: 5px;
-    }
-
+    /* Responsive */
     @media (max-width: 600px) {
-      .container {
-        padding: 25px;
+      .glass-container {
+        padding: 30px 25px;
       }
 
-      .header h1 {
-        font-size: 22px;
+      .tabs {
+        gap: 30px;
       }
 
-      .form-row {
-        grid-template-columns: 1fr;
+      .tab {
+        font-size: 14px;
       }
 
-      .form-row.full {
-        grid-template-columns: 1fr;
+      .buttons-row {
+        flex-direction: column;
+        gap: 20px;
       }
 
-      .fare-display .amount {
-        font-size: 28px;
+      .datetime-field {
+        flex-direction: column;
+        gap: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🚗 Book Your Ride</h1>
-      <p>Premium Limo Service Across UAE</p>
-    </div>
 
-    <div class="success-message" id="successMessage">
-      ✅ Booking confirmed! Your ride will arrive soon.
+  <div class="glass-container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" id="tab-transfer" onclick="switchTab('transfer')">Private Transfer</div>
+      <div class="tab" id="tab-hourly" onclick="switchTab('hourly')">Hourly</div>
     </div>
-
-    <div class="error-message" id="errorMessage"></div>
 
     <form id="bookingForm">
-      <!-- Customer Details -->
-      <div class="form-row full">
+      <!-- Private Transfer Section -->
+      <div class="transfer-section" id="transfer-section">
+        <!-- FROM -->
         <div class="form-group">
-          <label for="name">Full Name *</label>
-          <input type="text" id="name" name="name" placeholder="Ahmed Mohammed" required>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email *</label>
-          <input type="email" id="email" name="email" placeholder="ahmed@example.com" required>
-        </div>
-        <div class="form-group">
-          <label for="phone">Phone *</label>
-          <input type="tel" id="phone" name="phone" placeholder="+971501234567" required>
-        </div>
-      </div>
-
-      <!-- Locations with Smart Autocomplete -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="pickup">Pickup Location *</label>
-          <input type="text" id="pickup" name="pickup" placeholder="Type location..." required autocomplete="off">
+          <label>From</label>
+          <input type="text" id="pickup" name="pickup" placeholder="Enter a pickup location" autocomplete="off" required>
           <div id="pickup-suggestions" class="autocomplete-suggestions"></div>
         </div>
+
+        <!-- TO -->
         <div class="form-group">
-          <label for="dropoff">Dropoff Location *</label>
-          <input type="text" id="dropoff" name="dropoff" placeholder="Type location..." required autocomplete="off">
+          <label>To</label>
+          <input type="text" id="dropoff" name="dropoff" placeholder="Enter a dropoff location" autocomplete="off" required>
           <div id="dropoff-suggestions" class="autocomplete-suggestions"></div>
         </div>
       </div>
 
-      <!-- Vehicle & Distance -->
-      <div class="form-row">
+      <!-- Hourly Section (Hidden) -->
+      <div class="hourly-section" id="hourly-section">
+        <!-- FROM (Hourly) -->
         <div class="form-group">
-          <label for="vehicle">Vehicle Type *</label>
-          <select id="vehicle" name="vehicle" required>
-            <option value="">Select vehicle...</option>
-            ${vehicleOptions}
-          </select>
+          <label>Pickup Location</label>
+          <input type="text" id="hourly-pickup" name="hourly-pickup" placeholder="Enter pickup location" autocomplete="off">
+          <div id="hourly-pickup-suggestions" class="autocomplete-suggestions"></div>
         </div>
+
+        <!-- Hours Selection -->
         <div class="form-group">
-          <label for="distance">Distance (km) *</label>
-          <input type="number" id="distance" name="distance" placeholder="30" min="1" step="0.1" value="15" required>
+          <label>Select Hours</label>
+          <div class="hours-selector">
+            <div class="hour-option" data-hours="3" onclick="selectHours(3)">3 Hours</div>
+            <div class="hour-option" data-hours="4" onclick="selectHours(4)">4 Hours</div>
+            <div class="hour-option" data-hours="5" onclick="selectHours(5)">5 Hours</div>
+            <div class="hour-option" data-hours="6" onclick="selectHours(6)">6 Hours</div>
+            <div class="hour-option" data-hours="8" onclick="selectHours(8)">8 Hours</div>
+            <div class="hour-option" data-hours="10" onclick="selectHours(10)">10 Hours</div>
+            <div class="hour-option" data-hours="12" onclick="selectHours(12)">12 Hours</div>
+            <div class="hour-option" data-hours="14" onclick="selectHours(14)">14 Hours</div>
+          </div>
+          <input type="hidden" id="selected-hours" name="hours" value="">
         </div>
       </div>
 
-      <!-- Passengers & Luggage -->
-      <label style="margin-top: 20px; display: block; font-weight: 600; color: #333; margin-bottom: 15px;">Passengers & Luggage</label>
-      <div class="counter-group">
-        <div class="counter">
-          <label for="passengers" style="margin: 0;">👥 Passengers</label>
-          <div style="display: flex; gap: 5px; align-items: center;">
-            <button type="button" onclick="decreasePassengers()">−</button>
-            <input type="number" id="passengers" value="1" min="1" readonly>
-            <button type="button" onclick="increasePassengers()">+</button>
+      <!-- Pickup Date & Time -->
+      <div class="form-group">
+        <label>Pickup Date & Time</label>
+        <div class="datetime-field">
+          <input type="date" id="pickup-date" name="pickup-date" required>
+          <input type="time" id="pickup-time" name="pickup-time" required>
+        </div>
+      </div>
+
+      <!-- Return Section (Hidden) -->
+      <div class="return-section" id="return-section">
+        <div class="form-group">
+          <label>Return Date & Time</label>
+          <div class="datetime-field">
+            <input type="date" id="return-date" name="return-date">
+            <input type="time" id="return-time" name="return-time">
           </div>
         </div>
-        <div class="counter">
-          <label for="luggage" style="margin: 0;">🧳 Luggage</label>
-          <div style="display: flex; gap: 5px; align-items: center;">
-            <button type="button" onclick="decreaseLuggage()">−</button>
-            <input type="number" id="luggage" value="0" min="0" readonly>
-            <button type="button" onclick="increaseLuggage()">+</button>
-          </div>
-        </div>
       </div>
 
-      <!-- Payment Method -->
-      <div class="form-row full" style="margin-top: 20px;">
-        <div class="form-group">
-          <label for="payment">Payment Method *</label>
-          <select id="payment" name="payment" required>
-            <option value="cash">💵 Cash</option>
-            <option value="card">💳 Card</option>
-          </select>
-        </div>
+      <!-- Buttons -->
+      <div class="buttons-row">
+        <button type="button" class="btn-link" id="add-return-btn" onclick="toggleReturn()">+ Add Return</button>
+        <button type="button" class="btn-primary" onclick="checkFare()">Check Fare</button>
       </div>
-
-      <!-- Special Notes -->
-      <div class="form-row full">
-        <div class="form-group">
-          <label for="notes">Special Instructions</label>
-          <textarea id="notes" name="notes" placeholder="Any special requests?" rows="3"></textarea>
-          <div class="note">Optional - e.g., "Call 10 mins before", "Extra luggage", etc.</div>
-        </div>
-      </div>
-
-      <!-- Fare Display -->
-      <div class="fare-display">
-        <div class="label">Estimated Fare</div>
-        <div class="amount">AED <span id="fareAmount">0.00</span></div>
-      </div>
-
-      <!-- Loading & Submit -->
-      <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p>Processing your booking...</p>
-      </div>
-
-      <button type="submit" class="btn-submit" id="submitBtn">Book Now</button>
     </form>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-text">
+    Hire a limousine in Dubai from just <span>AED 99</span>
   </div>
 
   <script>
     const API_BASE = '${apiBase}';
     const ALL_LOCATIONS = ${locationsJSON};
-    
-    // Counter functions
-    function increasePassengers() {
-      const input = document.getElementById('passengers');
-      input.value = Math.min(parseInt(input.value) + 1, 6);
-      calculateFare();
-    }
-    
-    function decreasePassengers() {
-      const input = document.getElementById('passengers');
-      input.value = Math.max(parseInt(input.value) - 1, 1);
-      calculateFare();
-    }
-    
-    function increaseLuggage() {
-      const input = document.getElementById('luggage');
-      input.value = Math.min(parseInt(input.value) + 1, 8);
-      calculateFare();
-    }
-    
-    function decreaseLuggage() {
-      const input = document.getElementById('luggage');
-      input.value = Math.max(parseInt(input.value) - 1, 0);
-      calculateFare();
-    }
 
-    // Debounce timer for fare calculation
-    let fareTimeout;
+    // Current state
+    let currentTab = 'transfer';
+    let isReturnAdded = false;
+    let selectedHours = 0;
 
-    // Calculate fare when inputs change
-    function calculateFare() {
-      const vehicle = document.getElementById('vehicle').value;
-      const distance = parseFloat(document.getElementById('distance').value) || 0;
+    // Set default date/time to now
+    const now = new Date();
+    document.getElementById('pickup-date').value = now.toISOString().split('T')[0];
+    document.getElementById('pickup-time').value = now.toTimeString().slice(0,5);
 
-      // Clear previous timeout
-      clearTimeout(fareTimeout);
-
-      if (!vehicle || distance < 1) {
-        document.getElementById('fareAmount').textContent = '0.00';
-        return;
+    // Switch tabs
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      // Update tab styles
+      document.getElementById('tab-transfer').classList.toggle('active', tab === 'transfer');
+      document.getElementById('tab-hourly').classList.toggle('active', tab === 'hourly');
+      
+      // Show/hide sections
+      document.getElementById('transfer-section').classList.toggle('hidden', tab !== 'transfer');
+      document.getElementById('hourly-section').classList.toggle('active', tab === 'hourly');
+      
+      // Hide return for hourly
+      if (tab === 'hourly') {
+        document.getElementById('return-section').classList.remove('active');
+        document.getElementById('add-return-btn').style.display = 'none';
+      } else {
+        document.getElementById('add-return-btn').style.display = 'block';
       }
-
-      // Debounce the API call
-      fareTimeout = setTimeout(() => {
-        fetch(API_BASE + '/api/bookings/wordpress-calculate-fare', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            vehicle_type: vehicle,
-            booking_type: 'point_to_point',
-            distance_km: distance
-          })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            const fare = parseFloat(data.data.final_fare);
-            document.getElementById('fareAmount').textContent = fare.toFixed(2);
-          } else {
-            console.warn('Fare calculation warning:', data.error);
-            document.getElementById('fareAmount').textContent = '---';
-          }
-        })
-        .catch(err => {
-          console.error('Fare calculation error:', err);
-          document.getElementById('fareAmount').textContent = '---';
-        });
-      }, 500); // Wait 500ms after user stops typing
     }
 
-    // Event listeners
-    document.getElementById('vehicle').addEventListener('change', calculateFare);
-    document.getElementById('distance').addEventListener('input', calculateFare);
-    document.getElementById('distance').addEventListener('blur', calculateFare);
+    // Toggle return section
+    function toggleReturn() {
+      isReturnAdded = !isReturnAdded;
+      document.getElementById('return-section').classList.toggle('active', isReturnAdded);
+      document.getElementById('add-return-btn').textContent = isReturnAdded ? '- Remove Return' : '+ Add Return';
+    }
 
-    // Form submission
-    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Select hours (hourly rental)
+    function selectHours(hours) {
+      selectedHours = hours;
+      document.getElementById('selected-hours').value = hours;
+      
+      // Update UI
+      document.querySelectorAll('.hour-option').forEach(el => {
+        el.classList.toggle('selected', parseInt(el.dataset.hours) === hours);
+      });
+    }
 
-      const submitBtn = document.getElementById('submitBtn');
-      const loading = document.getElementById('loading');
-      const errorMsg = document.getElementById('errorMessage');
-      const successMsg = document.getElementById('successMessage');
-
-      submitBtn.disabled = true;
-      loading.style.display = 'block';
-      errorMsg.style.display = 'none';
-      successMsg.style.display = 'none';
-
-      const bookingData = {
-        customer_name: document.getElementById('name').value,
-        customer_email: document.getElementById('email').value,
-        customer_phone: document.getElementById('phone').value,
-        pickup_location: document.getElementById('pickup').value,
-        dropoff_location: document.getElementById('dropoff').value,
-        vehicle_type: document.getElementById('vehicle').value,
-        booking_type: 'point_to_point',
-        passengers_count: parseInt(document.getElementById('passengers').value),
-        luggage_count: parseInt(document.getElementById('luggage').value),
-        distance_km: parseFloat(document.getElementById('distance').value),
-        payment_method: document.getElementById('payment').value,
-        notes: document.getElementById('notes').value || null,
-        wordpress_booking_id: 'WP-' + Date.now()
-      };
-
-      try {
-        const response = await fetch(API_BASE + '/api/bookings/wordpress-booking', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bookingData)
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          successMsg.innerHTML = \`✅ Booking Confirmed! ID: <strong>\${data.data.booking_id}</strong><br>Fare: AED \${parseFloat(data.data.fare_aed).toFixed(2)}\`;
-          successMsg.style.display = 'block';
-          document.getElementById('bookingForm').reset();
-          document.getElementById('fareAmount').textContent = '0.00';
-          
-          // Scroll to success message
-          successMsg.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          errorMsg.textContent = '❌ Error: ' + (data.error || 'Failed to create booking');
-          errorMsg.style.display = 'block';
-        }
-      } catch (error) {
-        errorMsg.textContent = '❌ Error: ' + error.message;
-        errorMsg.style.display = 'block';
-      } finally {
-        submitBtn.disabled = false;
-        loading.style.display = 'none';
-      }
-    });
-
-    // Autocomplete function
+    // Autocomplete
     function setupAutocomplete(inputId, suggestionsId) {
       const input = document.getElementById(inputId);
       const suggestionsBox = document.getElementById(suggestionsId);
+
+      if (!input || !suggestionsBox) return;
 
       input.addEventListener('input', function() {
         const value = this.value.toLowerCase().trim();
@@ -753,7 +594,6 @@ const formController = {
           return;
         }
 
-        // Filter locations that match the input
         const matches = ALL_LOCATIONS.filter(location =>
           location.toLowerCase().includes(value)
         );
@@ -764,7 +604,6 @@ const formController = {
           return;
         }
 
-        // Show top 8 suggestions
         const suggestions = matches.slice(0, 8);
         suggestionsBox.innerHTML = suggestions
           .map(location => \`<div onclick="selectLocation('\${inputId}', '\${location}')">\${location}</div>\`)
@@ -772,41 +611,82 @@ const formController = {
         suggestionsBox.classList.add('active');
       });
 
-      // Hide suggestions when input loses focus
       input.addEventListener('blur', function() {
-        setTimeout(() => {
-          suggestionsBox.classList.remove('active');
-        }, 200);
-      });
-
-      // Show suggestions on focus if input has value
-      input.addEventListener('focus', function() {
-        if (this.value.length > 0) {
-          suggestionsBox.classList.add('active');
-        }
+        setTimeout(() => suggestionsBox.classList.remove('active'), 200);
       });
     }
 
-    // Select location from suggestions
     function selectLocation(inputId, location) {
-      const input = document.getElementById(inputId);
-      input.value = location;
+      document.getElementById(inputId).value = location;
       document.getElementById(inputId + '-suggestions').classList.remove('active');
-      input.focus();
     }
 
-    // Setup autocomplete for both fields
+    // Setup all autocomplete fields
     setupAutocomplete('pickup', 'pickup-suggestions');
     setupAutocomplete('dropoff', 'dropoff-suggestions');
+    setupAutocomplete('hourly-pickup', 'hourly-pickup-suggestions');
 
-    // Initial fare calculation
-    calculateFare();
+    // Check Fare - Next screen
+    function checkFare() {
+      const pickupDate = document.getElementById('pickup-date').value;
+      const pickupTime = document.getElementById('pickup-time').value;
+
+      if (currentTab === 'transfer') {
+        const pickup = document.getElementById('pickup').value;
+        const dropoff = document.getElementById('dropoff').value;
+
+        if (!pickup || !dropoff) {
+          alert('Please enter pickup and dropoff locations');
+          return;
+        }
+
+        // Store data for next screen
+        const bookingData = {
+          booking_type: isReturnAdded ? 'round_trip' : 'point_to_point',
+          pickup_location: pickup,
+          dropoff_location: dropoff,
+          pickup_date: pickupDate,
+          pickup_time: pickupTime,
+          return_date: isReturnAdded ? document.getElementById('return-date').value : null,
+          return_time: isReturnAdded ? document.getElementById('return-time').value : null
+        };
+
+        // For now, alert the data (next screen will handle this)
+        console.log('Transfer booking data:', bookingData);
+        alert('Screen 2 coming soon!\\n\\nBooking Type: ' + bookingData.booking_type + '\\nFrom: ' + pickup + '\\nTo: ' + dropoff);
+        
+      } else {
+        const pickup = document.getElementById('hourly-pickup').value;
+
+        if (!pickup) {
+          alert('Please enter pickup location');
+          return;
+        }
+
+        if (!selectedHours) {
+          alert('Please select rental hours');
+          return;
+        }
+
+        const bookingData = {
+          booking_type: 'hourly_rental',
+          pickup_location: pickup,
+          hours: selectedHours,
+          pickup_date: pickupDate,
+          pickup_time: pickupTime
+        };
+
+        console.log('Hourly booking data:', bookingData);
+        alert('Screen 2 coming soon!\\n\\nBooking Type: Hourly Rental\\nLocation: ' + pickup + '\\nHours: ' + selectedHours);
+      }
+    }
   </script>
 </body>
 </html>
       `;
 
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.send(html);
     } catch (error) {
       console.error('Form generation error:', error);
