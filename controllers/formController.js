@@ -86,6 +86,11 @@ const formController = {
    */
   async getBookingForm(req, res, next) {
     try {
+      // Get the origin from request (handles both dev and production)
+      const protocol = req.protocol || 'https';
+      const host = req.get('host') || 'localhost:5000';
+      const apiBase = `${protocol}://${host}`;
+
       // Get vehicle types from fare_rules
       const vehiclesResult = await query(`
         SELECT DISTINCT vehicle_type, base_fare, per_km_rate
@@ -509,7 +514,7 @@ const formController = {
   </div>
 
   <script>
-    const API_BASE = '${process.env.API_URL || window.location.origin}';
+    const API_BASE = '${apiBase}';
     
     // Counter functions
     function increasePassengers() {
