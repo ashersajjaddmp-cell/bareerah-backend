@@ -2,144 +2,111 @@ const { query } = require('../config/db');
 
 // Popular UAE locations
 const UAE_LOCATIONS = [
-  // Dubai - Popular Areas
-  'Dubai International Airport',
-  'Dubai Airport Terminal 1',
-  'Dubai Airport Terminal 2',
-  'Dubai Airport Terminal 3',
-  'Burj Khalifa',
-  'Dubai Marina',
-  'Downtown Dubai',
-  'Dubai Mall',
-  'Mall of Emirates',
-  'The Dubai Mall',
-  'Jumeirah Beach Hotel',
-  'Palm Jumeirah',
-  'Dubai Creek Harbour',
-  'JBR Beach',
-  'Deira',
-  'Bur Dubai',
-  'Dubai Festival City',
-  'Dubai Hills Estate',
-  'Emirates Hills',
-  'Al Barsha',
-  'Jumeirah',
-  'Dubai Silicon Oasis',
-  'Business Bay',
-  'DIFC',
-  'Dubai International Financial Centre',
-  'Dubai South',
-  'Jebel Ali',
-  'World Trade Centre',
-  'Zabeel Park',
-  'Al Safa',
-  'Manara',
-  'Satwa',
-  'Al Karama',
-  'Baniyas',
-  'Al Manara',
-  'Oud Metha',
-  'Karama',
-  'Naif',
-  'Al Khaleej',
-  'Al Reef',
-  'Mirdif',
-  'Muhaisnah',
-  'Warsan',
-  'Nad Al Sheba',
-  'Hatta',
-  'Meadows',
-  'Springs',
-  'Arabian Ranches',
-  'Emirates Living',
-  'Jumeirah Islands',
-  'Jumeirah Heights',
-  'The Hills',
-  'Madinat Jumeirah',
-  'Mall of the Emirates',
-  'Ibn Battuta Mall',
-  'Deira City Centre',
-  'The Galleria',
-  
-  // Abu Dhabi
-  'Abu Dhabi International Airport',
-  'Etihad Tower',
-  'Sheikh Zayed Grand Mosque',
-  'Emirates Palace',
-  'Yas Island',
-  'Yas Mall',
-  'Ferrari World',
-  'Saadiyat Island',
-  'Louvre Abu Dhabi',
-  'Al Bateen',
-  'Marina Mall Abu Dhabi',
-  'Abu Dhabi Downtown',
-  'Al Mina',
-  'Khalifa City',
-  'Al Reem Island',
-  'Al Manara',
-  'Al Marjan Island',
-  'Corniche Abu Dhabi',
-  'Sheikh Shakhbout City',
-  'Al Ain',
-  'Masdar City',
-  
-  // Sharjah
-  'Sharjah International Airport',
-  'Sharjah Corniche',
-  'Al Majaz Waterfront',
-  'Sharjah Museum',
-  'Mega Mall Sharjah',
-  'City Center Sharjah',
-  'Al Qasba',
-  'Sharjah Hills',
-  'Al Furjan',
-  'Muwailih',
-  'Buhaira',
-  'Al Nahda',
-  'Al Reef',
-  
-  // Ajman
-  'Ajman Corniche',
-  'Ajman Museum',
-  'Ajman City Centre',
-  'Al Zahara',
-  'Ajman Marina',
-  
-  // Umm Al Quwain
-  'Umm Al Quwain',
-  'Umm Al Quwain Corniche',
-  'UAQ Marina',
-  
-  // Ras Al Khaimah
-  'Ras Al Khaimah',
-  'RAK Airport',
-  'Ras Al Khaimah Corniche',
-  'RAK Mall',
-  'Al Noor Island',
-  
-  // Fujairah
-  'Fujairah',
-  'Fujairah Corniche',
-  'Al Aqah Beach',
-  'Fujairah Airport'
+  'Dubai International Airport', 'Dubai Airport Terminal 1', 'Dubai Airport Terminal 2', 'Dubai Airport Terminal 3',
+  'Burj Khalifa', 'Dubai Marina', 'Downtown Dubai', 'Dubai Mall', 'Mall of Emirates', 'The Dubai Mall',
+  'Jumeirah Beach Hotel', 'Palm Jumeirah', 'Dubai Creek Harbour', 'JBR Beach', 'Deira', 'Bur Dubai',
+  'Dubai Festival City', 'Dubai Hills Estate', 'Emirates Hills', 'Al Barsha', 'Jumeirah', 'Dubai Silicon Oasis',
+  'Business Bay', 'DIFC', 'Dubai International Financial Centre', 'Dubai South', 'Jebel Ali', 'World Trade Centre',
+  'Zabeel Park', 'Al Safa', 'Manara', 'Satwa', 'Al Karama', 'Baniyas', 'Al Manara', 'Oud Metha', 'Karama',
+  'Naif', 'Al Khaleej', 'Al Reef', 'Mirdif', 'Muhaisnah', 'Warsan', 'Nad Al Sheba', 'Hatta', 'Meadows',
+  'Springs', 'Arabian Ranches', 'Emirates Living', 'Jumeirah Islands', 'Jumeirah Heights', 'The Hills',
+  'Madinat Jumeirah', 'Mall of the Emirates', 'Ibn Battuta Mall', 'Deira City Centre', 'The Galleria',
+  'Abu Dhabi International Airport', 'Etihad Tower', 'Sheikh Zayed Grand Mosque', 'Emirates Palace',
+  'Yas Island', 'Yas Mall', 'Ferrari World', 'Saadiyat Island', 'Louvre Abu Dhabi', 'Al Bateen',
+  'Marina Mall Abu Dhabi', 'Abu Dhabi Downtown', 'Al Mina', 'Khalifa City', 'Al Reem Island', 'Al Ain', 'Masdar City',
+  'Sharjah International Airport', 'Sharjah Corniche', 'Al Majaz Waterfront', 'Sharjah Museum', 'Mega Mall Sharjah',
+  'City Center Sharjah', 'Al Qasba', 'Sharjah Hills', 'Al Nahda', 'Ajman Corniche', 'Ajman Museum', 'Ajman City Centre',
+  'Umm Al Quwain', 'Umm Al Quwain Corniche', 'Ras Al Khaimah', 'RAK Airport', 'Ras Al Khaimah Corniche', 'RAK Mall',
+  'Fujairah', 'Fujairah Corniche', 'Al Aqah Beach', 'Fujairah Airport'
+];
+
+// Vehicle data with images
+const VEHICLES = [
+  {
+    id: 'classic',
+    name: 'Classic',
+    badge: 'MOST POPULAR',
+    passengers: 3,
+    suitcases: 2,
+    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=150&fit=crop',
+    baseFare: 99,
+    perKm: 3.5,
+    discount: 30,
+    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation']
+  },
+  {
+    id: 'executive',
+    name: 'Executive',
+    badge: 'BEST VALUE',
+    passengers: 3,
+    suitcases: 2,
+    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=150&fit=crop',
+    baseFare: 129,
+    perKm: 4.2,
+    discount: 50,
+    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Premium Service']
+  },
+  {
+    id: 'urban_suv',
+    name: 'Urban SUV',
+    badge: 'NEW',
+    passengers: 5,
+    suitcases: 4,
+    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=300&h=150&fit=crop',
+    baseFare: 149,
+    perKm: 4.8,
+    discount: 50,
+    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Extra Luggage Space']
+  },
+  {
+    id: 'elite_van',
+    name: 'Elite Van',
+    badge: '',
+    passengers: 7,
+    suitcases: 7,
+    image: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=300&h=150&fit=crop',
+    baseFare: 199,
+    perKm: 5.5,
+    discount: 30,
+    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Group Travel']
+  },
+  {
+    id: 'luxury_suv',
+    name: 'Luxury SUV',
+    badge: '',
+    passengers: 5,
+    suitcases: 4,
+    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=300&h=150&fit=crop',
+    baseFare: 249,
+    perKm: 6.5,
+    discount: 30,
+    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Premium Luxury']
+  },
+  {
+    id: 'first_class',
+    name: 'First Class',
+    badge: 'LUXURY',
+    passengers: 3,
+    suitcases: 2,
+    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=300&h=150&fit=crop',
+    baseFare: 399,
+    perKm: 8.5,
+    discount: 30,
+    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'VIP Experience', 'Refreshments']
+  }
 ];
 
 const formController = {
   /**
-   * Serve complete WordPress booking form - Luxury Design
+   * Screen 1: Initial Booking Form
    */
   async getBookingForm(req, res, next) {
     try {
-      // Get the origin from request
       const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
       const host = req.get('host') || 'localhost:5000';
       const apiBase = `${protocol}://${host}`;
-
-      // Build location JSON for JavaScript autocomplete
       const locationsJSON = JSON.stringify(UAE_LOCATIONS);
 
-      // Build HTML form - Luxury Glass Design
       const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -149,12 +116,7 @@ const formController = {
   <title>Luxury Limo Booking</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Montserrat', sans-serif;
       min-height: 100vh;
@@ -165,7 +127,6 @@ const formController = {
       align-items: center;
       padding: 20px;
     }
-
     .glass-container {
       background: rgba(30, 40, 50, 0.75);
       backdrop-filter: blur(20px);
@@ -177,15 +138,7 @@ const formController = {
       width: 100%;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 50px;
-      margin-bottom: 40px;
-    }
-
+    .tabs { display: flex; justify-content: center; gap: 50px; margin-bottom: 40px; }
     .tab {
       color: rgba(255, 255, 255, 0.6);
       font-size: 16px;
@@ -197,22 +150,9 @@ const formController = {
       border-bottom: 2px solid transparent;
       transition: all 0.3s ease;
     }
-
-    .tab:hover {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .tab.active {
-      color: #fff;
-      border-bottom: 2px solid #fff;
-    }
-
-    /* Form Fields */
-    .form-group {
-      margin-bottom: 25px;
-      position: relative;
-    }
-
+    .tab:hover { color: rgba(255, 255, 255, 0.9); }
+    .tab.active { color: #fff; border-bottom: 2px solid #fff; }
+    .form-group { margin-bottom: 25px; position: relative; }
     .form-group label {
       display: block;
       color: rgba(255, 255, 255, 0.7);
@@ -222,7 +162,6 @@ const formController = {
       text-transform: uppercase;
       margin-bottom: 10px;
     }
-
     .form-group input {
       width: 100%;
       background: transparent;
@@ -235,16 +174,8 @@ const formController = {
       outline: none;
       transition: all 0.3s ease;
     }
-
-    .form-group input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .form-group input:focus {
-      border-bottom-color: rgba(255, 255, 255, 0.8);
-    }
-
-    /* Autocomplete Suggestions */
+    .form-group input::placeholder { color: rgba(255, 255, 255, 0.5); }
+    .form-group input:focus { border-bottom-color: rgba(255, 255, 255, 0.8); }
     .autocomplete-suggestions {
       position: absolute;
       top: 100%;
@@ -260,11 +191,7 @@ const formController = {
       z-index: 1000;
       margin-top: 5px;
     }
-
-    .autocomplete-suggestions.active {
-      display: block;
-    }
-
+    .autocomplete-suggestions.active { display: block; }
     .autocomplete-suggestions div {
       padding: 12px 15px;
       color: rgba(255, 255, 255, 0.8);
@@ -273,28 +200,14 @@ const formController = {
       transition: all 0.2s ease;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    .autocomplete-suggestions div:last-child {
-      border-bottom: none;
-    }
-
+    .autocomplete-suggestions div:last-child { border-bottom: none; }
     .autocomplete-suggestions div:hover {
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
       padding-left: 20px;
     }
-
-    /* Date Time Field */
-    .datetime-field {
-      display: flex;
-      gap: 15px;
-    }
-
-    .datetime-field input {
-      flex: 1;
-    }
-
-    /* Buttons Row */
+    .datetime-field { display: flex; gap: 15px; }
+    .datetime-field input { flex: 1; }
     .buttons-row {
       display: flex;
       justify-content: space-between;
@@ -302,7 +215,6 @@ const formController = {
       margin-top: 35px;
       padding-top: 20px;
     }
-
     .btn-link {
       color: rgba(255, 255, 255, 0.8);
       font-size: 13px;
@@ -315,11 +227,7 @@ const formController = {
       transition: all 0.3s ease;
       font-family: 'Montserrat', sans-serif;
     }
-
-    .btn-link:hover {
-      color: #fff;
-    }
-
+    .btn-link:hover { color: #fff; }
     .btn-primary {
       color: #fff;
       font-size: 14px;
@@ -334,12 +242,7 @@ const formController = {
       transition: all 0.3s ease;
       font-family: 'Montserrat', sans-serif;
     }
-
-    .btn-primary:hover {
-      opacity: 0.8;
-    }
-
-    /* Footer */
+    .btn-primary:hover { opacity: 0.8; }
     .footer-text {
       text-align: center;
       margin-top: 30px;
@@ -348,49 +251,14 @@ const formController = {
       letter-spacing: 2px;
       text-transform: uppercase;
     }
-
-    .footer-text span {
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    /* Return Section (Hidden by default) */
-    .return-section {
-      display: none;
-      margin-top: 25px;
-      padding-top: 25px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .return-section.active {
-      display: block;
-    }
-
-    /* Hourly Section (Hidden by default) */
-    .hourly-section {
-      display: none;
-    }
-
-    .hourly-section.active {
-      display: block;
-    }
-
-    .transfer-section {
-      display: block;
-    }
-
-    .transfer-section.hidden {
-      display: none;
-    }
-
-    /* Hours Selector */
-    .hours-selector {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
+    .footer-text span { font-weight: 700; font-size: 18px; }
+    .return-section { display: none; margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    .return-section.active { display: block; }
+    .hourly-section { display: none; }
+    .hourly-section.active { display: block; }
+    .transfer-section { display: block; }
+    .transfer-section.hidden { display: none; }
+    .hours-selector { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
     .hour-option {
       padding: 10px 20px;
       background: rgba(255, 255, 255, 0.1);
@@ -401,81 +269,42 @@ const formController = {
       cursor: pointer;
       transition: all 0.3s ease;
     }
-
-    .hour-option:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-    }
-
-    .hour-option.selected {
-      background: rgba(255, 255, 255, 0.25);
-      border-color: #fff;
-      color: #fff;
-    }
-
-    /* Responsive */
+    .hour-option:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+    .hour-option.selected { background: rgba(255, 255, 255, 0.25); border-color: #fff; color: #fff; }
     @media (max-width: 600px) {
-      .glass-container {
-        padding: 30px 25px;
-      }
-
-      .tabs {
-        gap: 30px;
-      }
-
-      .tab {
-        font-size: 14px;
-      }
-
-      .buttons-row {
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .datetime-field {
-        flex-direction: column;
-        gap: 20px;
-      }
+      .glass-container { padding: 30px 25px; }
+      .tabs { gap: 30px; }
+      .tab { font-size: 14px; }
+      .buttons-row { flex-direction: column; gap: 20px; }
+      .datetime-field { flex-direction: column; gap: 20px; }
     }
   </style>
 </head>
 <body>
-
   <div class="glass-container">
-    <!-- Tabs -->
     <div class="tabs">
       <div class="tab active" id="tab-transfer" onclick="switchTab('transfer')">Private Transfer</div>
       <div class="tab" id="tab-hourly" onclick="switchTab('hourly')">Hourly</div>
     </div>
-
     <form id="bookingForm">
-      <!-- Private Transfer Section -->
       <div class="transfer-section" id="transfer-section">
-        <!-- FROM -->
         <div class="form-group">
           <label>From</label>
           <input type="text" id="pickup" name="pickup" placeholder="Enter a pickup location" autocomplete="off" required>
           <div id="pickup-suggestions" class="autocomplete-suggestions"></div>
         </div>
-
-        <!-- TO -->
         <div class="form-group">
           <label>To</label>
           <input type="text" id="dropoff" name="dropoff" placeholder="Enter a dropoff location" autocomplete="off" required>
           <div id="dropoff-suggestions" class="autocomplete-suggestions"></div>
         </div>
       </div>
-
-      <!-- Hourly Section (Hidden) -->
       <div class="hourly-section" id="hourly-section">
-        <!-- FROM (Hourly) -->
         <div class="form-group">
           <label>Pickup Location</label>
           <input type="text" id="hourly-pickup" name="hourly-pickup" placeholder="Enter pickup location" autocomplete="off">
           <div id="hourly-pickup-suggestions" class="autocomplete-suggestions"></div>
         </div>
-
-        <!-- Hours Selection -->
         <div class="form-group">
           <label>Select Hours</label>
           <div class="hours-selector">
@@ -491,8 +320,6 @@ const formController = {
           <input type="hidden" id="selected-hours" name="hours" value="">
         </div>
       </div>
-
-      <!-- Pickup Date & Time -->
       <div class="form-group">
         <label>Pickup Date & Time</label>
         <div class="datetime-field">
@@ -500,8 +327,6 @@ const formController = {
           <input type="time" id="pickup-time" name="pickup-time" required>
         </div>
       </div>
-
-      <!-- Return Section (Hidden) -->
       <div class="return-section" id="return-section">
         <div class="form-group">
           <label>Return Date & Time</label>
@@ -511,47 +336,31 @@ const formController = {
           </div>
         </div>
       </div>
-
-      <!-- Buttons -->
       <div class="buttons-row">
         <button type="button" class="btn-link" id="add-return-btn" onclick="toggleReturn()">+ Add Return</button>
         <button type="button" class="btn-primary" onclick="checkFare()">Check Fare</button>
       </div>
     </form>
   </div>
-
-  <!-- Footer -->
-  <div class="footer-text">
-    Hire a limousine in Dubai from just <span>AED 99</span>
-  </div>
+  <div class="footer-text">Hire a limousine in Dubai from just <span>AED 99</span></div>
 
   <script>
     const API_BASE = '${apiBase}';
     const ALL_LOCATIONS = ${locationsJSON};
-
-    // Current state
     let currentTab = 'transfer';
     let isReturnAdded = false;
     let selectedHours = 0;
 
-    // Set default date/time to now
     const now = new Date();
     document.getElementById('pickup-date').value = now.toISOString().split('T')[0];
     document.getElementById('pickup-time').value = now.toTimeString().slice(0,5);
 
-    // Switch tabs
     function switchTab(tab) {
       currentTab = tab;
-      
-      // Update tab styles
       document.getElementById('tab-transfer').classList.toggle('active', tab === 'transfer');
       document.getElementById('tab-hourly').classList.toggle('active', tab === 'hourly');
-      
-      // Show/hide sections
       document.getElementById('transfer-section').classList.toggle('hidden', tab !== 'transfer');
       document.getElementById('hourly-section').classList.toggle('active', tab === 'hourly');
-      
-      // Hide return for hourly
       if (tab === 'hourly') {
         document.getElementById('return-section').classList.remove('active');
         document.getElementById('add-return-btn').style.display = 'none';
@@ -560,60 +369,42 @@ const formController = {
       }
     }
 
-    // Toggle return section
     function toggleReturn() {
       isReturnAdded = !isReturnAdded;
       document.getElementById('return-section').classList.toggle('active', isReturnAdded);
       document.getElementById('add-return-btn').textContent = isReturnAdded ? '- Remove Return' : '+ Add Return';
     }
 
-    // Select hours (hourly rental)
     function selectHours(hours) {
       selectedHours = hours;
       document.getElementById('selected-hours').value = hours;
-      
-      // Update UI
       document.querySelectorAll('.hour-option').forEach(el => {
         el.classList.toggle('selected', parseInt(el.dataset.hours) === hours);
       });
     }
 
-    // Autocomplete
     function setupAutocomplete(inputId, suggestionsId) {
       const input = document.getElementById(inputId);
       const suggestionsBox = document.getElementById(suggestionsId);
-
       if (!input || !suggestionsBox) return;
-
       input.addEventListener('input', function() {
         const value = this.value.toLowerCase().trim();
-
         if (value.length < 1) {
           suggestionsBox.innerHTML = '';
           suggestionsBox.classList.remove('active');
           return;
         }
-
-        const matches = ALL_LOCATIONS.filter(location =>
-          location.toLowerCase().includes(value)
-        );
-
+        const matches = ALL_LOCATIONS.filter(loc => loc.toLowerCase().includes(value));
         if (matches.length === 0) {
           suggestionsBox.innerHTML = '';
           suggestionsBox.classList.remove('active');
           return;
         }
-
         const suggestions = matches.slice(0, 8);
-        suggestionsBox.innerHTML = suggestions
-          .map(location => \`<div onclick="selectLocation('\${inputId}', '\${location}')">\${location}</div>\`)
-          .join('');
+        suggestionsBox.innerHTML = suggestions.map(loc => \`<div onclick="selectLocation('\${inputId}', '\${loc}')">\${loc}</div>\`).join('');
         suggestionsBox.classList.add('active');
       });
-
-      input.addEventListener('blur', function() {
-        setTimeout(() => suggestionsBox.classList.remove('active'), 200);
-      });
+      input.addEventListener('blur', () => setTimeout(() => suggestionsBox.classList.remove('active'), 200));
     }
 
     function selectLocation(inputId, location) {
@@ -621,12 +412,10 @@ const formController = {
       document.getElementById(inputId + '-suggestions').classList.remove('active');
     }
 
-    // Setup all autocomplete fields
     setupAutocomplete('pickup', 'pickup-suggestions');
     setupAutocomplete('dropoff', 'dropoff-suggestions');
     setupAutocomplete('hourly-pickup', 'hourly-pickup-suggestions');
 
-    // Check Fare - Next screen
     function checkFare() {
       const pickupDate = document.getElementById('pickup-date').value;
       const pickupTime = document.getElementById('pickup-time').value;
@@ -634,67 +423,636 @@ const formController = {
       if (currentTab === 'transfer') {
         const pickup = document.getElementById('pickup').value;
         const dropoff = document.getElementById('dropoff').value;
+        if (!pickup || !dropoff) { alert('Please enter pickup and dropoff locations'); return; }
 
-        if (!pickup || !dropoff) {
-          alert('Please enter pickup and dropoff locations');
-          return;
-        }
-
-        // Store data for next screen
-        const bookingData = {
-          booking_type: isReturnAdded ? 'round_trip' : 'point_to_point',
-          pickup_location: pickup,
-          dropoff_location: dropoff,
-          pickup_date: pickupDate,
-          pickup_time: pickupTime,
-          return_date: isReturnAdded ? document.getElementById('return-date').value : null,
-          return_time: isReturnAdded ? document.getElementById('return-time').value : null
-        };
-
-        // For now, alert the data (next screen will handle this)
-        console.log('Transfer booking data:', bookingData);
-        alert('Screen 2 coming soon!\\n\\nBooking Type: ' + bookingData.booking_type + '\\nFrom: ' + pickup + '\\nTo: ' + dropoff);
-        
+        const params = new URLSearchParams({
+          type: isReturnAdded ? 'round_trip' : 'point_to_point',
+          pickup: pickup,
+          dropoff: dropoff,
+          date: pickupDate,
+          time: pickupTime,
+          returnDate: isReturnAdded ? document.getElementById('return-date').value : '',
+          returnTime: isReturnAdded ? document.getElementById('return-time').value : ''
+        });
+        window.location.href = API_BASE + '/api/bookings/vehicle-details?' + params.toString();
       } else {
         const pickup = document.getElementById('hourly-pickup').value;
+        if (!pickup) { alert('Please enter pickup location'); return; }
+        if (!selectedHours) { alert('Please select rental hours'); return; }
 
-        if (!pickup) {
-          alert('Please enter pickup location');
-          return;
-        }
-
-        if (!selectedHours) {
-          alert('Please select rental hours');
-          return;
-        }
-
-        const bookingData = {
-          booking_type: 'hourly_rental',
-          pickup_location: pickup,
+        const params = new URLSearchParams({
+          type: 'hourly',
+          pickup: pickup,
           hours: selectedHours,
-          pickup_date: pickupDate,
-          pickup_time: pickupTime
-        };
-
-        console.log('Hourly booking data:', bookingData);
-        alert('Screen 2 coming soon!\\n\\nBooking Type: Hourly Rental\\nLocation: ' + pickup + '\\nHours: ' + selectedHours);
+          date: pickupDate,
+          time: pickupTime
+        });
+        window.location.href = API_BASE + '/api/bookings/vehicle-details?' + params.toString();
       }
     }
   </script>
 </body>
-</html>
-      `;
-
+</html>`;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.send(html);
     } catch (error) {
       console.error('Form generation error:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to generate form',
-        message: error.message
+      res.status(500).json({ success: false, error: 'Failed to generate form', message: error.message });
+    }
+  },
+
+  /**
+   * Screen 2: Vehicle Details Page
+   */
+  async getVehicleDetails(req, res, next) {
+    try {
+      const { type, pickup, dropoff, date, time, returnDate, returnTime, hours } = req.query;
+      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
+      const host = req.get('host') || 'localhost:5000';
+      const apiBase = `${protocol}://${host}`;
+
+      // Calculate estimated distance (mock - in production use real API)
+      const estimatedDistance = 14.4; // km
+      const vehiclesJSON = JSON.stringify(VEHICLES);
+
+      const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Vehicle - Luxury Limo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    
+    /* Progress Steps */
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #999;
+      font-size: 13px;
+    }
+    .step.active { color: #333; }
+    .step-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .step.active .step-icon { background: #1a1a1a; color: #fff; }
+    .step-line { width: 60px; height: 2px; background: #e0e0e0; }
+
+    /* Main Layout */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+    }
+
+    /* Vehicle Cards */
+    .vehicles-section { }
+    .vehicle-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 20px;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    .vehicle-card:hover {
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    .vehicle-image {
+      width: 180px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f0f0f0;
+    }
+    .vehicle-info { }
+    .vehicle-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vehicle-badge {
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .vehicle-badge.new { background: #e3f2fd; color: #1565c0; }
+    .vehicle-badge.luxury { background: #fce4ec; color: #c2185b; }
+    .vehicle-specs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 8px;
+      color: #666;
+      font-size: 13px;
+    }
+    .vehicle-specs span { display: flex; align-items: center; gap: 5px; }
+    .vehicle-type {
+      color: #999;
+      font-size: 12px;
+    }
+    .vehicle-pricing { text-align: right; min-width: 150px; }
+    .discount-badge {
+      display: inline-block;
+      background: #4caf50;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .discount-badge.gold { background: #ff9800; }
+    .price-label {
+      color: #999;
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+    .price-original {
+      color: #999;
+      font-size: 14px;
+      text-decoration: line-through;
+    }
+    .price-final {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+    }
+    .price-final small { font-size: 14px; font-weight: 400; }
+    .price-note {
+      color: #999;
+      font-size: 11px;
+      margin-top: 3px;
+    }
+    .btn-select {
+      display: block;
+      width: 100%;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .btn-select:hover { background: #333; }
+
+    /* Booking Details Sidebar */
+    .sidebar {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    .journey-section {
+      margin-bottom: 25px;
+    }
+    .journey-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #999;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .journey-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+    .journey-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4caf50;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .journey-icon.end { background: #f44336; }
+    .journey-text {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.5;
+    }
+    .journey-connector {
+      width: 2px;
+      height: 30px;
+      background: #e0e0e0;
+      margin-left: 4px;
+      margin-bottom: 10px;
+    }
+
+    .info-list {
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #666;
+    }
+    .info-item i {
+      width: 20px;
+      color: #4caf50;
+    }
+
+    .payment-methods {
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+    .payment-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    .payment-icons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .payment-icons img {
+      height: 24px;
+      opacity: 0.7;
+    }
+
+    .help-section {
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+    .help-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .help-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #666;
+    }
+    .help-item i { color: #4caf50; width: 20px; }
+
+    .trust-badge {
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .trust-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .trust-stars {
+      color: #4caf50;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .trust-rating {
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+      .vehicle-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .vehicle-image {
+        width: 100%;
+        height: 150px;
+      }
+      .vehicle-pricing {
+        text-align: center;
+      }
+      .vehicle-specs {
+        justify-content: center;
+      }
+      .sidebar {
+        position: relative;
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="page-header">
+      <h1 class="page-title">${type === 'round_trip' ? 'Book a Return Ride' : type === 'hourly' ? 'Book Hourly Rental' : 'Book a Ride'}</h1>
+      
+      <!-- Progress Steps -->
+      <div class="progress-steps">
+        <div class="step active">
+          <div class="step-icon"><i class="fas fa-car"></i></div>
+          <span>Vehicle Details</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-icon"><i class="fas fa-user"></i></div>
+          <span>Schedule & Guest Info</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+          <span>Billing Details</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      <!-- Vehicle Cards -->
+      <div class="vehicles-section" id="vehicles-list">
+        <!-- Vehicles will be rendered here by JS -->
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <h2 class="sidebar-title">Booking Details</h2>
+        
+        <!-- Outward Journey -->
+        <div class="journey-section">
+          <div class="journey-label">Outward Journey</div>
+          <div class="journey-point">
+            <div class="journey-icon"></div>
+            <div class="journey-text">${pickup || 'Pickup Location'}</div>
+          </div>
+          <div class="journey-connector"></div>
+          <div class="journey-point">
+            <div class="journey-icon end"></div>
+            <div class="journey-text">${dropoff || pickup || 'Dropoff Location'}</div>
+          </div>
+        </div>
+
+        ${type === 'round_trip' ? `
+        <!-- Return Journey -->
+        <div class="journey-section">
+          <div class="journey-label">Return Journey</div>
+          <div class="journey-point">
+            <div class="journey-icon"></div>
+            <div class="journey-text">${dropoff || 'Return From'}</div>
+          </div>
+          <div class="journey-connector"></div>
+          <div class="journey-point">
+            <div class="journey-icon end"></div>
+            <div class="journey-text">${pickup || 'Return To'}</div>
+          </div>
+        </div>
+        ` : ''}
+
+        ${type === 'hourly' ? `
+        <div class="info-item">
+          <i class="fas fa-clock"></i>
+          <span>${hours} Hours Rental</span>
+        </div>
+        ` : ''}
+
+        <!-- Info List -->
+        <div class="info-list">
+          <div class="info-item">
+            <i class="fas fa-route"></i>
+            <span>${estimatedDistance} km (Each Way)</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-stopwatch"></i>
+            <span>~30 mins (Approx)</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-users"></i>
+            <span>6,818 Passengers Transported</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-bolt"></i>
+            <span>Instant Confirmation</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-check-circle"></i>
+            <span>All Inclusive Pricing</span>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="payment-methods">
+          <div class="payment-title">Secure Payments by Credit Card, Debit card or Paypal</div>
+          <div class="payment-icons">
+            <span style="font-weight:600;color:#1a1a80;">VISA</span>
+            <span style="font-weight:600;color:#eb001b;">Master</span>
+            <span style="font-weight:600;color:#ff5f00;">G Pay</span>
+            <span style="font-weight:600;color:#003087;">PayPal</span>
+            <span style="font-weight:600;color:#000;">Apple</span>
+          </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section">
+          <div class="help-title">Need Help?</div>
+          <div class="help-item">
+            <i class="fas fa-comments"></i>
+            <div>
+              <strong>Start a Chat</strong><br>
+              <small style="color:#999;">We are always online</small>
+            </div>
+          </div>
+          <div class="help-item">
+            <i class="fas fa-question-circle"></i>
+            <div>
+              <strong>Help Centre</strong><br>
+              <small style="color:#999;">Frequently asked questions</small>
+            </div>
+          </div>
+          <div class="help-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <strong>Call us</strong><br>
+              <small style="color:#999;">24/7</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust Badge -->
+        <div class="trust-badge">
+          <div class="trust-title">Trustpilot</div>
+          <div class="trust-stars">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <div class="trust-rating">TrustScore 4.5 | 890 reviews</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '${apiBase}';
+    const VEHICLES = ${vehiclesJSON};
+    const BOOKING_TYPE = '${type}';
+    const DISTANCE = ${estimatedDistance};
+    const HOURS = ${hours || 0};
+
+    // Booking data
+    const bookingData = {
+      type: '${type}',
+      pickup: '${pickup || ''}',
+      dropoff: '${dropoff || ''}',
+      date: '${date}',
+      time: '${time}',
+      returnDate: '${returnDate || ''}',
+      returnTime: '${returnTime || ''}',
+      hours: ${hours || 0}
+    };
+
+    function calculatePrice(vehicle) {
+      let price;
+      if (BOOKING_TYPE === 'hourly') {
+        price = vehicle.baseFare * HOURS;
+      } else if (BOOKING_TYPE === 'round_trip') {
+        price = vehicle.baseFare + (vehicle.perKm * DISTANCE * 2);
+      } else {
+        price = vehicle.baseFare + (vehicle.perKm * DISTANCE);
+      }
+      const originalPrice = price / (1 - vehicle.discount/100);
+      return { original: Math.round(originalPrice), final: Math.round(price) };
+    }
+
+    function renderVehicles() {
+      const container = document.getElementById('vehicles-list');
+      container.innerHTML = VEHICLES.map(v => {
+        const prices = calculatePrice(v);
+        const badgeClass = v.badge === 'NEW' ? 'new' : v.badge === 'LUXURY' ? 'luxury' : '';
+        return \`
+          <div class="vehicle-card">
+            <img src="\${v.image}" alt="\${v.name}" class="vehicle-image">
+            <div class="vehicle-info">
+              <div class="vehicle-name">
+                \${v.name}
+                \${v.badge ? \`<span class="vehicle-badge \${badgeClass}">\${v.badge}</span>\` : ''}
+              </div>
+              <div class="vehicle-specs">
+                <span><i class="fas fa-user"></i> \${v.passengers} Max</span>
+                <span><i class="fas fa-suitcase"></i> \${v.suitcases} Suitcases</span>
+                <span><i class="fas fa-users"></i> \${v.passengers + v.suitcases} Passengers</span>
+              </div>
+              <div class="vehicle-type">Private Transfer  <i class="fas fa-star" style="color:#ffc107;margin-left:5px;"></i> Porter Service</div>
+            </div>
+            <div class="vehicle-pricing">
+              <div class="discount-badge \${v.discount >= 50 ? 'gold' : ''}">\${v.discount}% OFF</div>
+              <div class="price-label">Total Return Price</div>
+              <div class="price-original">AED \${prices.original}</div>
+              <div class="price-final">AED $\${prices.final}<small>.00</small></div>
+              <div class="price-note">Includes VAT & Fees</div>
+              <button class="btn-select" onclick="selectVehicle('\${v.id}', \${prices.final})">Select</button>
+            </div>
+          </div>
+        \`;
+      }).join('');
+    }
+
+    function selectVehicle(vehicleId, price) {
+      // Store selection and go to next screen
+      const params = new URLSearchParams({
+        ...bookingData,
+        vehicle: vehicleId,
+        price: price
       });
+      // For now alert - Screen 3 will handle this
+      alert('Screen 3 (Schedule & Guest Info) coming soon!\\n\\nVehicle: ' + vehicleId + '\\nPrice: AED ' + price);
+      // window.location.href = API_BASE + '/api/bookings/guest-info?' + params.toString();
+    }
+
+    renderVehicles();
+  </script>
+</body>
+</html>`;
+
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.send(html);
+    } catch (error) {
+      console.error('Vehicle details error:', error);
+      res.status(500).json({ success: false, error: 'Failed to load vehicle details', message: error.message });
     }
   }
 };
