@@ -653,6 +653,32 @@ const formController = {
     }
     .btn-select:hover { background: #333; }
 
+    /* Navigation Buttons */
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 40px;
+      justify-content: center;
+    }
+    .btn-back {
+      flex: 1;
+      max-width: 300px;
+      background: #f0f0f0;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 14px 30px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .btn-back:hover {
+      background: #e0e0e0;
+      border-color: #999;
+    }
+
     /* Booking Details Sidebar */
     .sidebar {
       background: #fff;
@@ -962,6 +988,10 @@ const formController = {
           <div class="trust-rating">TrustScore 4.5 | 890 reviews</div>
         </div>
       </div>
+      <!-- Navigation Buttons -->
+      <div class="button-group">
+        <button class="btn-back" onclick="goBack()">BACK</button>
+      </div>
     </div>
   </div>
 
@@ -983,6 +1013,20 @@ const formController = {
       returnTime: '${returnTime || ''}',
       hours: ${hours || 0}
     };
+
+    function goBack() {
+      const params = new URLSearchParams({
+        type: bookingData.type,
+        pickup: bookingData.pickup,
+        ...(bookingData.dropoff && { dropoff: bookingData.dropoff }),
+        date: bookingData.date,
+        time: bookingData.time,
+        ...(bookingData.returnDate && { returnDate: bookingData.returnDate }),
+        ...(bookingData.returnTime && { returnTime: bookingData.returnTime }),
+        ...(bookingData.hours && { hours: bookingData.hours })
+      });
+      window.location.href = API_BASE + '/wordpress-form?' + params.toString();
+    }
 
     function calculatePrice(vehicle) {
       let price;
