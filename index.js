@@ -43,6 +43,16 @@ app.use(express.json());
 // Apply Bareerah logging to all requests
 app.use(bareerahLogger);
 
+// Cache control middleware - disable caching for HTML/CSS/JS
+app.use((req, res, next) => {
+  if (req.path.includes('/dashboard/') || req.path.includes('/vendor') || req.path.includes('/driver') || req.path.endsWith('.html') || req.path.endsWith('.js') || req.path.endsWith('.css')) {
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+});
+
 // API routes BEFORE static files
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
