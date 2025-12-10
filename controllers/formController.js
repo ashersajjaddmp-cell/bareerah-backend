@@ -1,99 +1,211 @@
-const { query } = require('../config/db');
+const { query } = require("../config/db");
 
 // Popular UAE locations
 const UAE_LOCATIONS = [
-  'Dubai International Airport', 'Dubai Airport Terminal 1', 'Dubai Airport Terminal 2', 'Dubai Airport Terminal 3',
-  'Burj Khalifa', 'Dubai Marina', 'Downtown Dubai', 'Dubai Mall', 'Mall of Emirates', 'The Dubai Mall',
-  'Jumeirah Beach Hotel', 'Palm Jumeirah', 'Dubai Creek Harbour', 'JBR Beach', 'Deira', 'Bur Dubai',
-  'Dubai Festival City', 'Dubai Hills Estate', 'Emirates Hills', 'Al Barsha', 'Jumeirah', 'Dubai Silicon Oasis',
-  'Business Bay', 'DIFC', 'Dubai International Financial Centre', 'Dubai South', 'Jebel Ali', 'World Trade Centre',
-  'Zabeel Park', 'Al Safa', 'Manara', 'Satwa', 'Al Karama', 'Baniyas', 'Al Manara', 'Oud Metha', 'Karama',
-  'Naif', 'Al Khaleej', 'Al Reef', 'Mirdif', 'Muhaisnah', 'Warsan', 'Nad Al Sheba', 'Hatta', 'Meadows',
-  'Springs', 'Arabian Ranches', 'Emirates Living', 'Jumeirah Islands', 'Jumeirah Heights', 'The Hills',
-  'Madinat Jumeirah', 'Mall of the Emirates', 'Ibn Battuta Mall', 'Deira City Centre', 'The Galleria',
-  'Abu Dhabi International Airport', 'Etihad Tower', 'Sheikh Zayed Grand Mosque', 'Emirates Palace',
-  'Yas Island', 'Yas Mall', 'Ferrari World', 'Saadiyat Island', 'Louvre Abu Dhabi', 'Al Bateen',
-  'Marina Mall Abu Dhabi', 'Abu Dhabi Downtown', 'Al Mina', 'Khalifa City', 'Al Reem Island', 'Al Ain', 'Masdar City',
-  'Sharjah International Airport', 'Sharjah Corniche', 'Al Majaz Waterfront', 'Sharjah Museum', 'Mega Mall Sharjah',
-  'City Center Sharjah', 'Al Qasba', 'Sharjah Hills', 'Al Nahda', 'Ajman Corniche', 'Ajman Museum', 'Ajman City Centre',
-  'Umm Al Quwain', 'Umm Al Quwain Corniche', 'Ras Al Khaimah', 'RAK Airport', 'Ras Al Khaimah Corniche', 'RAK Mall',
-  'Fujairah', 'Fujairah Corniche', 'Al Aqah Beach', 'Fujairah Airport'
+  "Dubai International Airport",
+  "Dubai Airport Terminal 1",
+  "Dubai Airport Terminal 2",
+  "Dubai Airport Terminal 3",
+  "Burj Khalifa",
+  "Dubai Marina",
+  "Downtown Dubai",
+  "Dubai Mall",
+  "Mall of Emirates",
+  "The Dubai Mall",
+  "Jumeirah Beach Hotel",
+  "Palm Jumeirah",
+  "Dubai Creek Harbour",
+  "JBR Beach",
+  "Deira",
+  "Bur Dubai",
+  "Dubai Festival City",
+  "Dubai Hills Estate",
+  "Emirates Hills",
+  "Al Barsha",
+  "Jumeirah",
+  "Dubai Silicon Oasis",
+  "Business Bay",
+  "DIFC",
+  "Dubai International Financial Centre",
+  "Dubai South",
+  "Jebel Ali",
+  "World Trade Centre",
+  "Zabeel Park",
+  "Al Safa",
+  "Manara",
+  "Satwa",
+  "Al Karama",
+  "Baniyas",
+  "Al Manara",
+  "Oud Metha",
+  "Karama",
+  "Naif",
+  "Al Khaleej",
+  "Al Reef",
+  "Mirdif",
+  "Muhaisnah",
+  "Warsan",
+  "Nad Al Sheba",
+  "Hatta",
+  "Meadows",
+  "Springs",
+  "Arabian Ranches",
+  "Emirates Living",
+  "Jumeirah Islands",
+  "Jumeirah Heights",
+  "The Hills",
+  "Madinat Jumeirah",
+  "Mall of the Emirates",
+  "Ibn Battuta Mall",
+  "Deira City Centre",
+  "The Galleria",
+  "Abu Dhabi International Airport",
+  "Etihad Tower",
+  "Sheikh Zayed Grand Mosque",
+  "Emirates Palace",
+  "Yas Island",
+  "Yas Mall",
+  "Ferrari World",
+  "Saadiyat Island",
+  "Louvre Abu Dhabi",
+  "Al Bateen",
+  "Marina Mall Abu Dhabi",
+  "Abu Dhabi Downtown",
+  "Al Mina",
+  "Khalifa City",
+  "Al Reem Island",
+  "Al Ain",
+  "Masdar City",
+  "Sharjah International Airport",
+  "Sharjah Corniche",
+  "Al Majaz Waterfront",
+  "Sharjah Museum",
+  "Mega Mall Sharjah",
+  "City Center Sharjah",
+  "Al Qasba",
+  "Sharjah Hills",
+  "Al Nahda",
+  "Ajman Corniche",
+  "Ajman Museum",
+  "Ajman City Centre",
+  "Umm Al Quwain",
+  "Umm Al Quwain Corniche",
+  "Ras Al Khaimah",
+  "RAK Airport",
+  "Ras Al Khaimah Corniche",
+  "RAK Mall",
+  "Fujairah",
+  "Fujairah Corniche",
+  "Al Aqah Beach",
+  "Fujairah Airport",
 ];
 
 // Vehicle data with images
 const VEHICLES = [
   {
-    id: 'classic',
-    name: 'Classic',
-    badge: 'MOST POPULAR',
+    id: "classic",
+    name: "Classic",
+    badge: "MOST POPULAR",
     passengers: 3,
     suitcases: 2,
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=150&fit=crop',
+    image:
+      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=150&fit=crop",
     baseFare: 99,
     perKm: 3.5,
     discount: 30,
-    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation']
+    features: ["Private Transfer", "Meet & Greet", "Free Cancellation"],
   },
   {
-    id: 'executive',
-    name: 'Executive',
-    badge: 'BEST VALUE',
+    id: "executive",
+    name: "Executive",
+    badge: "BEST VALUE",
     passengers: 3,
     suitcases: 2,
-    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=150&fit=crop',
+    image:
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=150&fit=crop",
     baseFare: 129,
     perKm: 4.2,
     discount: 50,
-    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Premium Service']
+    features: [
+      "Private Transfer",
+      "Meet & Greet",
+      "Free Cancellation",
+      "Premium Service",
+    ],
   },
   {
-    id: 'urban_suv',
-    name: 'Urban SUV',
-    badge: 'NEW',
+    id: "urban_suv",
+    name: "Urban SUV",
+    badge: "NEW",
     passengers: 5,
     suitcases: 4,
-    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=300&h=150&fit=crop',
+    image:
+      "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=300&h=150&fit=crop",
     baseFare: 149,
     perKm: 4.8,
     discount: 50,
-    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Extra Luggage Space']
+    features: [
+      "Private Transfer",
+      "Meet & Greet",
+      "Free Cancellation",
+      "Extra Luggage Space",
+    ],
   },
   {
-    id: 'elite_van',
-    name: 'Elite Van',
-    badge: '',
+    id: "elite_van",
+    name: "Elite Van",
+    badge: "",
     passengers: 7,
     suitcases: 7,
-    image: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=300&h=150&fit=crop',
+    image:
+      "https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=300&h=150&fit=crop",
     baseFare: 199,
     perKm: 5.5,
     discount: 30,
-    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Group Travel']
+    features: [
+      "Private Transfer",
+      "Meet & Greet",
+      "Free Cancellation",
+      "Group Travel",
+    ],
   },
   {
-    id: 'luxury_suv',
-    name: 'Luxury SUV',
-    badge: '',
+    id: "luxury_suv",
+    name: "Luxury SUV",
+    badge: "",
     passengers: 5,
     suitcases: 4,
-    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=300&h=150&fit=crop',
+    image:
+      "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=300&h=150&fit=crop",
     baseFare: 249,
     perKm: 6.5,
     discount: 30,
-    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'Premium Luxury']
+    features: [
+      "Private Transfer",
+      "Meet & Greet",
+      "Free Cancellation",
+      "Premium Luxury",
+    ],
   },
   {
-    id: 'first_class',
-    name: 'First Class',
-    badge: 'LUXURY',
+    id: "first_class",
+    name: "First Class",
+    badge: "LUXURY",
     passengers: 3,
     suitcases: 2,
-    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=300&h=150&fit=crop',
+    image:
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?w=300&h=150&fit=crop",
     baseFare: 399,
     perKm: 8.5,
     discount: 30,
-    features: ['Private Transfer', 'Meet & Greet', 'Free Cancellation', 'VIP Experience', 'Refreshments']
-  }
+    features: [
+      "Private Transfer",
+      "Meet & Greet",
+      "Free Cancellation",
+      "VIP Experience",
+      "Refreshments",
+    ],
+  },
 ];
 
 const formController = {
@@ -102,8 +214,8 @@ const formController = {
    */
   async getBookingForm(req, res, next) {
     try {
-      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
+      const protocol = req.get("x-forwarded-proto") || req.protocol || "https";
+      const host = req.get("host") || "localhost:5000";
       const apiBase = `${protocol}://${host}`;
       const locationsJSON = JSON.stringify(UAE_LOCATIONS);
 
@@ -120,12 +232,15 @@ const formController = {
     body {
       font-family: 'Montserrat', sans-serif;
       min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=1920') center/cover no-repeat fixed;
+      // background: url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=1920') center/cover no-repeat fixed;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 20px;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
     }
     .glass-container {
       background: rgba(30, 40, 50, 0.75);
@@ -453,12 +568,16 @@ const formController = {
   </script>
 </body>
 </html>`;
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.send(html);
     } catch (error) {
-      console.error('Form generation error:', error);
-      res.status(500).json({ success: false, error: 'Failed to generate form', message: error.message });
+      console.error("Form generation error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to generate form",
+        message: error.message,
+      });
     }
   },
 
@@ -467,9 +586,18 @@ const formController = {
    */
   async getVehicleDetails(req, res, next) {
     try {
-      const { type, pickup, dropoff, date, time, returnDate, returnTime, hours } = req.query;
-      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
+      const {
+        type,
+        pickup,
+        dropoff,
+        date,
+        time,
+        returnDate,
+        returnTime,
+        hours,
+      } = req.query;
+      const protocol = req.get("x-forwarded-proto") || req.protocol || "https";
+      const host = req.get("host") || "localhost:5000";
       const apiBase = `${protocol}://${host}`;
 
       // Calculate estimated distance (mock - in production use real API)
@@ -844,7 +972,7 @@ const formController = {
   <div class="container">
     <!-- Header -->
     <div class="page-header">
-      <h1 class="page-title">${type === 'round_trip' ? 'Book a Return Ride' : type === 'hourly' ? 'Book Hourly Rental' : 'Book a Ride'}</h1>
+      <h1 class="page-title">${type === "round_trip" ? "Book a Return Ride" : type === "hourly" ? "Book Hourly Rental" : "Book a Ride"}</h1>
       
       <!-- Progress Steps -->
       <div class="progress-steps">
@@ -881,37 +1009,45 @@ const formController = {
           <div class="journey-label">Outward Journey</div>
           <div class="journey-point">
             <div class="journey-icon"></div>
-            <div class="journey-text">${pickup || 'Pickup Location'}</div>
+            <div class="journey-text">${pickup || "Pickup Location"}</div>
           </div>
           <div class="journey-connector"></div>
           <div class="journey-point">
             <div class="journey-icon end"></div>
-            <div class="journey-text">${dropoff || pickup || 'Dropoff Location'}</div>
+            <div class="journey-text">${dropoff || pickup || "Dropoff Location"}</div>
           </div>
         </div>
 
-        ${type === 'round_trip' ? `
+        ${
+          type === "round_trip"
+            ? `
         <!-- Return Journey -->
         <div class="journey-section">
           <div class="journey-label">Return Journey</div>
           <div class="journey-point">
             <div class="journey-icon"></div>
-            <div class="journey-text">${dropoff || 'Return From'}</div>
+            <div class="journey-text">${dropoff || "Return From"}</div>
           </div>
           <div class="journey-connector"></div>
           <div class="journey-point">
             <div class="journey-icon end"></div>
-            <div class="journey-text">${pickup || 'Return To'}</div>
+            <div class="journey-text">${pickup || "Return To"}</div>
           </div>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${type === 'hourly' ? `
+        ${
+          type === "hourly"
+            ? `
         <div class="info-item">
           <i class="fas fa-clock"></i>
           <span>${hours} Hours Rental</span>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <!-- Info List -->
         <div class="info-list">
@@ -1005,12 +1141,12 @@ const formController = {
     // Booking data
     const bookingData = {
       type: '${type}',
-      pickup: '${pickup || ''}',
-      dropoff: '${dropoff || ''}',
+      pickup: '${pickup || ""}',
+      dropoff: '${dropoff || ""}',
       date: '${date}',
       time: '${time}',
-      returnDate: '${returnDate || ''}',
-      returnTime: '${returnTime || ''}',
+      returnDate: '${returnDate || ""}',
+      returnTime: '${returnTime || ""}',
       hours: ${hours || 0}
     };
 
@@ -1088,12 +1224,16 @@ const formController = {
 </body>
 </html>`;
 
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.send(html);
     } catch (error) {
-      console.error('Vehicle details error:', error);
-      res.status(500).json({ success: false, error: 'Failed to load vehicle details', message: error.message });
+      console.error("Vehicle details error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to load vehicle details",
+        message: error.message,
+      });
     }
   },
 
@@ -1102,12 +1242,24 @@ const formController = {
    */
   async getGuestInfo(req, res, next) {
     try {
-      const { type, pickup, dropoff, date, time, returnDate, returnTime, hours, vehicle, price } = req.query;
-      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
+      const {
+        type,
+        pickup,
+        dropoff,
+        date,
+        time,
+        returnDate,
+        returnTime,
+        hours,
+        vehicle,
+        price,
+      } = req.query;
+      const protocol = req.get("x-forwarded-proto") || req.protocol || "https";
+      const host = req.get("host") || "localhost:5000";
       const apiBase = `${protocol}://${host}`;
 
-      const selectedVehicle = VEHICLES.find(v => v.id === vehicle) || VEHICLES[0];
+      const selectedVehicle =
+        VEHICLES.find((v) => v.id === vehicle) || VEHICLES[0];
       const vehiclesJSON = JSON.stringify(VEHICLES);
 
       const html = `
@@ -1265,7 +1417,7 @@ const formController = {
 <body>
   <div class="container">
     <div class="page-header">
-      <h1 class="page-title">Book a ${type === 'round_trip' ? 'City Tour' : 'Private Transfer'}</h1>
+      <h1 class="page-title">Book a ${type === "round_trip" ? "City Tour" : "Private Transfer"}</h1>
       <div class="progress-steps">
         <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><span>Vehicle Details</span></div>
         <div class="step-line completed"></div>
@@ -1386,27 +1538,31 @@ const formController = {
       </div>
 
       <div class="sidebar">
-        ${type === 'round_trip' ? `
+        ${
+          type === "round_trip"
+            ? `
         <div class="sidebar-card">
           <div class="sidebar-title">Return Ride Trip</div>
-          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${dropoff || 'Return From'}</div></div>
-          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${pickup || 'Return To'}</div></div>
+          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${dropoff || "Return From"}</div></div>
+          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${pickup || "Return To"}</div></div>
           <div class="trip-datetime">
             <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${returnDate || date}</span></div>
             <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${returnTime || time}</span></div>
           </div>
         </div>
-        ` : `
+        `
+            : `
         <div class="sidebar-card">
           <div class="sidebar-title">One Way Trip</div>
-          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${pickup || 'Pickup Location'}</div></div>
-          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${dropoff || 'Dropoff Location'}</div></div>
+          <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${pickup || "Pickup Location"}</div></div>
+          <div class="trip-point"><div class="trip-dot red"></div><div class="trip-text">${dropoff || "Dropoff Location"}</div></div>
           <div class="trip-datetime">
-            <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${date || 'Not set'}</span></div>
-            <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${time || 'Not set'}</span></div>
+            <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${date || "Not set"}</span></div>
+            <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${time || "Not set"}</span></div>
           </div>
         </div>
-        `}
+        `
+        }
 
         <div class="sidebar-card">
           <div class="vehicle-card-summary">
@@ -1432,7 +1588,7 @@ const formController = {
             <div class="total-label"><span class="arrow"><i class="fas fa-arrow-right"></i></span> Total Price</div>
             <div class="total-amount">
               <span class="currency">AED</span>
-              <span class="price" id="totalPrice">${price || '0'}</span>
+              <span class="price" id="totalPrice">${price || "0"}</span>
             </div>
           </div>
         </div>
@@ -1446,12 +1602,12 @@ const formController = {
     
     const bookingData = {
       type: '${type}',
-      pickup: '${pickup || ''}',
-      dropoff: '${dropoff || ''}',
+      pickup: '${pickup || ""}',
+      dropoff: '${dropoff || ""}',
       date: '${date}',
       time: '${time}',
-      returnDate: '${returnDate || ''}',
-      returnTime: '${returnTime || ''}',
+      returnDate: '${returnDate || ""}',
+      returnTime: '${returnTime || ""}',
       hours: ${hours || 0},
       vehicle: '${vehicle}',
       basePrice: ${price || 0}
@@ -1616,12 +1772,16 @@ const formController = {
 </body>
 </html>`;
 
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.send(html);
     } catch (error) {
-      console.error('Guest info error:', error);
-      res.status(500).json({ success: false, error: 'Failed to load guest info', message: error.message });
+      console.error("Guest info error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to load guest info",
+        message: error.message,
+      });
     }
   },
 
@@ -1630,20 +1790,41 @@ const formController = {
    */
   async getBillingDetails(req, res, next) {
     try {
-      const { type, pickup, dropoff, date, time, returnDate, returnTime, vehicle, price, 
-              fullName, email, phone, whatsapp, stopOnWay, stopLocation, childSeats,
-              seatCount, boosterCount, infantCount, totalPrice } = req.query;
-      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
+      const {
+        type,
+        pickup,
+        dropoff,
+        date,
+        time,
+        returnDate,
+        returnTime,
+        vehicle,
+        price,
+        fullName,
+        email,
+        phone,
+        whatsapp,
+        stopOnWay,
+        stopLocation,
+        childSeats,
+        seatCount,
+        boosterCount,
+        infantCount,
+        totalPrice,
+      } = req.query;
+      const protocol = req.get("x-forwarded-proto") || req.protocol || "https";
+      const host = req.get("host") || "localhost:5000";
       const apiBase = `${protocol}://${host}`;
 
-      const selectedVehicle = VEHICLES.find(v => v.id === vehicle) || VEHICLES[0];
+      const selectedVehicle =
+        VEHICLES.find((v) => v.id === vehicle) || VEHICLES[0];
       const basePrice = parseFloat(price) || 0;
-      const stopCost = stopOnWay === 'true' ? 38.12 : 0;
+      const stopCost = stopOnWay === "true" ? 38.12 : 0;
       const seatCost = 27.22 * (parseInt(seatCount) || 0);
       const boosterCost = 27.22 * (parseInt(boosterCount) || 0);
       const infantCost = 27.22 * (parseInt(infantCount) || 0);
-      const subtotal = basePrice + stopCost + seatCost + boosterCost + infantCost;
+      const subtotal =
+        basePrice + stopCost + seatCost + boosterCost + infantCost;
       const vat = 0;
       const total = subtotal + vat;
 
@@ -1741,7 +1922,7 @@ const formController = {
 <body>
   <div class="container">
     <div class="page-header">
-      <h1 class="page-title">Book a ${type === 'round_trip' ? 'City Tour' : 'Private Transfer'}</h1>
+      <h1 class="page-title">Book a ${type === "round_trip" ? "City Tour" : "Private Transfer"}</h1>
       <div class="progress-steps">
         <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><span>Vehicle Details</span></div>
         <div class="step-line completed"></div>
@@ -1768,12 +1949,12 @@ const formController = {
         </div>
 
         <div class="breakdown-lines">
-          <div class="breakdown-line"><span class="label">One Way Trip</span><span class="value">AED ${(basePrice / (type === 'round_trip' ? 2 : 1)).toFixed(2)}</span></div>
-          ${type === 'round_trip' ? '<div class="breakdown-line"><span class="label">Return Route</span><span class="value">AED ' + (basePrice / 2).toFixed(2) + '</span></div>' : ''}
-          ${stopOnWay === 'true' ? '<div class="breakdown-line"><span class="label">Add Stop</span><span class="value">AED 38.12</span></div>' : ''}
-          ${parseInt(seatCount) > 0 ? '<div class="breakdown-line"><span class="label">Regular Child Seat (' + seatCount + ')</span><span class="value">AED ' + seatCost.toFixed(2) + '</span></div>' : ''}
-          ${parseInt(boosterCount) > 0 ? '<div class="breakdown-line"><span class="label">Booster Child Seat (' + boosterCount + ')</span><span class="value">AED ' + boosterCost.toFixed(2) + '</span></div>' : ''}
-          ${parseInt(infantCount) > 0 ? '<div class="breakdown-line"><span class="label">Infant Child Seat (' + infantCount + ')</span><span class="value">AED ' + infantCost.toFixed(2) + '</span></div>' : ''}
+          <div class="breakdown-line"><span class="label">One Way Trip</span><span class="value">AED ${(basePrice / (type === "round_trip" ? 2 : 1)).toFixed(2)}</span></div>
+          ${type === "round_trip" ? '<div class="breakdown-line"><span class="label">Return Route</span><span class="value">AED ' + (basePrice / 2).toFixed(2) + "</span></div>" : ""}
+          ${stopOnWay === "true" ? '<div class="breakdown-line"><span class="label">Add Stop</span><span class="value">AED 38.12</span></div>' : ""}
+          ${parseInt(seatCount) > 0 ? '<div class="breakdown-line"><span class="label">Regular Child Seat (' + seatCount + ')</span><span class="value">AED ' + seatCost.toFixed(2) + "</span></div>" : ""}
+          ${parseInt(boosterCount) > 0 ? '<div class="breakdown-line"><span class="label">Booster Child Seat (' + boosterCount + ')</span><span class="value">AED ' + boosterCost.toFixed(2) + "</span></div>" : ""}
+          ${parseInt(infantCount) > 0 ? '<div class="breakdown-line"><span class="label">Infant Child Seat (' + infantCount + ')</span><span class="value">AED ' + infantCost.toFixed(2) + "</span></div>" : ""}
           <div class="breakdown-line"><span class="label">Subtotal</span><span class="value">AED ${subtotal.toFixed(2)}</span></div>
           <div class="breakdown-line"><span class="label">VAT (0.00%)</span><span class="value">AED ${vat.toFixed(2)}</span></div>
           <div class="breakdown-line total"><span class="label"><span class="arrow"><i class="fas fa-arrow-right"></i></span> Total Amount</span><span class="value">AED ${total.toFixed(2)}</span></div>
@@ -1795,8 +1976,9 @@ const formController = {
               <div class="payment-name">Pay by Card (+4% Fee)</div>
             </div>
             <div class="payment-cards">
-              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/visa.svg" alt="Visa" style="height:16px;">
-              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/mastercard.svg" alt="Mastercard" style="height:16px;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg
+" alt="Visa" style="height:16px;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" alt="Mastercard" style="height:16px;">
             </div>
           </div>
         </div>
@@ -1823,7 +2005,9 @@ const formController = {
           </div>
         </div>
 
-        ${type === 'round_trip' ? `
+        ${
+          type === "round_trip"
+            ? `
         <div class="sidebar-card">
           <div class="sidebar-title">Return Ride Trip</div>
           <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${dropoff}</div></div>
@@ -1833,7 +2017,9 @@ const formController = {
             <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${returnTime || time}</span></div>
           </div>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div class="sidebar-card">
           <div class="sidebar-title">Passenger Details</div>
@@ -1859,8 +2045,8 @@ const formController = {
       dropoff: '${dropoff}',
       date: '${date}',
       time: '${time}',
-      returnDate: '${returnDate || ''}',
-      returnTime: '${returnTime || ''}',
+      returnDate: '${returnDate || ""}',
+      returnTime: '${returnTime || ""}',
       vehicle: '${vehicle}',
       vehicleName: '${selectedVehicle.name}',
       vehicleImage: '${selectedVehicle.image}',
@@ -1870,8 +2056,8 @@ const formController = {
       email: '${email}',
       phone: '${phone}',
       whatsapp: '${whatsapp || phone}',
-      stopOnWay: ${stopOnWay === 'true'},
-      stopLocation: '${stopLocation || ''}',
+      stopOnWay: ${stopOnWay === "true"},
+      stopLocation: '${stopLocation || ""}',
       childSeats: ${parseInt(childSeats) || 0},
       seatCount: ${parseInt(seatCount) || 0},
       boosterCount: ${parseInt(boosterCount) || 0},
@@ -1956,12 +2142,16 @@ const formController = {
 </body>
 </html>`;
 
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.send(html);
     } catch (error) {
-      console.error('Billing details error:', error);
-      res.status(500).json({ success: false, error: 'Failed to load billing details', message: error.message });
+      console.error("Billing details error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to load billing details",
+        message: error.message,
+      });
     }
   },
 
@@ -1970,15 +2160,34 @@ const formController = {
    */
   async getSuccessPage(req, res, next) {
     try {
-      const { bookingId, type, pickup, dropoff, date, time, returnDate, returnTime, 
-              vehicle, vehicleName, fullName, email, phone, whatsapp, totalPrice, paymentMethod } = req.query;
-      const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
+      const {
+        bookingId,
+        type,
+        pickup,
+        dropoff,
+        date,
+        time,
+        returnDate,
+        returnTime,
+        vehicle,
+        vehicleName,
+        fullName,
+        email,
+        phone,
+        whatsapp,
+        totalPrice,
+        paymentMethod,
+      } = req.query;
+      const protocol = req.get("x-forwarded-proto") || req.protocol || "https";
+      const host = req.get("host") || "localhost:5000";
       const apiBase = `${protocol}://${host}`;
 
-      const selectedVehicle = VEHICLES.find(v => v.id === vehicle) || VEHICLES[0];
+      const selectedVehicle =
+        VEHICLES.find((v) => v.id === vehicle) || VEHICLES[0];
 
-      const returnTripHtml = type === 'round_trip' ? `
+      const returnTripHtml =
+        type === "round_trip"
+          ? `
         <div class="sidebar-card">
           <div class="sidebar-title">Return Ride Trip</div>
           <div class="trip-point"><div class="trip-dot green"></div><div class="trip-text">${dropoff}</div></div>
@@ -1987,7 +2196,8 @@ const formController = {
             <div><label><i class="far fa-calendar"></i> Pickup Date</label><span>${returnDate || date}</span></div>
             <div><label><i class="far fa-clock"></i> Pickup Time</label><span>${returnTime || time}</span></div>
           </div>
-        </div>` : '';
+        </div>`
+          : "";
 
       const html = `
 <!DOCTYPE html>
@@ -2131,14 +2341,18 @@ const formController = {
 </body>
 </html>`;
 
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.send(html);
     } catch (error) {
-      console.error('Success page error:', error);
-      res.status(500).json({ success: false, error: 'Failed to load success page', message: error.message });
+      console.error("Success page error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to load success page",
+        message: error.message,
+      });
     }
-  }
+  },
 };
 
 module.exports = formController;
