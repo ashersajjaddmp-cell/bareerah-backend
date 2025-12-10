@@ -1,60 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vendor Login - Bareerah</title>
-  <link rel="stylesheet" href="dashboard/css/styles.css">
-</head>
-<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">
-  <div style="background: var(--glass-bg); padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 400px; width: 100%;">
-    <h1 style="text-align: center; margin-bottom: 30px;">🚕 Bareerah Vendor</h1>
-    
-    <form id="vendorLoginForm" style="display: grid; gap: 15px;">
-      <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 600;">📧 Email</label>
-        <input type="email" id="vendorEmail" placeholder="vendor@email.com" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em;">
-      </div>
-      <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 600;">🔐 Password</label>
-        <input type="password" id="vendorPassword" placeholder="••••••••" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em;">
-      </div>
-      <button type="submit" style="padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer;">Login</button>
-    </form>
-    
-    <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
-    
-    <p style="text-align: center; margin-bottom: 15px;">New Vendor?</p>
-    <button onclick="window.location.href='/vendor-signup.html'" style="width: 100%; padding: 12px; background: transparent; color: #667eea; border: 2px solid #667eea; border-radius: 8px; font-size: 1em; cursor: pointer;">Sign Up</button>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendor Login - Star Skyline Limousine</title>
+    <link rel="stylesheet" href="dashboard/css/styles.css" />
+  </head>
+  <body
+    style="
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    "
+  >
+    <div
+      style="
+        background: var(--glass-bg);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 100%;
+      "
+    >
+      <h1 style="text-align: center; margin-bottom: 30px">
+        🚕 Star Skyline Limousine Vendor
+      </h1>
 
-  <script>
-    const API_BASE = window.location.origin + '/api';
-    
-    document.getElementById('vendorLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('vendorEmail').value;
-      const password = document.getElementById('vendorPassword').value;
-      
-      try {
-        const response = await fetch(`${API_BASE}/vendor-auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+      <form id="vendorLoginForm" style="display: grid; gap: 15px">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600"
+            >📧 Email</label
+          >
+          <input
+            type="email"
+            id="vendorEmail"
+            placeholder="vendor@email.com"
+            required
+            style="
+              width: 100%;
+              padding: 12px;
+              border: 1px solid var(--border-color);
+              border-radius: 8px;
+              font-size: 1em;
+            "
+          />
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600"
+            >🔐 Password</label
+          >
+          <input
+            type="password"
+            id="vendorPassword"
+            placeholder="••••••••"
+            required
+            style="
+              width: 100%;
+              padding: 12px;
+              border: 1px solid var(--border-color);
+              border-radius: 8px;
+              font-size: 1em;
+            "
+          />
+        </div>
+        <button
+          type="submit"
+          style="
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+          "
+        >
+          Login
+        </button>
+      </form>
+
+      <hr
+        style="
+          margin: 20px 0;
+          border: none;
+          border-top: 1px solid var(--border-color);
+        "
+      />
+
+      <p style="text-align: center; margin-bottom: 15px">New Vendor?</p>
+      <button
+        onclick="window.location.href='/vendor-signup.html'"
+        style="
+          width: 100%;
+          padding: 12px;
+          background: transparent;
+          color: #667eea;
+          border: 2px solid #667eea;
+          border-radius: 8px;
+          font-size: 1em;
+          cursor: pointer;
+        "
+      >
+        Sign Up
+      </button>
+    </div>
+
+    <script>
+      const API_BASE = window.location.origin + "/api";
+
+      document
+        .getElementById("vendorLoginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("vendorEmail").value;
+          const password = document.getElementById("vendorPassword").value;
+
+          try {
+            const response = await fetch(`${API_BASE}/vendor-auth/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              localStorage.setItem("vendor_token", result.token);
+              localStorage.setItem("vendor", JSON.stringify(result.vendor));
+              window.location.href = "/vendor-dashboard.html";
+            } else {
+              alert(`❌ ${result.error}`);
+            }
+          } catch (error) {
+            alert("Login failed");
+          }
         });
-        
-        const result = await response.json();
-        if (result.success) {
-          localStorage.setItem('vendor_token', result.token);
-          localStorage.setItem('vendor', JSON.stringify(result.vendor));
-          window.location.href = '/vendor-dashboard.html';
-        } else {
-          alert(`❌ ${result.error}`);
-        }
-      } catch (error) {
-        alert('Login failed');
-      }
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

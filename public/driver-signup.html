@@ -1,66 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Driver Registration - Bareerah</title>
-  <link rel="stylesheet" href="dashboard/css/styles.css">
-</head>
-<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px;">
-  <div style="background: var(--glass-bg); padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;">
-    <h1 style="text-align: center; margin-bottom: 30px;">🚗 Driver Registration</h1>
-    
-    <form id="driverSignupForm" style="display: grid; gap: 15px;">
-      <input type="text" id="driverName" placeholder="Full Name" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="email" id="driverEmail" placeholder="Email" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="tel" id="driverPhone" placeholder="Phone (+971...)" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="password" id="driverPassword" placeholder="Password" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="text" id="licenseNumber" placeholder="License Number (Required)" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="text" id="nationalId" placeholder="National ID" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="date" id="dateOfBirth" placeholder="Date of Birth" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="text" id="bankAccountNumber" placeholder="Bank Account Number" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      <input type="text" id="bankName" placeholder="Bank Name" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
-      
-      <button type="submit" style="padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer;">Submit for Approval</button>
-    </form>
-    
-    <p style="text-align: center; margin-top: 20px; font-size: 0.9em; color: rgba(255,255,255,0.7);">Already registered? <a href="/driver-login.html" style="color: #667eea; text-decoration: none;">Login here</a></p>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Driver Registration - Star Skyline Limousine</title>
+    <link rel="stylesheet" href="dashboard/css/styles.css" />
+  </head>
+  <body
+    style="
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    "
+  >
+    <div
+      style="
+        background: var(--glass-bg);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+      "
+    >
+      <h1 style="text-align: center; margin-bottom: 30px">
+        🚗 Driver Registration
+      </h1>
 
-  <script>
-    const API_BASE = window.location.origin + '/api';
-    
-    document.getElementById('driverSignupForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      try {
-        const response = await fetch(`${API_BASE}/driver-auth/signup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: document.getElementById('driverName').value,
-            email: document.getElementById('driverEmail').value,
-            phone: document.getElementById('driverPhone').value,
-            password: document.getElementById('driverPassword').value,
-            license_number: document.getElementById('licenseNumber').value,
-            national_id: document.getElementById('nationalId').value,
-            date_of_birth: document.getElementById('dateOfBirth').value,
-            bank_account_number: document.getElementById('bankAccountNumber').value,
-            bank_name: document.getElementById('bankName').value
-          })
+      <form id="driverSignupForm" style="display: grid; gap: 15px">
+        <input
+          type="text"
+          id="driverName"
+          placeholder="Full Name"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="email"
+          id="driverEmail"
+          placeholder="Email"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="tel"
+          id="driverPhone"
+          placeholder="Phone (+971...)"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="password"
+          id="driverPassword"
+          placeholder="Password"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="text"
+          id="licenseNumber"
+          placeholder="License Number (Required)"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="text"
+          id="nationalId"
+          placeholder="National ID"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="date"
+          id="dateOfBirth"
+          placeholder="Date of Birth"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="text"
+          id="bankAccountNumber"
+          placeholder="Bank Account Number"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+        <input
+          type="text"
+          id="bankName"
+          placeholder="Bank Name"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+          "
+        />
+
+        <button
+          type="submit"
+          style="
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+          "
+        >
+          Submit for Approval
+        </button>
+      </form>
+
+      <p
+        style="
+          text-align: center;
+          margin-top: 20px;
+          font-size: 0.9em;
+          color: rgba(255, 255, 255, 0.7);
+        "
+      >
+        Already registered?
+        <a
+          href="/driver-login.html"
+          style="color: #667eea; text-decoration: none"
+          >Login here</a
+        >
+      </p>
+    </div>
+
+    <script>
+      const API_BASE = window.location.origin + "/api";
+
+      document
+        .getElementById("driverSignupForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          try {
+            const response = await fetch(`${API_BASE}/driver-auth/signup`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: document.getElementById("driverName").value,
+                email: document.getElementById("driverEmail").value,
+                phone: document.getElementById("driverPhone").value,
+                password: document.getElementById("driverPassword").value,
+                license_number: document.getElementById("licenseNumber").value,
+                national_id: document.getElementById("nationalId").value,
+                date_of_birth: document.getElementById("dateOfBirth").value,
+                bank_account_number:
+                  document.getElementById("bankAccountNumber").value,
+                bank_name: document.getElementById("bankName").value,
+              }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              alert(
+                "✅ Registration submitted! Admin will review and approve your request.",
+              );
+              window.location.href = "/driver-login.html";
+            } else {
+              alert(`❌ ${result.error}`);
+            }
+          } catch (error) {
+            alert("Registration failed");
+          }
         });
-        
-        const result = await response.json();
-        if (result.success) {
-          alert('✅ Registration submitted! Admin will review and approve your request.');
-          window.location.href = '/driver-login.html';
-        } else {
-          alert(`❌ ${result.error}`);
-        }
-      } catch (error) {
-        alert('Registration failed');
-      }
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
