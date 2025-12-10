@@ -100,7 +100,7 @@ const UAE_LOCATIONS = [
   "Fujairah Airport",
 ];
 
-// Vehicle data with images
+// Vehicle data with images - RATES FROM DATABASE fare_rules
 const VEHICLES = [
   {
     id: "classic",
@@ -110,9 +110,10 @@ const VEHICLES = [
     suitcases: 2,
     image:
       "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=150&fit=crop",
-    baseFare: 99,
-    perKm: 3.5,
-    discount: 30,
+    baseFare: 95,
+    perKm: 1.0,
+    includedKm: 20,
+    discount: 0,
     features: ["Private Transfer", "Meet & Greet", "Free Cancellation"],
   },
   {
@@ -123,9 +124,10 @@ const VEHICLES = [
     suitcases: 2,
     image:
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=150&fit=crop",
-    baseFare: 129,
-    perKm: 4.2,
-    discount: 50,
+    baseFare: 105,
+    perKm: 1.0,
+    includedKm: 20,
+    discount: 0,
     features: [
       "Private Transfer",
       "Meet & Greet",
@@ -141,9 +143,10 @@ const VEHICLES = [
     suitcases: 4,
     image:
       "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=300&h=150&fit=crop",
-    baseFare: 149,
-    perKm: 4.8,
-    discount: 50,
+    baseFare: 108,
+    perKm: 1.0,
+    includedKm: 20,
+    discount: 0,
     features: [
       "Private Transfer",
       "Meet & Greet",
@@ -159,9 +162,10 @@ const VEHICLES = [
     suitcases: 7,
     image:
       "https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=300&h=150&fit=crop",
-    baseFare: 199,
-    perKm: 5.5,
-    discount: 30,
+    baseFare: 165,
+    perKm: 2.0,
+    includedKm: 20,
+    discount: 0,
     features: [
       "Private Transfer",
       "Meet & Greet",
@@ -177,9 +181,10 @@ const VEHICLES = [
     suitcases: 4,
     image:
       "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=300&h=150&fit=crop",
-    baseFare: 249,
-    perKm: 6.5,
-    discount: 30,
+    baseFare: 170,
+    perKm: 1.8,
+    includedKm: 20,
+    discount: 0,
     features: [
       "Private Transfer",
       "Meet & Greet",
@@ -195,9 +200,10 @@ const VEHICLES = [
     suitcases: 2,
     image:
       "https://images.unsplash.com/photo-1563720223185-11003d516935?w=300&h=150&fit=crop",
-    baseFare: 399,
-    perKm: 8.5,
-    discount: 30,
+    baseFare: 450,
+    perKm: 1.75,
+    includedKm: 40,
+    discount: 0,
     features: [
       "Private Transfer",
       "Meet & Greet",
@@ -1166,15 +1172,25 @@ const formController = {
 
     function calculatePrice(vehicle) {
       let price;
+      const includedKm = vehicle.includedKm || 20;
+      
       if (BOOKING_TYPE === 'hourly') {
         price = vehicle.baseFare * HOURS;
       } else if (BOOKING_TYPE === 'round_trip') {
-        price = vehicle.baseFare + (vehicle.perKm * DISTANCE * 2);
+        const totalDistance = DISTANCE * 2;
+        if (totalDistance > includedKm) {
+          price = vehicle.baseFare + ((totalDistance - includedKm) * vehicle.perKm);
+        } else {
+          price = vehicle.baseFare;
+        }
       } else {
-        price = vehicle.baseFare + (vehicle.perKm * DISTANCE);
+        if (DISTANCE > includedKm) {
+          price = vehicle.baseFare + ((DISTANCE - includedKm) * vehicle.perKm);
+        } else {
+          price = vehicle.baseFare;
+        }
       }
-      const originalPrice = price / (1 - vehicle.discount/100);
-      return { original: Math.round(originalPrice), final: Math.round(price) };
+      return { original: Math.round(price), final: Math.round(price) };
     }
 
     function renderVehicles() {
@@ -1198,9 +1214,7 @@ const formController = {
               <div class="vehicle-type">Private Transfer  <i class="fas fa-star" style="color:#ffc107;margin-left:5px;"></i> Porter Service</div>
             </div>
             <div class="vehicle-pricing">
-              <div class="discount-badge \${v.discount >= 50 ? 'gold' : ''}">\${v.discount}% OFF</div>
-              <div class="price-label">Total Return Price</div>
-              <div class="price-original">AED \${prices.original}</div>
+              <div class="price-label">Total Price</div>
               <div class="price-final">AED \${prices.final}<small>.00</small></div>
               <div class="price-note">Includes VAT & Fees</div>
               <button class="btn-select" onclick="selectVehicle('\${v.id}', \${prices.final})">Select</button>
