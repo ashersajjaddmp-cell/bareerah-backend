@@ -1581,6 +1581,28 @@ function exportBookings(format) {
   }).catch(e => console.error('Export error:', e));
 }
 
+function exportKPIReport(format) {
+  const token = localStorage.getItem('token');
+  const range = document.querySelector('.filter-group .filter-btn.active')?.dataset?.range || 'month';
+  const totalRev = document.getElementById('kpi-total-revenue').textContent.replace('AED ', '');
+  const vendorComm = document.getElementById('kpi-vendor-commission').textContent.replace('AED ', '');
+  const profit = document.getElementById('kpi-company-profit').textContent.replace('AED ', '');
+  const margin = document.getElementById('kpi-profit-margin').textContent;
+  
+  let csv = 'KPI Report - ' + range.charAt(0).toUpperCase() + range.slice(1) + '\n\n';
+  csv += 'Total Revenue (AED),' + totalRev + '\n';
+  csv += 'Vendor Commission (AED),' + vendorComm + '\n';
+  csv += 'Company Profit (AED),' + profit + '\n';
+  csv += 'Profit Margin (%),' + margin + '\n';
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const objUrl = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = objUrl;
+  a.download = 'kpi-report-' + range + '.' + format;
+  a.click();
+}
+
 async function openAddBookingModal() {
   const modal = document.getElementById('addBookingModal');
   if (modal) {

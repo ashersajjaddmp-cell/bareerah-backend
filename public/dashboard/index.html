@@ -223,32 +223,35 @@
                 <button
                   class="filter-btn active"
                   data-range="today"
-                  onclick="loadKPI()"
+                  onclick="this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadKPI();"
                 >
                   Today
                 </button>
                 <button
                   class="filter-btn"
                   data-range="yesterday"
-                  onclick="loadKPI()"
+                  onclick="this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadKPI();"
                 >
                   Yesterday
                 </button>
                 <button
                   class="filter-btn"
                   data-range="week"
-                  onclick="loadKPI()"
+                  onclick="this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadKPI();"
                 >
                   This Week
                 </button>
                 <button
                   class="filter-btn"
                   data-range="month"
-                  onclick="loadKPI()"
+                  onclick="this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadKPI();"
                 >
                   This Month
                 </button>
               </div>
+              <button class="btn btn-primary" onclick="exportKPIReport('csv')">
+                📥 Export CSV
+              </button>
             </div>
 
             <!-- KPI Cards -->
