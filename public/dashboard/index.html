@@ -243,7 +243,13 @@
               <div class="stat-card glass drag-handle" data-card-id="customer-funnels">
                 <div class="card-drag-indicator">⋮⋮</div>
                 <div class="stat-header">
-                  <div class="stat-label">🔗 Customer Funnels (30 Days)</div>
+                  <div class="stat-label">🔗 Customer Funnels</div>
+                  <select id="funnelsFilter" style="padding: 6px 10px; font-size: 12px; border-radius: 6px; border: 1px solid #ccc; background: white; color: #333; cursor: pointer;" onchange="loadCustomerFunnels(this.value)">
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="week">This Week</option>
+                    <option value="month" selected>This Month</option>
+                  </select>
                 </div>
                 <div id="customer-funnels-list" style="padding: 15px 0;"></div>
               </div>
@@ -266,9 +272,19 @@
                 <div class="stat-header">
                   <div class="stat-label">📍 Rides Yet to Assign</div>
                 </div>
-                <div style="padding: 20px 0; text-align: center;">
-                  <div style="font-size: 36px; font-weight: 700; color: #ef4444;" id="unassigned-count">0</div>
-                  <div style="font-size: 13px; color: #666; margin-top: 8px;">Pending & In-Process Rides</div>
+                <div style="padding: 15px 0;">
+                  <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 32px; font-weight: 700; color: #ef4444;" id="unassigned-count">0</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 4px;">Pending & In-Process</div>
+                  </div>
+                  <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; margin-bottom: 12px;">
+                    <div id="pending-bookings-list" style="max-height: 180px; overflow-y: auto;">
+                      <div style="color: #999; text-align: center; padding: 10px; font-size: 12px;">Loading...</div>
+                    </div>
+                  </div>
+                  <button onclick="goToBookingPanel()" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                    View All Bookings →
+                  </button>
                 </div>
               </div>
 

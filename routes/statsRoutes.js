@@ -15,5 +15,6 @@ router.get('/customer-funnels', asyncHandler(statsController.getCustomerFunnels)
 router.get('/revenue-by-type', asyncHandler(statsController.getRevenueByBookingType));
 router.get('/unassigned-rides', asyncHandler(statsController.getUnassignedRides));
 router.get('/accept-assigned-ratio', asyncHandler(statsController.getAcceptAssignedRatio));
+router.get('/pending-bookings', asyncHandler(statsController.getPendingBookings));
 
 module.exports = router;

@@ -183,20 +183,20 @@ const Stats = {
 
   async getUpcomingBookings() {
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const tomorrowEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0];
+    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString().split('T')[0];
+    const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString().split('T')[0];
+    const tomorrowEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2).toISOString().split('T')[0];
 
     const todayResult = await query(`
       SELECT COUNT(*) as count FROM bookings 
-      WHERE pickup_time >= $1 AND pickup_time < $2 AND status IN ('pending', 'in-process')
-    `, [todayStart, todayEnd]);
+      WHERE (DATE(pickup_time) = $1 OR DATE(created_at) = $1) AND status IN ('pending', 'in-process')
+    `, [todayStart]);
 
     const tomorrowResult = await query(`
       SELECT COUNT(*) as count FROM bookings 
-      WHERE pickup_time >= $1 AND pickup_time < $2 AND status IN ('pending', 'in-process')
-    `, [tomorrowStart, tomorrowEnd]);
+      WHERE (DATE(pickup_time) = $1 OR DATE(created_at) = $1) AND status IN ('pending', 'in-process')
+    `, [tomorrowStart]);
 
     return {
       today: parseInt(todayResult.rows[0]?.count || 0),
@@ -244,7 +244,17 @@ const Stats = {
     };
   },
 
-  async getCustomerFunnels() {
+  async getCustomerFunnels(range = 'month') {
+    const dates = await this.getDateRange(range);
+    let startDate = dates?.startDate;
+    let endDate = dates?.endDate;
+
+    if (!startDate || !endDate) {
+      const now = new Date();
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString().split('T')[0];
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    }
+
     const result = await query(`
       SELECT 
         booking_source,
@@ -252,10 +262,10 @@ const Stats = {
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
         ROUND(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as conversion_rate
       FROM bookings
-      WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+      WHERE created_at >= $1 AND created_at < $2
       GROUP BY booking_source
       ORDER BY count DESC
-    `, []);
+    `, [startDate, endDate]);
 
     return result.rows;
   },
@@ -330,6 +340,25 @@ const Stats = {
       total_rides: total,
       accept_ratio_percentage: parseFloat(ratio)
     };
+  },
+
+  async getPendingBookings() {
+    const result = await query(`
+      SELECT id, customer_name, pickup_location, dropoff_location, status, created_at
+      FROM bookings
+      WHERE driver_id IS NULL AND status IN ('pending', 'in-process')
+      ORDER BY created_at DESC
+      LIMIT 5
+    `, []);
+
+    return result.rows.map(r => ({
+      id: r.id,
+      customer_name: r.customer_name,
+      pickup: r.pickup_location,
+      dropoff: r.dropoff_location,
+      status: r.status,
+      created_at: r.created_at
+    }));
   }
 };
 

@@ -1396,7 +1396,7 @@ async function loadBookings() {
       const updatedTime = new Date(b.updated_at);
       const createdStr = formatDubaiDateTime(createdTime);
       const updatedStr = formatDubaiDateTime(updatedTime);
-      return '<tr><td>' + b.id.substring(0, 8) + '</td><td><span style="padding: 3px 8px; border-radius: 12px; background: ' + sourceColor + '22; color: ' + sourceColor + '; font-size: 11px; font-weight: 600; white-space: nowrap;">' + sourceLabel + '</span></td><td>' + b.customer_name + '</td><td>' + b.customer_phone + '</td><td>' + b.pickup_location + '</td><td>' + b.dropoff_location + '</td><td>' + b.distance_km + '</td><td>' + bookingTypeIcon + '</td><td>AED ' + (b.fare_aed || b.total_fare || 0) + '</td><td>' + driverDisplay + '</td><td>' + paymentDisplay + '</td><td>' + statusDisplay + '</td><td style="font-size: 12px;">' + createdStr + '</td><td style="font-size: 12px;">' + updatedStr + '</td><td><button onclick="viewBooking(\'' + b.id + '\')" class="btn-small">View</button> <button onclick="editBooking(\'' + b.id + '\')" class="btn-small">Edit</button></td></tr>';
+      return '<tr data-booking-id="' + b.id + '"><td>' + b.id.substring(0, 8) + '</td><td><span style="padding: 3px 8px; border-radius: 12px; background: ' + sourceColor + '22; color: ' + sourceColor + '; font-size: 11px; font-weight: 600; white-space: nowrap;">' + sourceLabel + '</span></td><td>' + b.customer_name + '</td><td>' + b.customer_phone + '</td><td>' + b.pickup_location + '</td><td>' + b.dropoff_location + '</td><td>' + b.distance_km + '</td><td>' + bookingTypeIcon + '</td><td>AED ' + (b.fare_aed || b.total_fare || 0) + '</td><td>' + driverDisplay + '</td><td>' + paymentDisplay + '</td><td>' + statusDisplay + '</td><td style="font-size: 12px;">' + createdStr + '</td><td style="font-size: 12px;">' + updatedStr + '</td><td><button onclick="viewBooking(\'' + b.id + '\')" class="btn-small">View</button> <button onclick="editBooking(\'' + b.id + '\')" class="btn-small">Edit</button></td></tr>';
     }).join('');
   } catch (e) {
     const tbody = document.getElementById('bookings-table-body');
@@ -2854,9 +2854,36 @@ async function loadFeatureCards() {
       document.getElementById('earnings-prev-week').textContent = earnings.data.lastWeek.toFixed(2);
     }
 
-    if (funnels.success && funnels.data.length) {
-      const funnelHtml = funnels.data.map(f => {
-        const source = f.booking_source === 'bareerah_ai' ? '📱 Bareerah AI' : f.booking_source === 'manually_created' ? '👤 Manual' : f.booking_source || 'Unknown';
+
+    // Load revenue by type with default 'month'
+    await loadRevenueByType('month');
+    
+    // Load unassigned rides and accept ratio and pending bookings
+    await Promise.all([
+      loadUnassignedRides(),
+      loadAcceptAssignedRatio(),
+      loadPendingBookings()
+    ]);
+    
+    // Load funnels with default range
+    await loadCustomerFunnels('month');
+    
+    initDragDrop();
+  } catch (e) {
+    console.error('Error loading feature cards:', e);
+  }
+}
+
+// Load customer funnels with range filter
+async function loadCustomerFunnels(range = 'month') {
+  try {
+    const url = `${API_BASE}/stats/customer-funnels?range=${range}`;
+    const response = await fetch(url, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await response.json();
+
+    if (data.success && data.data && data.data.length) {
+      const funnelHtml = data.data.map(f => {
+        const source = f.booking_source === 'bareerah_ai' ? '📱 Bareerah AI' : f.booking_source === 'manually_created' ? '👤 Manual' : f.booking_source || 'WordPress';
         return `<div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span>${source}</span>
@@ -2869,20 +2896,11 @@ async function loadFeatureCards() {
         </div>`;
       }).join('');
       document.getElementById('customer-funnels-list').innerHTML = funnelHtml;
+    } else {
+      document.getElementById('customer-funnels-list').innerHTML = '<div style="color: #999; padding: 10px; text-align: center;">No data available</div>';
     }
-
-    // Load revenue by type with default 'month'
-    await loadRevenueByType('month');
-    
-    // Load unassigned rides and accept ratio
-    await Promise.all([
-      loadUnassignedRides(),
-      loadAcceptAssignedRatio()
-    ]);
-    
-    initDragDrop();
   } catch (e) {
-    console.error('Error loading feature cards:', e);
+    console.error('Error loading customer funnels:', e);
   }
 }
 
@@ -2946,6 +2964,62 @@ async function loadAcceptAssignedRatio() {
   } catch (e) {
     console.error('Error loading accept assigned ratio:', e);
   }
+}
+
+// Load pending bookings list
+async function loadPendingBookings() {
+  try {
+    const response = await fetch(`${API_BASE}/stats/pending-bookings`, { 
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } 
+    });
+    const data = await response.json();
+    if (data.success && data.data && data.data.length) {
+      const bookingsHtml = data.data.map(b => {
+        const statusColor = b.status === 'pending' ? '#fbbf24' : '#3b82f6';
+        const shortId = b.id.substring(0, 8);
+        return `<div style="padding: 8px; background: #f9fafb; border-radius: 4px; margin-bottom: 6px; border-left: 3px solid ${statusColor};">
+          <div style="font-size: 11px; font-weight: 700; color: #1f2937;">
+            <a href="#" onclick="goToBookingDetail('${b.id}'); return false;" style="color: #3b82f6; text-decoration: none; cursor: pointer;">
+              ${shortId}...
+            </a>
+            <span style="color: ${statusColor}; margin-left: 8px;">${b.status.toUpperCase()}</span>
+          </div>
+          <div style="font-size: 10px; color: #666; margin-top: 4px;">
+            👤 ${b.customer_name || 'Unknown'}
+          </div>
+          <div style="font-size: 10px; color: #666;">
+            📍 ${(b.pickup || '').substring(0, 15)}...
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('pending-bookings-list').innerHTML = bookingsHtml;
+    } else {
+      document.getElementById('pending-bookings-list').innerHTML = '<div style="color: #999; text-align: center; padding: 10px; font-size: 12px;">No pending bookings</div>';
+    }
+  } catch (e) {
+    console.error('Error loading pending bookings:', e);
+    document.getElementById('pending-bookings-list').innerHTML = '<div style="color: #999; text-align: center; padding: 10px; font-size: 12px;">Error loading</div>';
+  }
+}
+
+// Navigate to booking detail
+function goToBookingDetail(bookingId) {
+  // Navigate to bookings tab and filter
+  document.querySelector('[data-page="bookings"]').click();
+  localStorage.setItem('selectedBookingId', bookingId);
+  setTimeout(() => {
+    const bookingRow = document.querySelector(`[data-booking-id="${bookingId}"]`);
+    if (bookingRow) {
+      bookingRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      bookingRow.style.backgroundColor = '#fef3c7';
+      setTimeout(() => bookingRow.style.backgroundColor = '', 2000);
+    }
+  }, 500);
+}
+
+// Navigate to booking panel
+function goToBookingPanel() {
+  document.querySelector('[data-page="bookings"]').click();
 }
 
 // Initialize drag-drop

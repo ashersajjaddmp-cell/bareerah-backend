@@ -173,7 +173,8 @@ const statsController = {
 
   async getCustomerFunnels(req, res, next) {
     try {
-      const data = await Stats.getCustomerFunnels();
+      const { range } = req.query;
+      const data = await Stats.getCustomerFunnels(range || 'month');
       res.json({ success: true, data });
     } catch (error) {
       next(error);
@@ -202,6 +203,15 @@ const statsController = {
   async getAcceptAssignedRatio(req, res, next) {
     try {
       const data = await Stats.getAcceptedAssignedRatio();
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getPendingBookings(req, res, next) {
+    try {
+      const data = await Stats.getPendingBookings();
       res.json({ success: true, data });
     } catch (error) {
       next(error);
