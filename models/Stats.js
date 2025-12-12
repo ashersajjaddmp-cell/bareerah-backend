@@ -260,7 +260,20 @@ const Stats = {
     return result.rows;
   },
 
-  async getRevenueByBookingType() {
+  async getRevenueByBookingType(range = 'month') {
+    const dates = await this.getDateRange(range);
+    let startDate, endDate;
+    
+    if (dates) {
+      startDate = dates.startDate;
+      endDate = dates.endDate;
+    } else {
+      // Default to last 30 days
+      const now = new Date();
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString().split('T')[0];
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    }
+
     const result = await query(`
       SELECT 
         CASE 
@@ -271,16 +284,20 @@ const Stats = {
         COUNT(*) as trips,
         COALESCE(SUM(CASE WHEN status = 'completed' THEN fare_aed ELSE 0 END), 0) as revenue
       FROM bookings
-      WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+      WHERE created_at >= $1 AND created_at < $2
       GROUP BY CASE 
           WHEN pickup_location ILIKE '%airport%' OR dropoff_location ILIKE '%airport%' THEN 'Airport Transfer'
           WHEN booking_type = 'hourly' THEN 'Hourly Rental'
           ELSE 'Point to Point'
         END
       ORDER BY revenue DESC
-    `, []);
+    `, [startDate, endDate]);
 
-    return result.rows;
+    return result.rows.map(r => ({
+      booking_type: r.booking_type,
+      trips: parseInt(r.trips),
+      revenue: parseFloat(r.revenue)
+    }));
   }
 };
 

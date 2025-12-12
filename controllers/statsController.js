@@ -182,7 +182,8 @@ const statsController = {
 
   async getRevenueByBookingType(req, res, next) {
     try {
-      const data = await Stats.getRevenueByBookingType();
+      const { range } = req.query;
+      const data = await Stats.getRevenueByBookingType(range || 'month');
       res.json({ success: true, data });
     } catch (error) {
       next(error);

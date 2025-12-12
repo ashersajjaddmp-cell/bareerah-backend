@@ -2836,11 +2836,10 @@ if (rentalRulesNav) {
 // Load new feature cards
 async function loadFeatureCards() {
   try {
-    const [upcoming, earnings, funnels, revenueType] = await Promise.all([
+    const [upcoming, earnings, funnels] = await Promise.all([
       fetch(`${API_BASE}/stats/upcoming-bookings`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(r => r.json()),
       fetch(`${API_BASE}/stats/earnings-comparison`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(r => r.json()),
-      fetch(`${API_BASE}/stats/customer-funnels`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(r => r.json()),
-      fetch(`${API_BASE}/stats/revenue-by-type`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(r => r.json())
+      fetch(`${API_BASE}/stats/customer-funnels`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(r => r.json())
     ]);
 
     if (upcoming.success) {
@@ -2872,23 +2871,41 @@ async function loadFeatureCards() {
       document.getElementById('customer-funnels-list').innerHTML = funnelHtml;
     }
 
-    if (revenueType.success && revenueType.data.length) {
+    // Load revenue by type with default 'month'
+    await loadRevenueByType('month');
+    
+    initDragDrop();
+  } catch (e) {
+    console.error('Error loading feature cards:', e);
+  }
+}
+
+// Load revenue by type with range filter
+async function loadRevenueByType(range = 'month') {
+  try {
+    const url = `${API_BASE}/stats/revenue-by-type?range=${range}`;
+    const response = await fetch(url, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const revenueType = await response.json();
+
+    if (revenueType.success && revenueType.data && revenueType.data.length) {
       const typeHtml = revenueType.data.map(t => {
         const icons = {'Airport Transfer': '✈️', 'Hourly Rental': '⏰', 'Point to Point': '🚗'};
+        const revenue = typeof t.revenue === 'string' ? parseFloat(t.revenue) : t.revenue;
         return `<div style="padding: 10px; background: rgba(59,130,246,0.1); border-radius: 6px; margin-bottom: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span style="font-weight: 600;">${icons[t.booking_type] || '📍'} ${t.booking_type}</span>
-            <span style="color: #10b981; font-weight: 700;">AED ${t.revenue.toFixed(2)}</span>
+            <span style="color: #10b981; font-weight: 700;">AED ${revenue.toFixed(2)}</span>
           </div>
           <div style="font-size: 12px; color: #666;">${t.trips} trips</div>
         </div>`;
       }).join('');
       document.getElementById('revenue-by-type-list').innerHTML = typeHtml;
+    } else {
+      document.getElementById('revenue-by-type-list').innerHTML = '<div style="color: #999; padding: 10px; text-align: center;">No data available</div>';
     }
-
-    initDragDrop();
   } catch (e) {
-    console.error('Error loading feature cards:', e);
+    console.error('Error loading revenue by type:', e);
+    document.getElementById('revenue-by-type-list').innerHTML = '<div style="color: #999; padding: 10px; text-align: center;">Error loading data</div>';
   }
 }
 
