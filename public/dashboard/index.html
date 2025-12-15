@@ -58,6 +58,7 @@
             <a class="nav-item" data-page="drivers-all">All Drivers</a>
             <a class="nav-item" data-page="drivers-online">Online</a>
             <a class="nav-item" data-page="drivers-offline">Offline</a>
+            <a class="nav-item" onclick="openAddDriverModal()">➕ Add New Driver</a>
           </div>
           <div class="nav-submenu-toggle" onclick="toggleSubmenu(this)">
             🚗 Cars ▼
@@ -2019,6 +2020,89 @@
             style="width: 100%"
           >
             Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Driver Add Modal -->
+    <div id="driverAddModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>➕ Add New Driver</h3>
+          <button class="modal-close" onclick="closeModal('driverAddModal')">
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="driverAddId" />
+          <div class="form-group">
+            <label>👤 Driver Name <span style="color: red">*</span></label>
+            <input
+              type="text"
+              id="driverAddName"
+              placeholder="Enter driver name"
+              style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+              "
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>📱 Phone Number <span style="color: red">*</span></label>
+            <input
+              type="tel"
+              id="driverAddPhone"
+              placeholder="Enter phone number"
+              style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+              "
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>🆔 License Number <span style="color: red">*</span></label>
+            <input
+              type="text"
+              id="driverAddLicense"
+              placeholder="Enter license number"
+              style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+              "
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>✅ Status</label>
+            <select
+              id="driverAddStatus"
+              style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+              "
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="on_duty">On Duty</option>
+            </select>
+          </div>
+          <button
+            onclick="saveDriverAdd()"
+            class="btn btn-primary"
+            style="width: 100%; margin-top: 10px"
+          >
+            Add Driver
           </button>
         </div>
       </div>

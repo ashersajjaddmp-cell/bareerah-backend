@@ -31,6 +31,7 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - **Vehicle Categories**: Seven configurable vehicle types (Classic, Executive, First Class, Urban SUV, Luxury SUV, Elite Van, Mini Bus) with distinct base fares, `included_km` thresholds, and per-km rates.
 - **Vendor Management**: Full vendor lifecycle from registration to approval/rejection and auto-assignment control.
 - **Bareerah Integration**: Automatic retry logic (3 attempts with exponential backoff), detailed request/response logging, payload validation, and tagging bookings with `booking_source: bareerah_ai`.
+- **Driver Management**: Add new drivers with admin/operator role restriction via modal form. Drivers auto-enabled for auto-assignment. Created with audit logging.
 
 ## Feature Specifications
 
@@ -40,6 +41,13 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - Fare Rules Management Tab for viewing and editing.
 - Vendors Tab for listing, approving/rejecting, and managing vendor auto-assignment.
 - Analytics: 7-Day Booking Trend, Revenue by Vehicle Type, Top Drivers List with KPI cards and interactive charts.
+
+### Driver Management (NEW - December 15, 2025)
+- **Add New Driver**: Admins/Operators can add drivers via sidebar menu (➕ Add New Driver)
+- **Modal Form**: Name, Phone, License Number, Status (Active/Inactive/On Duty)
+- **Role-Based Access**: Only admin and operator roles can create drivers
+- **Auto-Enable**: New drivers automatically enabled for auto-assignment
+- **Audit Logging**: All driver creation logged for accountability
 
 ### Vendor Management
 - **Registration**: Company info, bank details, logo submitted, saved as "pending."
@@ -71,7 +79,15 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - **Email Service**: Resend (professional HTML emails with luxury design).
 - **Messaging (Planned)**: WhatsApp API.
 
-# Recent Updates (November 30, 2025)
+# Recent Updates (December 15, 2025)
+
+## Driver Management Feature (NEW)
+1. **Add Driver API Endpoint**: POST /api/drivers with admin/operator role check
+2. **Modal UI**: Clean form in sidebar under Drivers menu (➕ Add New Driver)
+3. **Form Fields**: Name, Phone, License Number, Status selector
+4. **Validation**: Required field checks before submission
+5. **Audit Logging**: All driver creations logged for compliance
+6. **Status Options**: Active, Inactive, On Duty (defaults to Active)
 
 ## Phase 2: Hourly Rental System (COMPLETE)
 1. **Hourly Rental Backend** - Full API for 3-14 hour rentals
@@ -93,6 +109,11 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
    - Support contact info
 
 ## New API Endpoints
+- `POST /api/drivers` - Create new driver (admin/operator only)
+- `GET /api/drivers` - List all drivers
+- `GET /api/drivers/available` - Get auto-assignable drivers
+- `GET /api/drivers/:id` - Get specific driver details
+- `PUT /api/drivers/:id` - Update driver info
 - `POST /api/bookings/create-round-trip` - Round-trip bookings
 - `POST /api/bookings/create-multi-stop` - Multi-stop bookings
 - `POST /api/bookings/create-hourly-rental` - Hourly rental bookings
@@ -107,16 +128,25 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 
 ## UI/Dashboard Changes
 - New "⏰ Hourly Rentals" tab in admin dashboard
+- New "➕ Add New Driver" option under Drivers menu
 - Rental rules management table with live calculations
 - Edit modal for updating hourly rates
+- Driver add modal with validation
 - Professional pricing display (3-hour and 14-hour totals)
+
+## Code Changes
+- `controllers/driverController.js` - Added createDriver() for POST endpoint
+- `routes/driverRoutes.js` - Added POST route with role-based middleware
+- `public/dashboard/index.html` - Added "Add New Driver" sidebar button and modal form
+- `public/dashboard/js/app.js` - Added openAddDriverModal() and updated saveDriverChanges() for both add/update
 
 ## Documentation
 - **BAREERAH_HOURLY_RENTAL_GUIDE.md** - Complete integration guide for Bareerah
 - **BAREERAH_NEW_FEATURES_GUIDE.md** - Existing feature documentation
 - All features tested and production-ready
 - Email notifications live (testing mode: sent to aizaz.dmp@gmail.com)
-## Driver Dashboard (NEW - November 30, 2025)
+
+## Driver Dashboard (November 30, 2025)
 - **Full Analytics Dashboard**: 7-day booking trends, earnings breakdown charts
 - **Date Filtering**: Today, Yesterday, This Week, This Month, Custom Date Range
 - **Stats Cards**: Total bookings, completed rides, total earnings, avg rating
@@ -156,11 +186,12 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 ### Bug Fixes
 - **pickup_time** now correctly saved from website form to database
 - **Vehicle colors** - All vehicles now have colors assigned (no more N/A)
+- **WordPress Booking Auto-Assignment** - Fixed critical column name bug (v.vehicle_type → v.type), implemented capacity validation, proper vehicle model/color/driver persistence
 - **API optimization** - Uses `/api/stats/bookings` with pagination parameters
 
 ### Technical Changes
 - `models/Stats.js` - getAllBookings supports pagination (page, limit, offset) and search
 - `controllers/statsController.js` - Accepts page, limit, search query params
-- `controllers/wordpressBookingController.js` - Saves pickup_time to database
+- `controllers/wordpressBookingController.js` - Saves pickup_time to database, fixed auto-assignment column name bug
 - `public/dashboard/js/app.js` - initBookingsFilters() connects dropdowns, renderBookingsPagination()
 - `public/dashboard/index.html` - Added bookingsPagination div

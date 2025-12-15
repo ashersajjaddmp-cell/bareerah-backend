@@ -1931,31 +1931,98 @@ function saveCarChanges() {
 
 function saveDriverChanges() {
   const id = document.getElementById('driverEditId').value;
+  const name = document.getElementById('driverName').value;
+  const phone = document.getElementById('driverPhone').value;
+  const license = document.getElementById('driverLicense').value;
+  const status = document.getElementById('driverStatus').value;
   const token = localStorage.getItem('token');
-  fetch(API_BASE + '/drivers/' + id, {
-    method: 'PUT',
+
+  // Validate required fields
+  if (!name || !phone || !license) {
+    showToast('Name, phone, and license number are required', 'error');
+    return;
+  }
+
+  // Determine if this is add (from driverAddModal) or update (from driverEditModal)
+  const isAdd = !id;
+  const method = isAdd ? 'POST' : 'PUT';
+  const url = isAdd ? API_BASE + '/drivers' : API_BASE + '/drivers/' + id;
+  const driverData = {
+    name: name,
+    phone: phone,
+    license_number: license,
+    status: status
+  };
+
+  fetch(url, {
+    method: method,
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token
     },
-    body: JSON.stringify({
-      name: document.getElementById('driverName').value,
-      phone: document.getElementById('driverPhone').value,
-      email: document.getElementById('driverEmail').value,
-      status: document.getElementById('driverStatus').value,
-      auto_assign: document.getElementById('driverAutoAssign').checked
-    })
+    body: JSON.stringify(driverData)
   }).then(r => r.json()).then(d => {
     if (d.success) {
-      showToast('Driver updated successfully!', 'success');
-      closeModal('driverEditModal');
+      showToast(isAdd ? 'Driver added successfully!' : 'Driver updated successfully!', 'success');
+      closeModal(isAdd ? 'driverAddModal' : 'driverEditModal');
       loadDrivers();
     } else {
-      showToast('Error: ' + (d.error || 'Failed to update driver'), 'error');
+      showToast('Error: ' + (d.error || 'Failed to save driver'), 'error');
     }
   }).catch(e => {
     console.error('Save driver error:', e);
-    showToast('Error saving driver changes', 'error');
+    showToast('Error saving driver: ' + e.message, 'error');
+  });
+}
+
+function openAddDriverModal() {
+  // Clear form fields
+  document.getElementById('driverAddId').value = '';
+  document.getElementById('driverAddName').value = '';
+  document.getElementById('driverAddPhone').value = '';
+  document.getElementById('driverAddLicense').value = '';
+  document.getElementById('driverAddStatus').value = 'active';
+  openModal('driverAddModal');
+}
+
+function saveDriverAdd() {
+  const name = document.getElementById('driverAddName').value;
+  const phone = document.getElementById('driverAddPhone').value;
+  const license = document.getElementById('driverAddLicense').value;
+  const status = document.getElementById('driverAddStatus').value;
+  const token = localStorage.getItem('token');
+
+  // Validate required fields
+  if (!name || !phone || !license) {
+    showToast('Name, phone, and license number are required', 'error');
+    return;
+  }
+
+  const driverData = {
+    name: name,
+    phone: phone,
+    license_number: license,
+    status: status
+  };
+
+  fetch(API_BASE + '/drivers', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify(driverData)
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      showToast('Driver added successfully!', 'success');
+      closeModal('driverAddModal');
+      loadDrivers();
+    } else {
+      showToast('Error: ' + (d.error || 'Failed to add driver'), 'error');
+    }
+  }).catch(e => {
+    console.error('Add driver error:', e);
+    showToast('Error adding driver: ' + e.message, 'error');
   });
 }
 

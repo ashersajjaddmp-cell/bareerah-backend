@@ -95,6 +95,46 @@ const driverController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async createDriver(req, res, next) {
+    try {
+      const { name, phone, license_number, status = 'active' } = req.body;
+      const { query } = require('../config/db');
+      const auditLogger = require('../utils/auditLogger');
+      const user = req.user || { username: 'unknown', role: 'admin' };
+
+      // Validation
+      if (!name || !phone || !license_number) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Name, phone, and license number are required' 
+        });
+      }
+
+      // Create driver
+      const result = await query(`
+        INSERT INTO drivers (name, phone, license_number, status, auto_assign)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+      `, [name, phone, license_number, status, true]);
+
+      const driver = result.rows[0];
+      
+      // Audit log
+      await auditLogger.logChange('driver', driver.id, 'CREATE', 
+        { name, phone, license_number, status }, 
+        user.username, user.username, user.role
+      ).catch(e => console.error('Audit error:', e));
+
+      res.json({
+        success: true,
+        message: 'Driver created successfully',
+        data: driver
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 
