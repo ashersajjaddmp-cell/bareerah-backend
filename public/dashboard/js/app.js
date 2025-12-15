@@ -1982,7 +1982,9 @@ function openAddDriverModal() {
   document.getElementById('driverAddPhone').value = '';
   document.getElementById('driverAddLicense').value = '';
   document.getElementById('driverAddStatus').value = 'active';
-  openModal('driverAddModal');
+  // Show modal
+  document.getElementById('driverAddModal').style.display = 'flex';
+  document.getElementById('modalOverlay').style.display = 'block';
 }
 
 function saveDriverAdd() {
