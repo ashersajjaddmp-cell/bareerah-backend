@@ -103,6 +103,47 @@ function showToast(message, type = 'success') {
   }, 4000);
 }
 
+// Handle auth errors - redirect to login on 401
+function handleAuthError(response, data) {
+  if (response.status === 401 || (data && data.code === 'TOKEN_EXPIRED') || (data && data.code === 'TOKEN_INVALID')) {
+    showToast('Session expired. Redirecting to login...', 'error');
+    localStorage.removeItem('token');
+    setTimeout(() => {
+      window.location.href = '/dashboard/login.html';
+    }, 1500);
+    return true;
+  }
+  return false;
+}
+
+// Safe fetch wrapper that handles auth errors
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/dashboard/login.html';
+    return null;
+  }
+  
+  options.headers = {
+    ...options.headers,
+    'Authorization': 'Bearer ' + token
+  };
+  
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    
+    if (handleAuthError(response, data)) {
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
+  }
+}
+
 // UAE COMPREHENSIVE Locations for Autocomplete (ALL EMIRATES & AREAS - 400+ Locations)
 const UAE_LOCATIONS = [
   // ===== DUBAI (120+ Locations) =====
@@ -2384,7 +2425,15 @@ function createManualBooking() {
       'Authorization': 'Bearer ' + token
     },
     body: JSON.stringify(body)
-  }).then(r => r.json()).then(d => {
+  }).then(async r => {
+    const d = await r.json();
+    // Handle 401 auth errors
+    if (r.status === 401 || d.code === 'TOKEN_EXPIRED' || d.code === 'TOKEN_INVALID') {
+      showToast('Session expired. Please login again.', 'error');
+      localStorage.removeItem('token');
+      setTimeout(() => window.location.href = '/dashboard/login.html', 1500);
+      return;
+    }
     if (d.success) {
       showToast('Booking created successfully!', 'success');
       closeModal('addBookingModal');

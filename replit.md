@@ -19,6 +19,7 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - **Vehicle Color System**: Mandatory 7-color dropdown (Black, White, Silver, Gray, Red, Blue, Gold) included in notifications.
 
 ## Technical Implementations
+- **Authentication System**: JWT-based auth with 24-hour token expiry. Fallback JWT_SECRET ensures consistency. Auth middleware returns specific error codes (TOKEN_EXPIRED, TOKEN_INVALID, AUTH_FAILED). Frontend handles 401 errors gracefully with auto-redirect to login.
 - **Core Logic**: Dynamic slab-based fare calculation based on distance, time, and vehicle type. Fare rules are admin-editable and stored in the database, including `included_km` for slab calculations.
 - **Booking Management**: Supports point-to-point, multi-stop, and round-trip bookings with automated fare calculation and `booking_stops` table for multi-leg journeys. Includes a `notes` field for special instructions.
 - **Booking Assignment**: Automatic driver-vehicle tagging and assignment based on `assigned_vehicle_id` and vehicle's `driver_id`. Manual override and smart vendor vehicle assignment with approval checks.
