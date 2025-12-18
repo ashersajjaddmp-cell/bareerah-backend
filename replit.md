@@ -80,7 +80,20 @@ The application is built on an MVC (Model-View-Controller) architecture using Ex
 - **Email Service**: Resend (professional HTML emails with luxury design).
 - **Messaging (Planned)**: WhatsApp API.
 
-# Recent Updates (December 15, 2025)
+# Recent Updates (December 18, 2025)
+
+## Today Tab - Timezone Fix (NEW)
+1. **Issue**: Today tab was empty while Week tab showed bookings - caused by timezone mismatch
+2. **Root Cause**: Date filter calculations used local server timezone instead of Dubai timezone (Asia/Dubai)
+3. **Solution**: Updated `models/Stats.js` to use moment-timezone library for all date range calculations
+4. **Implementation**: 
+   - Import moment-timezone in Stats.js
+   - Calculate all date ranges (today, yesterday, week, month) in Dubai timezone
+   - Convert to UTC ISO format for database comparison
+   - Properly apply startOfDay (00:00) to endOfDay (23:59) in Dubai timezone
+5. **Result**: Today tab now correctly displays bookings created on current Dubai date with accurate timezone handling
+
+# Previous Updates (December 15, 2025)
 
 ## Driver Management Feature (NEW)
 1. **Add Driver API Endpoint**: POST /api/drivers with admin/operator role check

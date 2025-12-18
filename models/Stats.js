@@ -1,37 +1,42 @@
 const { query } = require('../config/db');
+const moment = require('moment-timezone');
 
 const Stats = {
   async getDateRange(range) {
-    const now = new Date();
+    // Use Dubai timezone (Asia/Dubai) for all date calculations
+    const dubaiTz = 'Asia/Dubai';
+    const now = moment().tz(dubaiTz);
     let startDate, endDate;
 
     switch (range) {
       case 'today':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        // Start of today 00:00 Dubai time, end of today 23:59:59 Dubai time
+        startDate = now.clone().startOf('day').utc();
+        endDate = now.clone().endOf('day').utc().add(1, 'second');
         break;
       case 'yesterday':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        // Start of yesterday 00:00 Dubai time, end of yesterday 23:59:59 Dubai time
+        startDate = now.clone().subtract(1, 'day').startOf('day').utc();
+        endDate = now.clone().subtract(1, 'day').endOf('day').utc().add(1, 'second');
         break;
       case 'week':
-        const d = new Date();
-        const day = d.getDay();
-        const diff = d.getDate() - day;
-        startDate = new Date(d.setDate(diff));
-        startDate.setHours(0, 0, 0, 0);
-        endDate = new Date();
-        endDate.setDate(endDate.getDate() + 1);
+        // Start of week (Sunday) 00:00 Dubai time, end of today Dubai time
+        startDate = now.clone().startOf('week').utc();
+        endDate = now.clone().endOf('day').utc().add(1, 'second');
         break;
       case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        // Start of month 00:00 Dubai time, end of month 23:59:59 Dubai time
+        startDate = now.clone().startOf('month').utc();
+        endDate = now.clone().endOf('month').utc().add(1, 'second');
         break;
       default:
         return null;
     }
 
-    return { startDate: startDate.toISOString().split('T')[0], endDate: endDate.toISOString().split('T')[0] };
+    return { 
+      startDate: startDate.toISOString(), 
+      endDate: endDate.toISOString() 
+    };
   },
 
   async getSummary(startDate, endDate) {
