@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.11 (b740647)
+-- Dumped from database version 16.11 (f45eb12)
 -- Dumped by pg_dump version 16.5
 
 SET statement_timeout = 0;
@@ -24,7 +24,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
@@ -35,7 +35,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: audit_logs; Type: TABLE; Schema: public; Owner: -
+-- Name: audit_logs; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.audit_logs (
@@ -52,8 +52,10 @@ CREATE TABLE public.audit_logs (
 );
 
 
+ALTER TABLE public.audit_logs OWNER TO neondb_owner;
+
 --
--- Name: booking_stops; Type: TABLE; Schema: public; Owner: -
+-- Name: booking_stops; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.booking_stops (
@@ -69,8 +71,10 @@ CREATE TABLE public.booking_stops (
 );
 
 
+ALTER TABLE public.booking_stops OWNER TO neondb_owner;
+
 --
--- Name: bookings; Type: TABLE; Schema: public; Owner: -
+-- Name: bookings; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.bookings (
@@ -111,8 +115,10 @@ CREATE TABLE public.bookings (
 );
 
 
+ALTER TABLE public.bookings OWNER TO neondb_owner;
+
 --
--- Name: car_images; Type: TABLE; Schema: public; Owner: -
+-- Name: car_images; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.car_images (
@@ -125,8 +131,10 @@ CREATE TABLE public.car_images (
 );
 
 
+ALTER TABLE public.car_images OWNER TO neondb_owner;
+
 --
--- Name: customers; Type: TABLE; Schema: public; Owner: -
+-- Name: customers; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.customers (
@@ -142,8 +150,10 @@ CREATE TABLE public.customers (
 );
 
 
+ALTER TABLE public.customers OWNER TO neondb_owner;
+
 --
--- Name: customers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: customers_id_seq; Type: SEQUENCE; Schema: public; Owner: neondb_owner
 --
 
 CREATE SEQUENCE public.customers_id_seq
@@ -155,15 +165,17 @@ CREATE SEQUENCE public.customers_id_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.customers_id_seq OWNER TO neondb_owner;
+
 --
--- Name: customers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: customers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: neondb_owner
 --
 
 ALTER SEQUENCE public.customers_id_seq OWNED BY public.customers.id;
 
 
 --
--- Name: driver_ratings; Type: TABLE; Schema: public; Owner: -
+-- Name: driver_ratings; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.driver_ratings (
@@ -178,8 +190,10 @@ CREATE TABLE public.driver_ratings (
 );
 
 
+ALTER TABLE public.driver_ratings OWNER TO neondb_owner;
+
 --
--- Name: drivers; Type: TABLE; Schema: public; Owner: -
+-- Name: drivers; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.drivers (
@@ -207,8 +221,10 @@ CREATE TABLE public.drivers (
 );
 
 
+ALTER TABLE public.drivers OWNER TO neondb_owner;
+
 --
--- Name: fare_rules; Type: TABLE; Schema: public; Owner: -
+-- Name: fare_rules; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.fare_rules (
@@ -224,8 +240,10 @@ CREATE TABLE public.fare_rules (
 );
 
 
+ALTER TABLE public.fare_rules OWNER TO neondb_owner;
+
 --
--- Name: notification_logs; Type: TABLE; Schema: public; Owner: -
+-- Name: notification_logs; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.notification_logs (
@@ -242,8 +260,10 @@ CREATE TABLE public.notification_logs (
 );
 
 
+ALTER TABLE public.notification_logs OWNER TO neondb_owner;
+
 --
--- Name: notification_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: notification_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: neondb_owner
 --
 
 CREATE SEQUENCE public.notification_logs_id_seq
@@ -255,15 +275,17 @@ CREATE SEQUENCE public.notification_logs_id_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.notification_logs_id_seq OWNER TO neondb_owner;
+
 --
--- Name: notification_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: notification_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: neondb_owner
 --
 
 ALTER SEQUENCE public.notification_logs_id_seq OWNED BY public.notification_logs.id;
 
 
 --
--- Name: payouts; Type: TABLE; Schema: public; Owner: -
+-- Name: payouts; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.payouts (
@@ -277,8 +299,10 @@ CREATE TABLE public.payouts (
 );
 
 
+ALTER TABLE public.payouts OWNER TO neondb_owner;
+
 --
--- Name: rental_rules; Type: TABLE; Schema: public; Owner: -
+-- Name: rental_rules; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.rental_rules (
@@ -293,8 +317,10 @@ CREATE TABLE public.rental_rules (
 );
 
 
+ALTER TABLE public.rental_rules OWNER TO neondb_owner;
+
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -
+-- Name: users; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.users (
@@ -312,8 +338,10 @@ CREATE TABLE public.users (
 );
 
 
+ALTER TABLE public.users OWNER TO neondb_owner;
+
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: neondb_owner
 --
 
 CREATE SEQUENCE public.users_id_seq
@@ -325,15 +353,17 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.users_id_seq OWNER TO neondb_owner;
+
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: neondb_owner
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: vehicles; Type: TABLE; Schema: public; Owner: -
+-- Name: vehicles; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.vehicles (
@@ -357,8 +387,10 @@ CREATE TABLE public.vehicles (
 );
 
 
+ALTER TABLE public.vehicles OWNER TO neondb_owner;
+
 --
--- Name: vendor_payouts; Type: TABLE; Schema: public; Owner: -
+-- Name: vendor_payouts; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.vendor_payouts (
@@ -371,8 +403,10 @@ CREATE TABLE public.vendor_payouts (
 );
 
 
+ALTER TABLE public.vendor_payouts OWNER TO neondb_owner;
+
 --
--- Name: vendors; Type: TABLE; Schema: public; Owner: -
+-- Name: vendors; Type: TABLE; Schema: public; Owner: neondb_owner
 --
 
 CREATE TABLE public.vendors (
@@ -394,38 +428,51 @@ CREATE TABLE public.vendors (
 );
 
 
+ALTER TABLE public.vendors OWNER TO neondb_owner;
+
 --
--- Name: customers id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: customers id; Type: DEFAULT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.customers ALTER COLUMN id SET DEFAULT nextval('public.customers_id_seq'::regclass);
 
 
 --
--- Name: notification_logs id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: notification_logs id; Type: DEFAULT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.notification_logs ALTER COLUMN id SET DEFAULT nextval('public.notification_logs_id_seq'::regclass);
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
--- Data for Name: audit_logs; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: audit_logs; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.audit_logs (id, entity_type, entity_id, action, changes, updated_by_id, updated_by_name, user_role, created_at, ip_address) FROM stdin;
 f57818da-62bb-4cd0-aba6-087f3bcb8a0c	driver	bbbb251b-e07d-4434-8c29-9461292d9c51	UPDATE	{"status": {"new": "offline", "old": "online"}}	admin	admin	admin	2025-11-30 01:15:11.075522	\N
+e4a9e492-19f1-46d2-82bf-6a16fba8ab98	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"email": {"new": "", "old": "jawaddigitalminds@gmail.com"}}	admin@example.com	admin@example.com	admin	2026-01-07 14:01:01.329882	\N
+f43ce05b-fdf6-417e-aea2-169ea016be82	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"phone": {"new": "354854874", "old": "+92354854874"}}	admin@example.com	admin@example.com	admin	2026-01-07 15:15:33.233713	\N
+301f839a-5a52-4e1b-8e78-8441db65a2a4	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"email": {"new": "", "old": "jawaddigitalminds@gmail.com"}, "status": {"new": "online", "old": "offline"}}	admin@example.com	admin@example.com	admin	2026-01-07 15:15:48.595081	\N
+d7316504-96ed-43ff-b4d7-a94fcd907cba	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"email": {"new": "", "old": "jawaddigitalminds@gmail.com"}, "status": {"new": "offline", "old": "online"}}	admin@example.com	admin@example.com	admin	2026-01-07 15:16:00.251172	\N
+dbfb2d49-27ee-4585-adb8-32f9753cf796	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"email": {"new": "", "old": "jawaddigitalminds@gmail.com"}, "status": {"new": "online", "old": "offline"}}	admin@example.com	admin@example.com	admin	2026-01-08 08:54:03.515606	\N
+6ae48235-213f-4d09-8641-881f2f432ca9	driver	e9785cd4-837f-4cfa-a535-8a6b3022eea1	UPDATE	{"email": {"new": "", "old": null}}	admin@example.com	admin@example.com	admin	2026-01-08 09:01:04.038099	\N
+a1e2e0a4-f1a7-4665-8c9a-0393f0b8d645	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"email": {"new": "", "old": "jawaddigitalminds@gmail.com"}, "status": {"new": "offline", "old": "online"}}	admin@example.com	admin@example.com	admin	2026-01-08 10:12:11.811709	\N
+c5533a5d-5c3d-455c-a9a1-daf6f831f51d	driver	26bcd573-1af6-4698-8990-8e95a063635a	UPDATE	{"email": {"new": "", "old": null}, "status": {"new": "Approved", "old": "offline"}}	admin@example.com	admin@example.com	admin	2026-01-08 10:23:45.898079	\N
+eba6873b-f1b5-429f-be1f-3e6d35eeec68	driver	417ea360-3044-476e-a769-5a2130d96d7a	UPDATE	{"email": {"new": "", "old": "jawaddigitalminds@gmail.com"}, "status": {"new": "Approved", "old": "offline"}}	admin@example.com	admin@example.com	admin	2026-01-08 12:07:12.805924	\N
+38c9090e-c275-41d3-92fe-888056aebfa8	driver	e9785cd4-837f-4cfa-a535-8a6b3022eea1	UPDATE	{"email": {"new": "", "old": null}, "status": {"new": "Approved", "old": "online"}}	admin@example.com	admin@example.com	admin	2026-01-08 12:24:57.679881	\N
+c1408066-7fe9-416d-8cff-2b39983d8c44	driver	e9785cd4-837f-4cfa-a535-8a6b3022eea1	UPDATE	{"email": {"new": "", "old": null}, "status": {"new": "online", "old": "Approved"}}	admin@example.com	admin@example.com	admin	2026-01-08 12:25:04.252253	\N
 \.
 
 
 --
--- Data for Name: booking_stops; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: booking_stops; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.booking_stops (id, booking_id, stop_number, location, stop_type, duration_minutes, distance_from_previous, created_at, updated_at) FROM stdin;
@@ -457,7 +504,7 @@ c6dbaee0-aaa1-49d9-b72f-eef3b332f9e1	79d7326c-824a-4a98-b421-e66a715191e6	1	Duba
 
 
 --
--- Data for Name: bookings; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: bookings; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.bookings (id, customer_name, customer_phone, pickup_location, dropoff_location, distance_km, fare_aed, vehicle_type, status, created_at, assigned_vehicle_id, vendor_id, external_id, payment_method, driver_id, updated_at, passengers_count, luggage_count, booking_type, caller_number, confirmed_contact_number, customer_email, booking_source, updated_by, vehicle_model, notes, vehicle_color, rental_hours, hourly_rate_aed, pickup_time, flight_arrival_time, flight_departure_time, flight_type, flight_time) FROM stdin;
@@ -720,11 +767,66 @@ de6f5dbb-e4ec-49c8-a71a-4c101861c118	test	+971354854874	Burj Khalifa	Dubai Inter
 5d80dd53-3411-4973-a49e-b907ad0833f2	Aizaz Khan	+9718877992211	Burj Khalifa	DWC	15	119.78	executive	assigned	2025-12-18 12:40:33.742086	7270ab4d-b7f1-4da2-8107-4e7c8d3bf3f6	\N	\N	cash	0aceffab-516f-43dc-8cc4-48bae23dec69	2025-12-18 12:40:33.742086	3	2	point_to_point	\N	\N	aizaz.dmp@gmail.com	wordpress	\N	Lexus ES 300H	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-18 @ 17:39 | Child Seats: 3	Silver	\N	\N	2025-12-18 17:39:00	\N	\N	\N	\N
 a47ddc1c-1b1f-491b-a9be-04cbcfe82e96	Aizaz Khan	03212237788	Dubai Old Town	Emirates Hills	16.4	0	sedan	in-process	2025-12-18 13:08:05.715097	\N	\N	\N	cash	\N	2025-12-18 13:08:05.715097	1	1	point_to_point	\N	\N	a@a.com	manually_created	\N	Honda Civic	\N	\N	\N	\N	2025-12-19 18:07:00	\N	\N	\N	\N
 414428d4-0c65-4b73-85ec-e52554c63031	JIM	030548784564	Al Jahili Fort Al Ain	Al Furjan	11.3	450	luxury	in-process	2025-12-18 14:16:56.004217	ab209cb6-cba3-4f61-b265-380ca4085cb8	\N	\N	cash	\N	2025-12-18 14:16:56.004217	1	1	point_to_point	\N	\N	jim@gmail.com	manually_created	\N	Range Rover	\N	Silver	\N	\N	2025-12-19 21:18:00	\N	\N	\N	\N
+13561e49-9be8-4ce0-89a4-79e9a90a12f9	Aizaz Khan	03212237788	Burj Khalifa	Burj Khalifa	2	0	suv	in-process	2025-12-19 10:14:05.355275	\N	\N	\N	cash	\N	2025-12-19 10:14:05.355275	1	0	point_to_point	\N	\N	a@a.com	manually_created	\N	Ford Explorer	\N	\N	\N	\N	2025-12-19 15:13:00	\N	\N	\N	\N
+115d536f-21fd-49eb-92af-1aa1dcf90005	fazi	+97103545454545	Ajman Airport	Fujairah Airport	15	119.78	executive	assigned	2025-12-19 10:31:12.21085	d32e7b7e-7468-4b71-8fbe-627207d31156	\N	\N	cash	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	2025-12-19 10:31:12.21085	3	2	round_trip	\N	\N	fazi@gmail.com	wordpress	\N	Lexus ES 300H	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-20 @ 16:30 | Return: 2025-12-20 @ 18:33 | Child Seats: 3	Silver	\N	\N	2025-12-20 16:30:00	\N	\N	\N	\N
+1eee2abb-48da-4ddc-9d3f-259bf4ed71ac	jhon	030548784564	Al Jahili Fort Al Ain	Al Furjan	32.6	56.7	suv	in-process	2025-12-19 10:53:04.28237	\N	\N	\N	cash	\N	2025-12-19 10:53:04.28237	1	0	point_to_point	\N	\N	jim@gmail.com	manually_created	\N	Ford Explorer	\N	\N	\N	\N	2025-12-20 18:55:00	\N	\N	\N	\N
+c147b38f-33b8-4c53-8350-e4d5c6eadb29	test	030548784564	Al Jahili Fort Al Ain	Al Furjan	15.3	0	van	in-process	2025-12-19 11:18:20.830982	\N	\N	\N	cash	\N	2025-12-19 11:18:20.830982	1	1	point_to_point	\N	\N	jim@gmail.com	manually_created	\N	Mercedes V Class	\N	\N	\N	\N	2025-12-20 19:21:00	\N	\N	\N	\N
+9af273b9-8b48-4696-b115-7ba25fa494e9	admed	+97103545454545	ahmed	Dubai Airport Terminal 1	15	81.66	executive	assigned	2025-12-19 11:27:59.262772	a828f965-94da-4307-ba82-edbb9be30672	\N	\N	cash	\N	2025-12-19 11:27:59.262772	3	2	point_to_point	\N	\N	digitalminds.pk@gmail.com	wordpress	\N	Tesla Model 3	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-19 @ 16:27 | Child Seats: 3	Black	\N	\N	2025-12-19 16:27:00	\N	\N	\N	\N
+44f1b2c8-b4a7-4a6c-8ae4-0a9d8082b4d7	test	+97103545454545	DWC	Dubai International Airport	15	65.34	classic	assigned	2025-12-19 11:35:42.396181	89ee1ed9-f0d0-4e0d-bd3a-7a76d712f0eb	\N	\N	cash	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	2025-12-19 11:35:42.396181	3	2	point_to_point	\N	\N	digitalminds.pk@gmail.com	wordpress	\N	Toyota Hiace	Child Seats: 1 (Seat: 1, Booster: 0, Infant: 0) | Pickup: 2025-12-19 @ 16:35 | Child Seats: 1	Black	\N	\N	2025-12-19 16:35:00	\N	\N	\N	\N
+b9ca9bb0-cd00-46cb-a3ea-fd34c02e0706	JIM	+97103545454545	Business Bay	Al Maktoum Airport	15	119.78	urban_suv	assigned	2025-12-19 11:37:54.294071	25e647ca-92a5-4c3b-bb54-9b4be85f7a37	\N	\N	card	0aceffab-516f-43dc-8cc4-48bae23dec69	2025-12-19 11:37:54.294071	5	4	point_to_point	\N	\N	digitalminds.pk@gmail.com	wordpress	\N	Toyota Highlander	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-19 @ 16:37 | Child Seats: 3 | WhatsApp: +971	Black	\N	\N	2025-12-19 16:37:00	\N	\N	\N	\N
+c06eeb74-62ba-482f-9d6f-99070c1c8650	jawad	+97103545454545	DXB	Dubai Airport Terminal 1	15	147	executive	assigned	2025-12-19 11:45:06.398066	90f98f0f-ff38-403a-a88f-af437a607489	\N	\N	cash	\N	2025-12-19 11:45:06.398066	3	2	point_to_point	\N	\N	digitalminds.pk@gmail.com	wordpress	\N	Tesla Model Y	Child Seats: 4 (Seat: 2, Booster: 1, Infant: 1) | Pickup: 2025-12-19 @ 16:44 | Child Seats: 4	Black	\N	\N	2025-12-19 16:44:00	\N	\N	\N	\N
+4cf9e0c5-5957-4eba-b840-367b4a53a27c	test	+97103545454545	Sharjah International Airport	Sheikh Zayed Grand Mosque	15	119.78	executive	assigned	2025-12-19 12:01:31.077102	e4b8d71a-3ce6-4882-ba90-bcf747595eb6	\N	\N	cash	\N	2025-12-19 12:01:31.077102	3	2	point_to_point	\N	\N	digitalminds.pk@gmail.com	wordpress	\N	Mercedes E Class	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-19 @ 17:00 | Child Seats: 3	Black	\N	\N	2025-12-19 17:00:00	\N	\N	\N	\N
+d8f04059-abef-48fa-a80c-613626bf8001	jawad nazari	354854874	Jebel Ali Port	Dubai Old Town	25	450	luxury	in-process	2025-12-22 09:07:15.695267	ab209cb6-cba3-4f61-b265-380ca4085cb8	\N	\N	cash	\N	2025-12-22 09:07:15.695267	1	1	point_to_point	\N	\N	test@gmail.com	manually_created	\N	Range Rover	\N	Silver	\N	\N	2025-12-23 18:10:00	\N	\N	\N	\N
+34eba634-b81a-4160-82e0-508999e3db5b	Aizaz Khan	+9718877992211	Sharjah International Airport	Dubai International Airport	15	119.78	executive	pending	2025-12-22 10:03:00.854732	\N	\N	\N	cash	\N	2025-12-22 10:03:00.854732	3	2	point_to_point	\N	\N	aizaz.dmp@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-22 @ 14:58 | Child Seats: 3	\N	\N	\N	2025-12-22 14:58:00	\N	\N	\N	\N
+fde1aea9-fa5d-415c-b7f0-68c31911fc13	Aizaz	+9718877992211	Fujairah Airport	Abu Dhabi International Airport	15	147	first_class	assigned	2025-12-22 10:11:15.641333	e5293bbf-8ca0-4ff5-8119-08a8ac35ba8f	\N	\N	cash	21e2dd72-821f-4126-b480-091e8a7d04d4	2025-12-22 10:11:15.641333	3	2	point_to_point	\N	\N	admin@digitalminds.pk	wordpress	\N	BMW 7 Series	Child Seats: 4 (Seat: 2, Booster: 1, Infant: 1) | Pickup: 2025-12-22 @ 15:10 | Stop: cafeshop | Child Seats: 4	Black	\N	\N	2025-12-22 15:10:00	\N	\N	\N	\N
+3a387dce-2af9-47af-8573-7b8b1b1ede9c	jawad nazari	+971354854874	Mall of the Emirates	Dubai Festival City	15	119.78	classic	assigned	2025-12-22 11:11:03.146129	e05e9f46-3245-4658-bebe-b478492db40d	\N	\N	cash	bbbb251b-e07d-4434-8c29-9461292d9c51	2025-12-22 11:11:03.146129	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	BYD Han	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-22 @ 16:10 | Child Seats: 3	White	\N	\N	2025-12-22 16:10:00	\N	\N	\N	\N
+6a5f0d7a-1212-4007-9f14-8356557e8ea7	jawad nazari	+971354854874	Jumeirah Beach - Jumeirah - Jumeira Third - Dubai - United Arab Emirates	Mena Jabal Ali - Dubai - United Arab Emirates	15	119.78	executive	pending	2025-12-31 18:34:27.312877	\N	\N	\N	cash	\N	2025-12-31 18:34:27.312877	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2025-12-31 @ 23:33 | Child Seats: 3	\N	\N	\N	\N	\N	\N	\N	\N
+3453713c-fa95-449c-b3ae-7bfd2858c2d9	jawad nazari	+971354854874	The Walk - Marsa Dubai - Jumeirah Beach Residence - Dubai - United Arab Emirates	Marsa Dubai - Jumeirah Beach Residence - Dubai - United Arab Emirates	15	201.44	executive	pending	2025-12-31 19:54:22.490947	\N	\N	\N	cash	\N	2025-12-31 19:54:22.490947	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 1, Booster: 2, Infant: 3) | Pickup: 2025-12-31 @ 00:52 | Child Seats: 6	\N	\N	\N	2025-12-31 00:52:00	\N	\N	\N	\N
+29003007-9ff7-49e6-8e71-1f753572ef80	test	+971354854874	Airport Rd - Al Garhoud - Dubai - United Arab Emirates	1 Sheikh Mohammed bin Rashid Blvd - Burj Khalifa - Downtown Dubai - Dubai - United Arab Emirates	15	174.22	elite_van	pending	2026-01-02 18:50:07.956248	\N	\N	\N	cash	\N	2026-01-02 18:50:07.956248	7	7	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 5 (Seat: 1, Booster: 2, Infant: 2) | Pickup: 2026-01-02 @ 23:47 | Child Seats: 5	\N	\N	\N	\N	\N	\N	\N	\N
+9962f98a-7ec7-496d-896f-de2333909bec	asad	+971354854874	Dubai - United Arab Emirates	Jumeirah Village - Jumeirah Village Circle - Dubai - United Arab Emirates	15	201.44	elite_van	pending	2026-01-05 11:09:29.231125	\N	\N	\N	cash	\N	2026-01-05 11:09:29.231125	7	7	point_to_point	\N	\N	admin@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 16:06 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+412e303f-213b-4442-a903-40403b036d7b	jawad nazari	+971354854874	Dubai - United Arab Emirates	1 Sheikh Mohammed bin Rashid Blvd - Burj Khalifa - Downtown Dubai - Dubai - United Arab Emirates	15	81.66	urban_suv	pending	2026-01-05 11:37:53.263063	\N	\N	\N	cash	\N	2026-01-05 11:37:53.263063	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-05 @ 16:06 | Child Seats: 3	\N	\N	\N	\N	\N	\N	\N	\N
+08fad277-fda3-4596-be0d-6ae4192de2e9	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	15	81.66	first_class	pending	2026-01-05 13:12:54.057526	\N	\N	\N	cash	\N	2026-01-05 13:12:54.057526	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-05 @ 18:11 | Child Seats: 3	\N	\N	\N	\N	\N	\N	\N	\N
+4219bf68-7bc3-4a58-81f2-f58c26e21546	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	15	190.54	first_class	pending	2026-01-05 13:14:53.742327	\N	\N	\N	cash	\N	2026-01-05 13:14:53.742327	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 7 (Seat: 3, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 18:11 | Child Seats: 7	\N	\N	\N	\N	\N	\N	\N	\N
+14b25546-3bd7-4a81-b15c-28c0538cd9d8	asad	+971354854874	Fujairah - United Arab Emirates	Dubai - United Arab Emirates	15	108.88	executive	pending	2026-01-05 13:18:28.338643	\N	\N	\N	cash	\N	2026-01-05 13:18:28.338643	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 4 (Seat: 1, Booster: 2, Infant: 1) | Pickup: 2026-01-05 @ 18:17 | Child Seats: 4	\N	\N	\N	\N	\N	\N	\N	\N
+c248f54e-f8fa-478f-a80a-43c5e2fe8dee	jawad nazari	+971354854874	Dubai - United Arab Emirates	Fujairah - United Arab Emirates	15	228.66	executive	pending	2026-01-05 14:08:46.578798	\N	\N	\N	cash	\N	2026-01-05 14:08:46.578798	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 7 (Seat: 2, Booster: 2, Infant: 3) | Pickup: 2026-01-05 @ 19:07 | Child Seats: 7	\N	\N	\N	\N	\N	\N	\N	\N
+dc942f3e-1acb-4fad-9242-65491aa03a8a	jawad nazari	+971354854874	Dubai - United Arab Emirates	Fujairah - United Arab Emirates	15	228.66	executive	pending	2026-01-05 14:18:18.031171	\N	\N	\N	cash	\N	2026-01-05 14:18:18.031171	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 7 (Seat: 2, Booster: 2, Infant: 3) | Pickup: 2026-01-05 @ 19:07 | Child Seats: 7	\N	\N	\N	\N	\N	\N	\N	\N
+06df41f2-23a5-46c8-a362-a479bf59f2c7	dev test	+971354854874	Dubai - United Arab Emirates	Fujairah - United Arab Emirates	15	163.32	first_class	pending	2026-01-05 15:06:11.606991	\N	\N	\N	cash	\N	2026-01-05 15:06:11.606991	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 19:07 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+0d4f26e9-fd8f-466f-bc9c-b4ebdded032d	test two	+971354854874	Sharjah - United Arab Emirates	Sharjah - Al Ruqa Al Hamra - Sharjah - United Arab Emirates	15	201.44	urban_suv	pending	2026-01-05 15:23:48.772018	\N	\N	\N	cash	\N	2026-01-05 15:23:48.772018	5	4	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 20:22 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+9c0f77a0-a900-4a0d-8df9-333eca7e26c9	jawad nazari	+971354854874	Dubai - United Arab Emirates	Burj Khalifa - Downtown Dubai - Dubai - United Arab Emirates	15	99	luxury_suv	pending	2026-01-05 15:34:27.845099	\N	\N	\N	cash	\N	2026-01-05 15:34:27.845099	5	4	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 0 (Seat: 0, Booster: 0, Infant: 0) | Pickup: 2026-01-05 @ 20:33 | WhatsApp: +971	\N	\N	\N	\N	\N	\N	\N	\N
+17bf40f2-f046-4c3e-88eb-d1c5fbd92380	test	+971354854874	Sharjah - United Arab Emirates	Dubai - United Arab Emirates	15	201.44	elite_van	pending	2026-01-05 16:09:30.951584	\N	\N	\N	cash	\N	2026-01-05 16:09:30.951584	7	7	round_trip	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 20:59 | Return: 2026-01-07 @ 11:10 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+7c02665b-5cf6-454d-bd9d-dc04ce1c0830	jawad nazari	+971354854874	Sharjah - United Arab Emirates	Dubai - United Arab Emirates	15	201.44	classic	pending	2026-01-05 16:14:06.140679	\N	\N	\N	cash	\N	2026-01-05 16:14:06.140679	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 21:12 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+38df5e85-6500-4cf3-9b2f-e683abf39e41	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	32.93	201.44	classic	pending	2026-01-05 16:47:48.777171	\N	\N	\N	cash	\N	2026-01-05 16:47:48.777171	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 21:44 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+4a66f032-55e9-4e0c-9cd2-d6738a22f077	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	32.93	201.44	classic	pending	2026-01-05 16:47:58.250574	\N	\N	\N	cash	\N	2026-01-05 16:47:58.250574	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 21:44 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+607c20ae-8940-4ccf-8542-fbf05b0c8b98	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	32.93	201.44	classic	pending	2026-01-05 16:48:05.420152	\N	\N	\N	cash	\N	2026-01-05 16:48:05.420152	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 21:44 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+d7890d25-8569-44ac-9c6e-e536d6629a43	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	32.93	201.44	classic	pending	2026-01-05 16:55:01.051829	\N	\N	\N	cash	\N	2026-01-05 16:55:01.051829	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 21:44 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+72aa8f92-eb92-4bdb-9a49-39426729e6de	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	32.93	201.44	classic	pending	2026-01-05 16:59:47.707051	\N	\N	\N	cash	\N	2026-01-05 16:59:47.707051	3	2	point_to_point	\N	\N	test@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 21:44 | Child Seats: 6	\N	\N	\N	\N	\N	\N	\N	\N
+c08b33e3-c32a-4f1a-abe1-1ddc1da262a2	nadir	+9710559033884	Dubai - United Arab Emirates	Al Khail Rd - Hadaeq Sheikh Mohammed Bin Rashid - Dubai - United Arab Emirates	19.98	174.22	classic	pending	2026-01-05 17:02:13.183071	\N	\N	\N	cash	\N	2026-01-05 17:02:13.183071	3	2	point_to_point	\N	\N	Nabiakhan@gmail.com	wordpress	\N	\N	Child Seats: 5 (Seat: 1, Booster: 2, Infant: 2) | Pickup: 2026-01-05 @ 22:00 | Child Seats: 5	\N	\N	\N	\N	\N	\N	\N	\N
+9b22a6ad-c7ab-460e-b6f4-4c4dc0350e30	nadir	+971354854874	Sharjah - Al Ruqa Al Hamra - Sharjah - United Arab Emirates	Sharjah - United Arab Emirates	8.17	119.78	executive	pending	2026-01-05 17:07:52.226628	\N	\N	\N	cash	\N	2026-01-05 17:07:52.226628	3	2	point_to_point	\N	\N	Nabia@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-05 @ 22:06 | Child Seats: 3	\N	\N	\N	2026-01-05 22:06:00	\N	\N	\N	\N
+3c76885a-3806-49f2-bf72-e638aba1addc	Anas	+97107932664441	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	29.51	163.32	classic	assigned	2026-01-06 12:29:41.223736	d8df2cb8-cbf7-408d-a6ec-09819c0ee903	\N	\N	cash	e5a0a542-54f9-42bc-aa53-7986bbd0c7e0	2026-01-06 12:29:41.223736	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	Toyota Camry	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-06 @ 17:28 | Child Seats: 6	Black	\N	\N	2026-01-06 17:28:00	\N	\N	\N	\N
+5ee83048-e30c-4330-ba69-889cf9e664c0	Omer	+97107932664441	Fujairah - United Arab Emirates	Dubai - United Arab Emirates	120.55	163.32	classic	assigned	2026-01-06 12:33:36.879957	0f1d5c26-2da3-45f9-9682-6fa3969fac1f	\N	\N	cash	eb1175b3-0ab7-4134-a870-58c0397a139f	2026-01-06 12:33:36.879957	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	Honda Civic	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-06 @ 17:32 | Child Seats: 6	Black	\N	\N	2026-01-06 17:32:00	\N	\N	\N	\N
+8cc3e851-2467-4565-8ba4-b83649a46732	test	+971354854874	Burj Khalifa - Downtown Dubai - Dubai - United Arab Emirates	Al Khail Rd - Hadaeq Sheikh Mohammed Bin Rashid - Dubai - United Arab Emirates	15.96	108.88	executive	pending	2026-01-06 12:50:56.658199	\N	\N	\N	cash	\N	2026-01-06 12:50:56.658199	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 4 (Seat: 2, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 17:45 | Child Seats: 4 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 17:45:00	\N	\N	\N	\N
+01f358cc-b24f-41c5-adb4-6c7c6c93e22d	test	+971354854874	Burj Khalifa - Downtown Dubai - Dubai - United Arab Emirates	Al Khail Rd - Hadaeq Sheikh Mohammed Bin Rashid - Dubai - United Arab Emirates	15.96	108.88	executive	pending	2026-01-06 13:03:07.849616	\N	\N	\N	cash	\N	2026-01-06 13:03:07.849616	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 4 (Seat: 2, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 17:45 | Child Seats: 4 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 17:45:00	\N	\N	\N	\N
+49997793-391d-4416-a3e3-59abaa418156	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - Al Ruqa Al Hamra - Sharjah - United Arab Emirates	39.98	81.66	executive	pending	2026-01-06 13:04:00.140691	\N	\N	\N	cash	\N	2026-01-06 13:04:00.140691	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 18:03 | Child Seats: 3 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 18:03:00	\N	\N	\N	\N
+d7156729-0640-4084-a6a3-6cbd6d6dc0bf	jawad nazari	+971354854874	Sharjah - United Arab Emirates	Saadiyat Island - Al Saadiyat Island - Abu Dhabi - United Arab Emirates	168.74	54.44	urban_suv	assigned	2026-01-06 13:17:42.332656	49cddb0a-9095-4d94-b501-e1fc0bbb72ca	\N	\N	cash	\N	2026-01-06 13:17:42.332656	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	BYD Song	Child Seats: 2 (Seat: 1, Booster: 1, Infant: 0) | Pickup: 2026-01-06 @ 18:16 | Child Seats: 2 | WhatsApp: +9710559033884	White	\N	\N	2026-01-06 18:16:00	\N	\N	\N	\N
+5e0a2a84-86f7-4e6c-810c-16f30e85765f	jawad nazari	+971354854874	Sharjah - United Arab Emirates	Saadiyat Island - Al Saadiyat Island - Abu Dhabi - United Arab Emirates	168.74	54.44	urban_suv	assigned	2026-01-06 13:30:59.43932	1a77dc40-f880-45e2-88f1-d2c793ab63ff	\N	\N	cash	\N	2026-01-06 13:30:59.43932	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	GMC	Child Seats: 2 (Seat: 1, Booster: 1, Infant: 0) | Pickup: 2026-01-06 @ 18:16 | Child Seats: 2 | WhatsApp: +9710559033884	White	\N	\N	2026-01-06 18:16:00	\N	\N	\N	\N
+26885b53-49b2-4ac0-9c49-8ceff0171976	jawad nazari	+971354854874	Sharjah - Al Ruqa Al Hamra - Sharjah - United Arab Emirates	Sharjah - United Arab Emirates	10.71	81.66	executive	pending	2026-01-06 13:40:51.219392	\N	\N	\N	cash	\N	2026-01-06 13:40:51.219392	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 18:40 | Child Seats: 3 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 18:40:00	\N	\N	\N	\N
+0642c5ab-af89-4dd2-8f76-4eaedc3b9d9d	jawad nazari	+971354854874	Sharjah - Al Ruqa Al Hamra - Sharjah - United Arab Emirates	Sharjah - United Arab Emirates	10.71	81.66	executive	pending	2026-01-06 13:46:01.917933	\N	\N	\N	cash	\N	2026-01-06 13:46:01.917933	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 18:40 | Child Seats: 3 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 18:40:00	\N	\N	\N	\N
+f69e564c-d1da-404d-a6fe-d975b40684b5	jawad nazari	+971354854874	Sharjah - United Arab Emirates	Al Nahda St - Hay Al Nahda - Al Nahda - Sharjah - United Arab Emirates	11.54	81.66	urban_suv	assigned	2026-01-06 13:46:45.516844	113a84a1-b8f0-49fd-b70d-1012c3a04e18	\N	\N	cash	\N	2026-01-06 13:46:45.516844	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	BYD Song	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 18:46 | Child Seats: 3 | WhatsApp: +9710559033884	White	\N	\N	2026-01-06 18:46:00	\N	\N	\N	\N
+a137e1b9-2a72-4c0a-aa36-8dcf6ae5ee5b	jawad nazari	+971354854874	Sharjah - United Arab Emirates	Al Nahda St - Hay Al Nahda - Al Nahda - Sharjah - United Arab Emirates	11.54	81.66	urban_suv	pending	2026-01-06 13:47:46.868753	\N	\N	\N	cash	\N	2026-01-06 13:47:46.868753	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 18:46 | Child Seats: 3 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 18:46:00	\N	\N	\N	\N
+976758ee-f201-435c-af78-24ca01b9ba34	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - Al Ruqa Al Hamra - Sharjah - United Arab Emirates	37.92	54.44	urban_suv	pending	2026-01-06 13:48:21.294434	\N	\N	\N	cash	\N	2026-01-06 13:48:21.294434	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 2 (Seat: 1, Booster: 1, Infant: 0) | Pickup: 2026-01-06 @ 18:47 | Child Seats: 2 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 18:47:00	\N	\N	\N	\N
+d35583a5-0bfb-4809-ba37-eb3d8d1b3028	jawad nazari	+971354854874	Sharjah - United Arab Emirates	Sharjah - United Arab Emirates	15	81.66	urban_suv	pending	2026-01-06 14:05:12.691407	\N	\N	\N	cash	\N	2026-01-06 14:05:12.691407	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 19:04 | Child Seats: 3 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 19:04:00	\N	\N	\N	\N
+67ebe3f1-c9cb-42df-86fd-f4ca28b61db9	Usman ALI	+9710559033884	Sharjah - United Arab Emirates	Burj Khalifa - Downtown Dubai - Dubai - United Arab Emirates	28.96	81.66	urban_suv	pending	2026-01-06 14:18:44.416721	\N	\N	\N	cash	\N	2026-01-06 14:18:44.416721	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 19:18 | Child Seats: 3	\N	\N	\N	2026-01-06 19:18:00	\N	\N	\N	\N
+5fbc5d29-a73f-45ca-a713-be23de4cfb02	jawad nazari	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	28.86	163.32	classic	assigned	2026-01-06 14:27:10.608554	bc9d9cec-1128-4fe9-b2ab-c37b99d6fed8	\N	\N	cash	eff7f1c9-476d-4be1-b65d-572f9be22464	2026-01-06 14:27:10.608554	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	Toyota Camry	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-06 @ 19:26 | Child Seats: 6 | WhatsApp: +9710559033884	Black	\N	\N	2026-01-06 19:26:00	\N	\N	\N	\N
+acbb1233-3f93-4441-9b1a-00b511f42e77	jawad nazari	+971354854874	Ras Al-Khaimah - Ras Al Khaimah - United Arab Emirates	Marsa Dubai - Jumeirah Beach Residence - Dubai - United Arab Emirates	155.07	201.44	executive	pending	2026-01-06 14:30:55.160818	\N	\N	\N	cash	\N	2026-01-06 14:30:55.160818	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 6 (Seat: 2, Booster: 2, Infant: 2) | Pickup: 2026-01-06 @ 19:30 | Child Seats: 6 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 19:30:00	\N	\N	\N	\N
+8122779e-5ad5-486c-a463-15f47e036036	Ali	+971354854874	Sharjah - United Arab Emirates	Dubai - United Arab Emirates	28.65	108.88	classic	assigned	2026-01-06 14:42:21.886367	da82e6c3-bacc-404a-b7e5-7095e832adfa	\N	\N	cash	bbbb251b-e07d-4434-8c29-9461292d9c51	2026-01-06 14:42:21.886367	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	Toyota Corolla	Child Seats: 4 (Seat: 2, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 19:41 | Child Seats: 4 | WhatsApp: +9710559033884	Black	\N	\N	2026-01-06 19:41:00	\N	\N	\N	\N
+9011a21f-b9e2-4250-9a69-74cdb4cc532c	Ahmed	+971354854874	Mena Jabal Ali - Dubai - United Arab Emirates	Al Qouz Ind.fourth - Al Quoz - Dubai - United Arab Emirates	36.41	136.1	executive	pending	2026-01-06 14:51:09.481847	\N	\N	\N	cash	\N	2026-01-06 14:51:09.481847	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 5 (Seat: 2, Booster: 1, Infant: 2) | Pickup: 2026-01-06 @ 19:50 | Child Seats: 5 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-06 19:50:00	\N	\N	\N	\N
+3ee0f517-c962-4709-b4a1-1fe1a7e6bb4c	Usman 	+9710559033884	27 28th St - Al QusaisAl Qusais 3 - الطوار الرابعة - دبي - United Arab Emirates	Sharjah - United Arab Emirates	17.82	81.66	urban_suv	pending	2026-01-06 14:52:52.182283	\N	\N	\N	cash	\N	2026-01-06 14:52:52.182283	5	4	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-06 @ 19:52 | Child Seats: 3	\N	\N	\N	2026-01-06 19:52:00	\N	\N	\N	\N
+47ed6247-4557-4562-9692-74d2e4cca178	asad	+971354854874	Dubai - United Arab Emirates	Sharjah - United Arab Emirates	36.71	81.66	classic	pending	2026-01-07 11:44:35.28311	\N	\N	\N	cash	\N	2026-01-07 11:44:35.28311	3	2	point_to_point	\N	\N	jawaddigitalminds@gmail.com	wordpress	\N	\N	Child Seats: 3 (Seat: 1, Booster: 1, Infant: 1) | Pickup: 2026-01-07 @ 16:42 | Child Seats: 3 | WhatsApp: +9710559033884	\N	\N	\N	2026-01-07 16:42:00	\N	\N	\N	\N
 \.
 
 
 --
--- Data for Name: car_images; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: car_images; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.car_images (id, vehicle_id, image_filename, image_size, image_type, uploaded_at) FROM stdin;
@@ -732,7 +834,7 @@ COPY public.car_images (id, vehicle_id, image_filename, image_size, image_type, 
 
 
 --
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.customers (id, name, phone, email, whatsapp, preferred_vehicle, notes, created_at, updated_at) FROM stdin;
@@ -755,7 +857,7 @@ COPY public.customers (id, name, phone, email, whatsapp, preferred_vehicle, note
 
 
 --
--- Data for Name: driver_ratings; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: driver_ratings; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.driver_ratings (id, booking_id, driver_rating, trip_rating, customer_feedback, created_at) FROM stdin;
@@ -793,16 +895,19 @@ d2b2f905-584f-4e9e-90d2-9a94d27693f4	ba3c1a92-1b9c-43c0-a042-baf88232da65	4	5	De
 
 
 --
--- Data for Name: drivers; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: drivers; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.drivers (id, vendor_id, name, phone, license_number, created_at, status, updated_at, auto_assign, license_issue_date, license_expiry_date, image_url, email, password_hash, bank_account_number, bank_name, account_holder_name, driver_registration_status, national_id, date_of_birth, updated_by) FROM stdin;
 bbbb251b-e07d-4434-8c29-9461292d9c51	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Ahmed Hassan	+971503333333	AE000012	2025-11-26 18:09:34.121589	offline	2025-11-30 01:15:10.212667	t	2024-11-26	2029-11-26	https://ui-avatars.com/api/?name=Ahmed+Hassan&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 e5a0a542-54f9-42bc-aa53-7986bbd0c7e0	\N	Test Driver	+971501234567	\N	2025-11-30 22:08:38.038772	offline	2025-11-30 22:08:38.038772	t	\N	\N	\N	driver@example.com	$2b$10$49EFlTx03jiCiQvVLQwwnumsrF3Im41hfLX7/haC91FunqCKhYGIy	\N	\N	\N	approved	\N	\N	\N
+0e0e05e7-df4c-4a3a-8f8c-09c6d5d2b712	\N	Jawad	03072189005	0212545	2026-01-07 12:23:00.570422	offline	2026-01-07 12:23:00.570422	t	\N	\N	\N	jawaddigitalminds@gmail.com	$2b$10$d7Ms9m54vQbSmZ.2vz6rsOdkinK7Kky8od8CkeKm.4SwzigVsUozW	030702189005	easypaisa	Jawad	pending	pakistani	1990-11-15	\N
+e9785cd4-837f-4cfa-a535-8a6b3022eea1	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Zainab Mohamed	+971507777778	AE000014	2025-11-26 18:09:37.347556	online	2026-01-08 12:25:04.232535	t	2023-11-26	2028-11-26	https://ui-avatars.com/api/?name=Zainab+Mohamed&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
+26bcd573-1af6-4698-8990-8e95a063635a	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Ibrahim Khan	+971509999999	AE000004	2025-11-26 18:09:35.506906	Approved	2026-01-08 10:23:45.86967	t	2024-11-26	2029-11-26	https://ui-avatars.com/api/?name=Ibrahim+Khan&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
+417ea360-3044-476e-a769-5a2130d96d7a	\N	jawad nazari	+92354854874	0212545	2026-01-07 13:49:22.630659	Approved	2026-01-08 12:07:12.780999	t	\N	\N	\N	jawaddigitalminds@gmail.com	$2b$10$RmCTkgwG1jYAzLGZEd7l7ORy5TyHTZJfhPbx/bNLGWwq5BVhykwBC	030702189005	easypaisa	jawad nazari	pending	pakistani	1990-06-22	\N
 06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Hassan Mahmoud	+971507777777	AE000001	2025-11-26 18:09:35.046005	offline	2025-11-26 18:09:35.046005	t	2022-11-26	2027-11-26	https://ui-avatars.com/api/?name=Hassan+Mahmoud&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 0aceffab-516f-43dc-8cc4-48bae23dec69	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Noor Ibrahim	+971503333334	AE000002	2025-11-26 18:09:36.427995	offline	2025-11-26 18:09:36.427995	t	2023-11-26	2028-11-26	https://ui-avatars.com/api/?name=Noor+Ibrahim&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 21e2dd72-821f-4126-b480-091e8a7d04d4	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Khalid Mansour	+971502222223	AE000003	2025-11-26 18:09:36.198412	online	2025-11-26 18:09:36.198412	t	2021-11-26	2026-11-26	https://ui-avatars.com/api/?name=Khalid+Mansour&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
-26bcd573-1af6-4698-8990-8e95a063635a	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Ibrahim Khan	+971509999999	AE000004	2025-11-26 18:09:35.506906	offline	2025-11-26 18:09:35.506906	t	2024-11-26	2029-11-26	https://ui-avatars.com/api/?name=Ibrahim+Khan&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 32b6548e-dd3a-4e12-b045-759671263394	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Karim Hassan	+971508888889	AE000005	2025-11-26 18:09:37.57711	offline	2025-11-26 18:09:37.57711	f	2020-11-26	2025-05-26	https://ui-avatars.com/api/?name=Karim+Hassan&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 7983e2e1-14b7-49bd-a15f-988038a17e51	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Rashid Al Mansoori	+971508888888	AE000006	2025-11-26 18:09:35.27716	online	2025-11-26 18:09:35.27716	t	2023-11-26	2028-11-26	https://ui-avatars.com/api/?name=Rashid+Al+Mansoori&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 7dc4b95a-83e1-4abf-aa5a-88f2e463f1f3	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Aisha Abdullah	+971506666667	AE000007	2025-11-26 18:09:37.11714	online	2025-11-26 18:09:37.11714	t	2022-11-26	2027-11-26	https://ui-avatars.com/api/?name=Aisha+Abdullah&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
@@ -811,18 +916,16 @@ b5d713bb-17d8-4c02-ba03-5beb243c79e8	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Ali Hu
 ba981095-24ed-4cdb-9f6a-b450e5fe9e99	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Omar Al Mazrouei	+971505555556	AE000010	2025-11-26 18:09:36.887477	offline	2025-11-26 18:09:36.887477	t	2023-11-26	2028-11-26	https://ui-avatars.com/api/?name=Omar+Al+Mazrouei&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 bb37d0b3-5956-4644-85f1-d9fc441cc7a4	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Hassan Ibrahim	+971504444445	AE000011	2025-11-26 18:09:36.657884	online	2025-11-26 18:09:36.657884	f	2020-11-26	2024-11-26	https://ui-avatars.com/api/?name=Hassan+Ibrahim&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 dd639c64-7587-4d69-a4ca-86dfafb00e5c	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Sara Ahmed	+971501111112	AE000013	2025-11-26 18:09:35.966781	online	2025-11-26 18:09:35.966781	t	2022-11-26	2027-11-26	https://ui-avatars.com/api/?name=Sara+Ahmed&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
-e9785cd4-837f-4cfa-a535-8a6b3022eea1	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	Zainab Mohamed	+971507777778	AE000014	2025-11-26 18:09:37.347556	online	2025-11-26 18:09:37.347556	t	2023-11-26	2028-11-26	https://ui-avatars.com/api/?name=Zainab+Mohamed&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 eb1175b3-0ab7-4134-a870-58c0397a139f	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Marwan Ali	+971500000000	AE000015	2025-11-26 18:09:35.736809	online	2025-11-26 18:09:35.736809	t	2021-11-26	2026-11-26	https://ui-avatars.com/api/?name=Marwan+Ali&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 eff7f1c9-476d-4be1-b65d-572f9be22464	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	Mohammed Ali	+971504444444	AE000016	2025-11-26 18:09:34.354341	online	2025-11-26 18:09:34.354341	t	2024-11-26	2029-11-26	https://ui-avatars.com/api/?name=Mohammed+Ali&background=random&size=128&bold=true&font-size=0.4	\N	\N	\N	\N	\N	pending	\N	\N	\N
 \.
 
 
 --
--- Data for Name: fare_rules; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: fare_rules; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.fare_rules (id, vehicle_type, base_fare, per_km_rate, active, created_at, updated_at, updated_by, included_km) FROM stdin;
-e2644fc4-499e-416f-9da7-e6a3290ce831	classic	95.00	1.00	t	2025-11-28 17:34:01.027766	2025-11-28 17:34:01.027766	\N	20
 34dc3d54-e530-42ba-95e7-b3179656ac67	executive	105.00	1.00	t	2025-11-28 17:34:01.027766	2025-11-28 17:34:01.027766	\N	20
 55a8ec91-4cf7-41e1-866f-58cc0322590f	urban_suv	108.00	1.00	t	2025-11-28 17:34:01.027766	2025-11-28 17:34:01.027766	\N	20
 4a45c49f-1a80-43fe-979e-0581ec1b4bf5	luxury_suv	170.00	1.80	t	2025-11-28 17:34:01.027766	2025-11-28 17:34:01.027766	\N	20
@@ -830,11 +933,12 @@ d5398b9b-fd5f-4cc3-b83e-02493c48fb96	elite_van	165.00	2.00	t	2025-11-28 17:34:01
 86c301e9-21ac-46fa-a220-64bd0420123d	mini_bus	825.00	7.50	t	2025-11-28 17:34:01.027766	2025-11-28 17:34:01.027766	\N	50
 95c0e67a-d89e-4f09-bf15-d739e5ce6624	first_class	450.00	1.75	t	2025-11-30 02:10:06.563368	2025-11-30 02:10:06.563368	\N	40
 6120a8d1-a875-49cf-97bf-58bd27412e7e	luxury	450.00	1.75	t	2025-11-30 02:10:06.563368	2025-11-30 02:10:06.563368	\N	40
+e2644fc4-499e-416f-9da7-e6a3290ce831	classic	95.00	1.00	t	2025-11-28 17:34:01.027766	2026-01-07 07:04:05.572743	\N	20
 \.
 
 
 --
--- Data for Name: notification_logs; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: notification_logs; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.notification_logs (id, recipient_type, recipient_phone, recipient_email, channel, template_id, content, status, metadata, created_at) FROM stdin;
@@ -862,7 +966,7 @@ COPY public.notification_logs (id, recipient_type, recipient_phone, recipient_em
 
 
 --
--- Data for Name: payouts; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: payouts; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.payouts (id, vendor_id, amount_aed, status, payment_date, notes, created_at) FROM stdin;
@@ -874,7 +978,7 @@ d0580c8b-d33f-4679-9ab5-64754655f221	e5a0a542-54f9-42bc-aa53-7986bbd0c7e0	450.00
 
 
 --
--- Data for Name: rental_rules; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: rental_rules; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.rental_rules (id, vehicle_type, hourly_rate_aed, min_hours, max_hours, is_active, created_at, updated_at) FROM stdin;
@@ -890,7 +994,7 @@ c4f678ef-4226-4cbf-a256-b25222524abc	urban_suv	108.00	3	14	t	2025-11-30 19:11:41
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.users (id, email, password_hash, role, name, phone, status, created_at, updated_at) FROM stdin;
@@ -902,56 +1006,56 @@ COPY public.users (id, email, password_hash, role, name, phone, status, created_
 
 
 --
--- Data for Name: vehicles; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: vehicles; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.vehicles (id, vendor_id, driver_id, plate_number, model, type, created_at, status, max_passengers, max_luggage, has_big_trunk, hourly_price, per_km_price, active, color, image_url, updated_by) FROM stdin;
 7da8aa3f-8701-48d7-81e9-6abba62dd860	67d97a9a-dfb4-411c-b3e5-a716235598c1	32b6548e-dd3a-4e12-b045-759671263394	DEMO105	Toyota Highlander	urban_suv	2025-11-30 03:15:54.421093	on_trip	5	4	t	50.00	1.50	t	Black	\N	\N
 7270ab4d-b7f1-4da2-8107-4e7c8d3bf3f6	67d97a9a-dfb4-411c-b3e5-a716235598c1	0aceffab-516f-43dc-8cc4-48bae23dec69	DEMO102	Lexus ES 300H	executive	2025-11-30 03:15:54.421093	on_trip	5	4	t	50.00	1.50	t	Silver	\N	\N
+d32e7b7e-7468-4b71-8fbe-627207d31156	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	LEXUS-ES-001	Lexus ES 300H	executive	2025-11-28 17:35:10.924991	on_trip	4	3	t	75.00	3.50	t	Silver	/images/vehicles/range_rover_lexus_lu_478425b3.jpg	\N
+89ee1ed9-f0d0-4e0d-bd3a-7a76d712f0eb	67d97a9a-dfb4-411c-b3e5-a716235598c1	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	DEMO101	Toyota Hiace	classic	2025-11-30 03:15:54.421093	on_trip	5	4	t	50.00	1.50	t	Black	\N	\N
+25e647ca-92a5-4c3b-bb54-9b4be85f7a37	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	0aceffab-516f-43dc-8cc4-48bae23dec69	TOYOTA-HL-001	Toyota Highlander	urban_suv	2025-11-28 17:35:10.924991	on_trip	7	4	t	75.00	3.50	t	Black	/images/vehicles/toyota_highlander_fo_3ccb53bd.jpg	\N
+e5293bbf-8ca0-4ff5-8119-08a8ac35ba8f	67d97a9a-dfb4-411c-b3e5-a716235598c1	21e2dd72-821f-4126-b480-091e8a7d04d4	DEMO103	BMW 7 Series	first_class	2025-11-30 03:15:54.421093	on_trip	5	4	t	50.00	1.50	t	Black	\N	\N
 a67cd6bf-cdf8-48a0-ad08-8a7d6ad0a20f	67d97a9a-dfb4-411c-b3e5-a716235598c1	bbbb251b-e07d-4434-8c29-9461292d9c51	DEMO100	Mercedes Sprinter	mini_bus	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	White	\N	\N
 185801b2-aef3-4efa-ab6f-3cc9e5aa3ed2	67d97a9a-dfb4-411c-b3e5-a716235598c1	7983e2e1-14b7-49bd-a15f-988038a17e51	DEMO106	Mercedes V Class	elite_van	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	Black	\N	\N
 ab209cb6-cba3-4f61-b265-380ca4085cb8	67d97a9a-dfb4-411c-b3e5-a716235598c1	\N	DEMO107	Range Rover	luxury	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	Silver	\N	\N
 45563e13-c868-430d-beb3-e5b6d8121543	67d97a9a-dfb4-411c-b3e5-a716235598c1	\N	DEMO108	Audi A8	luxury	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	Blue	\N	\N
 c3dfd059-1218-4c6e-aa35-d8bfa2fa5ff6	67d97a9a-dfb4-411c-b3e5-a716235598c1	\N	DEMO109	Cadillac Escalade	luxury_suv	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	Gray	\N	\N
+e05e9f46-3245-4658-bebe-b478492db40d	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	bbbb251b-e07d-4434-8c29-9461292d9c51	BYD-HAN-001	BYD Han	classic	2025-11-28 17:35:10.924991	on_trip	4	2	t	75.00	3.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
+d8df2cb8-cbf7-408d-a6ec-09819c0ee903	\N	e5a0a542-54f9-42bc-aa53-7986bbd0c7e0	DXB-001	Toyota Camry	classic	2025-11-30 22:36:20.723568	on_trip	4	3	t	75.00	3.50	t	Black	\N	\N
+49cddb0a-9095-4d94-b501-e1fc0bbb72ca	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	BYD-SONG-001	BYD Song	urban_suv	2025-11-28 17:35:10.924991	on_trip	5	4	t	75.00	3.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
 31278e30-8220-4ce1-ab93-b739d0afe503	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	ABU-1001	BMW 5 Series	luxury	2025-11-26 18:09:38.729285	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/bmw_7_series_luxury__14fb90b3.jpg	\N
 32e5e3c1-d52e-4f16-8e0f-55a3605f2ca9	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	32b6548e-dd3a-4e12-b045-759671263394	BMW-7-001	BMW 7 Series	first_class	2025-11-28 17:35:10.924991	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/bmw_7_series_luxury__14fb90b3.jpg	\N
-e5293bbf-8ca0-4ff5-8119-08a8ac35ba8f	67d97a9a-dfb4-411c-b3e5-a716235598c1	21e2dd72-821f-4126-b480-091e8a7d04d4	DEMO103	BMW 7 Series	first_class	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	Black	\N	\N
-e05e9f46-3245-4658-bebe-b478492db40d	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	bbbb251b-e07d-4434-8c29-9461292d9c51	BYD-HAN-001	BYD Han	classic	2025-11-28 17:35:10.924991	available	4	2	t	75.00	3.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
-49cddb0a-9095-4d94-b501-e1fc0bbb72ca	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	BYD-SONG-001	BYD Song	urban_suv	2025-11-28 17:35:10.924991	available	5	4	t	75.00	3.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
-d32e7b7e-7468-4b71-8fbe-627207d31156	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	LEXUS-ES-001	Lexus ES 300H	executive	2025-11-28 17:35:10.924991	available	4	3	t	75.00	3.50	t	Silver	/images/vehicles/range_rover_lexus_lu_478425b3.jpg	\N
-25e647ca-92a5-4c3b-bb54-9b4be85f7a37	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	0aceffab-516f-43dc-8cc4-48bae23dec69	TOYOTA-HL-001	Toyota Highlander	urban_suv	2025-11-28 17:35:10.924991	available	7	4	t	75.00	3.50	t	Black	/images/vehicles/toyota_highlander_fo_3ccb53bd.jpg	\N
-89ee1ed9-f0d0-4e0d-bd3a-7a76d712f0eb	67d97a9a-dfb4-411c-b3e5-a716235598c1	06e3ff6a-c02a-4dfb-84e4-7eaa21ec0098	DEMO101	Toyota Hiace	classic	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	Black	\N	\N
-d8df2cb8-cbf7-408d-a6ec-09819c0ee903	\N	e5a0a542-54f9-42bc-aa53-7986bbd0c7e0	DXB-001	Toyota Camry	classic	2025-11-30 22:36:20.723568	available	4	3	t	75.00	3.50	t	Black	\N	\N
 26229440-c91c-41c5-85a2-0bd94df6ab4d	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	26bcd573-1af6-4698-8990-8e95a063635a	GMC-YUKON-001	GMC Yukon	luxury_suv	2025-11-28 17:35:10.924991	available	6	5	t	75.00	3.50	t	White	/images/vehicles/cadillac_gmc_yukon_l_ba4108e8.jpg	\N
 6475177d-4fd6-441f-b884-291d1d608d6e	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	21e2dd72-821f-4126-b480-091e8a7d04d4	MERC-V-001	Mercedes V Class	elite_van	2025-11-28 17:35:10.924991	available	7	5	t	75.00	3.50	t	Black	/images/vehicles/mercedes_sprinter_va_af7fed32.jpg	\N
+a828f965-94da-4307-ba82-edbb9be30672	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	TESLA-3-001	Tesla Model 3	executive	2025-11-28 17:35:10.924991	on_trip	4	2	t	75.00	3.50	t	Black	/images/vehicles/tesla_model_3_model__07e528b0.jpg	\N
+90f98f0f-ff38-403a-a88f-af437a607489	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	TESLA-Y-001	Tesla Model Y	executive	2025-11-28 17:35:10.924991	on_trip	5	3	t	75.00	3.50	t	Black	/images/vehicles/tesla_model_3_model__200a6474.jpg	\N
+e4b8d71a-3ce6-4882-ba90-bcf747595eb6	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	MERC-E-001	Mercedes E Class	executive	2025-11-28 17:35:10.924991	on_trip	4	3	t	75.00	3.50	t	Black	/images/vehicles/mercedes_s_class_ext_5bfcf1a2.jpg	\N
+0f1d5c26-2da3-45f9-9682-6fa3969fac1f	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	eb1175b3-0ab7-4134-a870-58c0397a139f	ABU-3001	Honda Civic	classic	2025-11-26 18:09:39.419005	on_trip	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_corolla_honda_2ad82148.jpg	\N
+1a77dc40-f880-45e2-88f1-d2c793ab63ff	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	GMC-CAT	GMC	urban_suv	2025-11-26 18:46:16.414021	on_trip	6	6	t	90.00	4.50	t	White	/images/vehicles/cadillac_gmc_yukon_l_ba4108e8.jpg	\N
+113a84a1-b8f0-49fd-b70d-1012c3a04e18	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	BYD-SONG	BYD Song	urban_suv	2025-11-26 18:46:16.414021	on_trip	5	5	t	90.00	4.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
+bc9d9cec-1128-4fe9-b2ab-c37b99d6fed8	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	eff7f1c9-476d-4be1-b65d-572f9be22464	DXB-1002	Toyota Camry	classic	2025-11-26 18:09:38.037974	on_trip	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_corolla_honda_4d95245a.jpg	\N
 3bb629a9-68a1-4532-9828-d57271479f56	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	BMW7-CAT	BMW 7 Series	luxury	2025-11-26 18:46:16.414021	available	4	3	t	150.00	6.50	t	Black	/images/vehicles/bmw_7_series_luxury__d62c944c.jpg	\N
-113a84a1-b8f0-49fd-b70d-1012c3a04e18	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	BYD-SONG	BYD Song	urban_suv	2025-11-26 18:46:16.414021	available	5	5	t	90.00	4.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
 226c3fce-873e-440f-a0f5-fd1fa0e03c00	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	BYD-HAN	BYD Han	luxury	2025-11-26 18:46:16.414021	available	4	3	t	150.00	6.50	t	White	/images/vehicles/toyota_hiace_microbu_505726df.jpg	\N
 f6e1a85e-db6f-4acf-a209-8e5c52808849	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	LEXUS-CAT	Lexus	luxury	2025-11-26 18:46:16.414021	available	4	3	t	150.00	6.50	t	Silver	/images/vehicles/toyota_hiace_microbu_4a4820d3.jpg	\N
 3ba9706d-7654-46f2-9b77-9dc8811a8dc2	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	7983e2e1-14b7-49bd-a15f-988038a17e51	MERC-SPRINTER-001	Mercedes Sprinter	mini_bus	2025-11-28 17:35:10.924991	available	12	8	t	75.00	3.50	t	Black	/images/vehicles/mercedes_sprinter_va_af7fed32.jpg	\N
-0f1d5c26-2da3-45f9-9682-6fa3969fac1f	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	eb1175b3-0ab7-4134-a870-58c0397a139f	ABU-3001	Honda Civic	classic	2025-11-26 18:09:39.419005	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_corolla_honda_2ad82148.jpg	\N
-bc9d9cec-1128-4fe9-b2ab-c37b99d6fed8	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	eff7f1c9-476d-4be1-b65d-572f9be22464	DXB-1002	Toyota Camry	classic	2025-11-26 18:09:38.037974	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_corolla_honda_4d95245a.jpg	\N
+da82e6c3-bacc-404a-b7e5-7095e832adfa	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	bbbb251b-e07d-4434-8c29-9461292d9c51	DXB-1001	Toyota Corolla	classic	2025-11-26 18:09:37.806737	on_trip	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_corolla_honda_dabd56a3.jpg	\N
 bf2f71f5-7e19-4f57-b251-251c87ee6c66	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	26bcd573-1af6-4698-8990-8e95a063635a	ABU-2001	Range Rover	urban_suv	2025-11-26 18:09:39.189153	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_highlander_fo_e64edbe4.jpg	\N
 39a0593a-df17-4684-9159-4add0bb98c6d	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	MERCEDES-V	Mercedes V Class	elite_van	2025-11-26 18:46:16.414021	available	7	7	t	120.00	5.00	t	Black	/images/vehicles/mercedes_sprinter_va_af7fed32.jpg	\N
 7ad96261-ddbc-4a64-b177-7575d522071c	e03e6fff-575b-4bb3-9ff6-1c92394fe94e	7983e2e1-14b7-49bd-a15f-988038a17e51	ABU-1002	Mercedes E-Class	luxury	2025-11-26 18:09:38.958822	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/audi_a8_exterior_lux_b6800e9d.jpg	\N
 a0ae0a08-331e-4784-ab87-8fd9b264fdb9	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	TESLA-CAT	Tesla	luxury	2025-11-26 18:46:16.414021	available	4	2	t	150.00	6.50	t	Black	/images/vehicles/range_rover_lexus_lu_97f3e706.jpg	\N
 c5f8c7d0-9344-4ba7-9fac-879f3f6e466a	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	CADILLAC-ESC-001	Cadillac Escalade	luxury_suv	2025-11-28 17:35:10.924991	available	7	5	t	75.00	3.50	t	Black	/images/vehicles/cadillac_gmc_yukon_l_06779f14.jpg	\N
-da82e6c3-bacc-404a-b7e5-7095e832adfa	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	bbbb251b-e07d-4434-8c29-9461292d9c51	DXB-1001	Toyota Corolla	classic	2025-11-26 18:09:37.806737	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_corolla_honda_dabd56a3.jpg	\N
 e6fd3c76-4c66-4722-9119-b4ce4320bfb1	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	MINI-001	Toyota Hiace	mini_bus	2025-11-26 19:15:40.569547	available	14	8	t	110.00	5.50	t	Black	/images/vehicles/mercedes_sprinter_va_3e1f78be.jpg	\N
 3e742f31-9e12-4852-a126-7ef790fc7033	67d97a9a-dfb4-411c-b3e5-a716235598c1	26bcd573-1af6-4698-8990-8e95a063635a	DEMO104	GMC Yukon	luxury_suv	2025-11-30 03:15:54.421093	available	5	4	t	50.00	1.50	t	White	\N	\N
 d0e18893-9cee-45ff-9d55-37951100b64b	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	b5d713bb-17d8-4c02-ba03-5beb243c79e8	DXB-2002	GMC Yukon	urban_suv	2025-11-26 18:09:38.499456	available	4	3	t	75.00	3.50	t	White	/images/vehicles/cadillac_gmc_yukon_l_ba4108e8.jpg	\N
-1a77dc40-f880-45e2-88f1-d2c793ab63ff	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	GMC-CAT	GMC	urban_suv	2025-11-26 18:46:16.414021	available	6	6	t	90.00	4.50	t	White	/images/vehicles/cadillac_gmc_yukon_l_ba4108e8.jpg	\N
 1d0ac375-e4c6-4fce-8db6-60bbda20931a	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	9f547d39-af55-4b02-86d2-3b5a5b70c8fb	DXB-2001	Ford Explorer	urban_suv	2025-11-26 18:09:38.267954	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/toyota_highlander_fo_7bd096d2.jpg	\N
-a828f965-94da-4307-ba82-edbb9be30672	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	TESLA-3-001	Tesla Model 3	executive	2025-11-28 17:35:10.924991	available	4	2	t	75.00	3.50	t	Black	/images/vehicles/tesla_model_3_model__07e528b0.jpg	\N
-90f98f0f-ff38-403a-a88f-af437a607489	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	TESLA-Y-001	Tesla Model Y	executive	2025-11-28 17:35:10.924991	available	5	3	t	75.00	3.50	t	Black	/images/vehicles/tesla_model_3_model__200a6474.jpg	\N
 9b5cda84-9870-4ec9-a5d7-7a95ad90269c	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	MERC-S-001	Mercedes S Class	first_class	2025-11-28 17:35:10.924991	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/mercedes_s_class_ext_1b7b47eb.jpg	\N
 7d41bbfe-960f-45a6-8e2b-f8efbf44b190	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	AUDI-A8-001	Audi A8	first_class	2025-11-28 17:35:10.924991	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/audi_a8_exterior_lux_54a179bd.jpg	\N
-e4b8d71a-3ce6-4882-ba90-bcf747595eb6	3bda5b46-1bf0-44be-967b-d9fcbcf4c9a7	\N	MERC-E-001	Mercedes E Class	executive	2025-11-28 17:35:10.924991	available	4	3	t	75.00	3.50	t	Black	/images/vehicles/mercedes_s_class_ext_5bfcf1a2.jpg	\N
 \.
 
 
 --
--- Data for Name: vendor_payouts; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: vendor_payouts; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.vendor_payouts (id, vendor_id, booking_id, vendor_amount, company_profit, created_at) FROM stdin;
@@ -959,7 +1063,7 @@ COPY public.vendor_payouts (id, vendor_id, booking_id, vendor_amount, company_pr
 
 
 --
--- Data for Name: vendors; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: vendors; Type: TABLE DATA; Schema: public; Owner: neondb_owner
 --
 
 COPY public.vendors (id, name, phone, email, commission_rate, created_at, status, bank_account_number, bank_name, account_holder_name, logo_url, approval_reason, auto_assign_disabled, rejection_reason, password_hash) FROM stdin;
@@ -972,28 +1076,28 @@ e5a0a542-54f9-42bc-aa53-7986bbd0c7e0	Test Driver	+971501234567	driver@example.co
 
 
 --
--- Name: customers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: customers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: neondb_owner
 --
 
 SELECT pg_catalog.setval('public.customers_id_seq', 51, true);
 
 
 --
--- Name: notification_logs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: notification_logs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: neondb_owner
 --
 
 SELECT pg_catalog.setval('public.notification_logs_id_seq', 20, true);
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: neondb_owner
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 
 
 --
--- Name: audit_logs audit_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: audit_logs audit_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.audit_logs
@@ -1001,7 +1105,7 @@ ALTER TABLE ONLY public.audit_logs
 
 
 --
--- Name: booking_stops booking_stops_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: booking_stops booking_stops_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.booking_stops
@@ -1009,7 +1113,7 @@ ALTER TABLE ONLY public.booking_stops
 
 
 --
--- Name: bookings bookings_external_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: bookings bookings_external_id_key; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.bookings
@@ -1017,7 +1121,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- Name: bookings bookings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: bookings bookings_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.bookings
@@ -1025,7 +1129,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- Name: car_images car_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: car_images car_images_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.car_images
@@ -1033,7 +1137,7 @@ ALTER TABLE ONLY public.car_images
 
 
 --
--- Name: customers customers_phone_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: customers customers_phone_key; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.customers
@@ -1041,7 +1145,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.customers
@@ -1049,7 +1153,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- Name: driver_ratings driver_ratings_booking_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: driver_ratings driver_ratings_booking_id_key; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.driver_ratings
@@ -1057,7 +1161,7 @@ ALTER TABLE ONLY public.driver_ratings
 
 
 --
--- Name: driver_ratings driver_ratings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: driver_ratings driver_ratings_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.driver_ratings
@@ -1065,7 +1169,7 @@ ALTER TABLE ONLY public.driver_ratings
 
 
 --
--- Name: drivers drivers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: drivers drivers_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.drivers
@@ -1073,7 +1177,7 @@ ALTER TABLE ONLY public.drivers
 
 
 --
--- Name: fare_rules fare_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: fare_rules fare_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.fare_rules
@@ -1081,7 +1185,7 @@ ALTER TABLE ONLY public.fare_rules
 
 
 --
--- Name: fare_rules fare_rules_vehicle_type_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: fare_rules fare_rules_vehicle_type_key; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.fare_rules
@@ -1089,7 +1193,7 @@ ALTER TABLE ONLY public.fare_rules
 
 
 --
--- Name: notification_logs notification_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: notification_logs notification_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.notification_logs
@@ -1097,7 +1201,7 @@ ALTER TABLE ONLY public.notification_logs
 
 
 --
--- Name: payouts payouts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: payouts payouts_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.payouts
@@ -1105,7 +1209,7 @@ ALTER TABLE ONLY public.payouts
 
 
 --
--- Name: rental_rules rental_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: rental_rules rental_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.rental_rules
@@ -1113,7 +1217,7 @@ ALTER TABLE ONLY public.rental_rules
 
 
 --
--- Name: rental_rules rental_rules_vehicle_type_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: rental_rules rental_rules_vehicle_type_key; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.rental_rules
@@ -1121,7 +1225,7 @@ ALTER TABLE ONLY public.rental_rules
 
 
 --
--- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.users
@@ -1129,7 +1233,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.users
@@ -1137,7 +1241,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: vehicles vehicles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: vehicles vehicles_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vehicles
@@ -1145,7 +1249,7 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- Name: vendor_payouts vendor_payouts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: vendor_payouts vendor_payouts_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vendor_payouts
@@ -1153,7 +1257,7 @@ ALTER TABLE ONLY public.vendor_payouts
 
 
 --
--- Name: vendors vendors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: vendors vendors_pkey; Type: CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vendors
@@ -1161,63 +1265,63 @@ ALTER TABLE ONLY public.vendors
 
 
 --
--- Name: idx_audit_logs_created; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_audit_logs_created; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_audit_logs_created ON public.audit_logs USING btree (created_at DESC);
 
 
 --
--- Name: idx_audit_logs_entity; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_audit_logs_entity; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_audit_logs_entity ON public.audit_logs USING btree (entity_type, entity_id);
 
 
 --
--- Name: idx_booking_stops_booking_id; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_booking_stops_booking_id; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_booking_stops_booking_id ON public.booking_stops USING btree (booking_id);
 
 
 --
--- Name: idx_booking_stops_stop_number; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_booking_stops_stop_number; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_booking_stops_stop_number ON public.booking_stops USING btree (stop_number);
 
 
 --
--- Name: idx_bookings_created_at; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_bookings_created_at; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_bookings_created_at ON public.bookings USING btree (created_at DESC);
 
 
 --
--- Name: idx_bookings_type; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_bookings_type; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_bookings_type ON public.bookings USING btree (booking_type);
 
 
 --
--- Name: idx_users_email; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_users_email; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_users_email ON public.users USING btree (email);
 
 
 --
--- Name: idx_users_role; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_users_role; Type: INDEX; Schema: public; Owner: neondb_owner
 --
 
 CREATE INDEX idx_users_role ON public.users USING btree (role);
 
 
 --
--- Name: booking_stops booking_stops_booking_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: booking_stops booking_stops_booking_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.booking_stops
@@ -1225,7 +1329,7 @@ ALTER TABLE ONLY public.booking_stops
 
 
 --
--- Name: bookings bookings_assigned_vehicle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: bookings bookings_assigned_vehicle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.bookings
@@ -1233,7 +1337,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- Name: bookings bookings_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: bookings bookings_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.bookings
@@ -1241,7 +1345,7 @@ ALTER TABLE ONLY public.bookings
 
 
 --
--- Name: car_images car_images_vehicle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: car_images car_images_vehicle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.car_images
@@ -1249,7 +1353,7 @@ ALTER TABLE ONLY public.car_images
 
 
 --
--- Name: driver_ratings driver_ratings_booking_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: driver_ratings driver_ratings_booking_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.driver_ratings
@@ -1257,7 +1361,7 @@ ALTER TABLE ONLY public.driver_ratings
 
 
 --
--- Name: drivers drivers_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: drivers drivers_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.drivers
@@ -1265,7 +1369,7 @@ ALTER TABLE ONLY public.drivers
 
 
 --
--- Name: payouts payouts_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: payouts payouts_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.payouts
@@ -1273,7 +1377,7 @@ ALTER TABLE ONLY public.payouts
 
 
 --
--- Name: payouts payouts_vendor_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: payouts payouts_vendor_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.payouts
@@ -1281,7 +1385,7 @@ ALTER TABLE ONLY public.payouts
 
 
 --
--- Name: vehicles vehicles_driver_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: vehicles vehicles_driver_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vehicles
@@ -1289,7 +1393,7 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- Name: vehicles vehicles_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: vehicles vehicles_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vehicles
@@ -1297,7 +1401,7 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- Name: vendor_payouts vendor_payouts_booking_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: vendor_payouts vendor_payouts_booking_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vendor_payouts
@@ -1305,11 +1409,25 @@ ALTER TABLE ONLY public.vendor_payouts
 
 
 --
--- Name: vendor_payouts vendor_payouts_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: vendor_payouts vendor_payouts_vendor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: neondb_owner
 --
 
 ALTER TABLE ONLY public.vendor_payouts
     ADD CONSTRAINT vendor_payouts_vendor_id_fkey FOREIGN KEY (vendor_id) REFERENCES public.vendors(id);
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT ALL ON SEQUENCES TO neon_superuser WITH GRANT OPTION;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: cloud_admin
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE cloud_admin IN SCHEMA public GRANT ALL ON TABLES TO neon_superuser WITH GRANT OPTION;
 
 
 --
